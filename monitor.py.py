@@ -4,7 +4,7 @@ import time
 import os
 import re
 
-# 你的 26 檔成分股與比例
+# 您的 26 檔成分股比例資料
 stocks_data = {
     "旺矽": ("6223.TW", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TW", 6.12),
     "精測": ("6510.TW", 5.68), "信驊": ("5274.TW", 5.63), "聯亞": ("3081.TWO", 4.56),
@@ -19,36 +19,69 @@ stocks_data = {
 
 def run_monitor():
     total_contribution = 0
+    table_rows = "" 
     now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
+    print(f"\n🚀 開始監測 - 執行時間: {now_str}")
+    print("-" * 60)
+    print(f"{'股票名稱':<10} {'昨日(N-1)':<10} {'現價(N)':<10} {'貢獻':<10}")
+    print("-" * 60)
+
     for name, (sid, weight) in stocks_data.items():
         try:
             stock = yf.Ticker(sid)
+            # 取得歷史資料
             hist = stock.history(period="5d")
             hist = hist[hist['Close'].notna()]
+            
             if len(hist) >= 1:
-                p_n1 = hist['Close'].iloc[-1]
-                p_n = stock.fast_info['lastPrice'] or p_n1
-                total_contribution += (p_n - p_n1) * (weight / 100)
-            time.sleep(0.1)
-        except: pass
+                # N-1 天收盤價
+                p_n1 = round(hist['Close'].iloc[-1], 2)
+                # 即時現價 (N)
+                p_n = stock.fast_info['lastPrice']
+                if p_n is None or p_n == 0:
+                    p_n = p_n1
+                p_n = round(p_n, 2)
+                
+                diff = round(p_n - p_n1, 2)
+                contribution = round(diff * (weight / 100), 4)
+                total_contribution += contribution
+                
+                # 終端機/日誌輸出
+                print(f"{name:<10} {p_n1:<12} {p_n:<10} {contribution:+.4f}")
+                
+                # 生成網頁表格語法
+                color_class = "up" if diff > 0 else "down" if diff < 0 else ""
+                table_rows += f"""
+                <tr>
+                    <td>{name}</td>
+                    <td>{p_n1}</td>
+                    <td class="{color_class}">{p_n}</td>
+                    <td class="{color_class}">{contribution:+.4f}</td>
+                </tr>
+                """
+            time.sleep(0.1) # 避開頻繁請求限制
+        except Exception as e:
+            print(f"❌ 錯誤: {name} ({sid}) - {e}")
 
     final_res = round(total_contribution, 4)
-    print(f"計算完成: {final_res}")
+    print("-" * 60)
+    print(f"🔥 預估基金總漲跌貢獻: {final_res:+.4f}")
+    print("-" * 60)
 
-    # --- 自動尋找並更新 index.html ---
+    # --- 更新 index.html 網頁內容 ---
     if os.path.exists("index.html"):
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
         
-        # 替換數字
-        content = re.sub(r'<div id="total-sum">.*?</div>', f'<div id="total-sum">{final_res}</div>', content)
-        # 替換更新時間
-        content = re.sub(r'<div class="update-time" id="last-update">.*?</div>', f'<div class="update-time" id="last-update">更新時間：{now_str} (TW)</div>', content)
+        # 替換網頁上的總額、清單與時間
+        content = re.sub(r'<div id="total-sum">.*?</div>', f'<div id="total-sum">{final_res:+.4f}</div>', content)
+        content = re.sub(r'<tbody id="stock-details">.*?</tbody>', f'<tbody id="stock-details">{table_rows}</tbody>', content, flags=re.DOTALL)
+        content = re.sub(r'<div class="update-time" id="last-update">.*?</div>', f'<div class="update-time" id="last-update">最後更新：{now_str} (TW)</div>', content)
         
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
-        print("網頁檔案已在地端完成更新")
+        print("✅ index.html 網頁更新完畢")
 
 if __name__ == "__main__":
     run_monitor()

@@ -1,24 +1,51 @@
-name: Daily_Stock_Monitor
-on:
-  workflow_dispatch:
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台股監測詳細版</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .app-card { background: white; width: 100%; max-width: 500px; border-radius: 20px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 20px; }
+        .total-box { background: #1a5276; color: white; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
+        #total-sum { font-size: 36px; font-weight: bold; }
+        .stock-list { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .stock-list th { border-bottom: 2px solid #eee; padding: 10px; text-align: left; color: #666; }
+        .stock-list td { padding: 12px 10px; border-bottom: 1px solid #f0f0f0; }
+        .up { color: #d35400; font-weight: bold; } /* 漲 */
+        .down { color: #27ae60; font-weight: bold; } /* 跌 */
+        .update-time { font-size: 12px; color: #999; text-align: center; margin-top: 15px; }
+        .btn-run { background: #eee; color: #333; border: none; width: 100%; padding: 12px; border-radius: 10px; margin-top: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="app-card">
+        <div class="header"><h2>📊 成分股監測明細</h2></div>
+        
+        <div class="total-box">
+            <div style="font-size: 14px; opacity: 0.8;">預估總漲跌貢獻</div>
+            <div id="total-sum">--</div>
+        </div>
 
-jobs:
-  run_script:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      - name: Install packages
-        run: pip install yfinance pandas
-      - name: Run script
-        run: python monitor.py.py
-      - name: Commit and Push
-        run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          git add index.html
-          git commit -m "Update stock result" || echo "No changes"
-          git push
+        <table class="stock-list">
+            <thead>
+                <tr>
+                    <th>股票</th>
+                    <th>昨日</th>
+                    <th>現價</th>
+                    <th>貢獻</th>
+                </tr>
+            </thead>
+            <tbody id="stock-details">
+                <!-- 這裡會被 Python 自動填入每一列股票資料 -->
+            </tbody>
+        </table>
+
+        <div class="update-time" id="last-update">等待數據更新...</div>
+        <button class="btn-run" onclick="location.href='https://github.com/a0928533194-web/stock-monitor/actions'">
+            🔄 重新計算
+        </button>
+    </div>
+</body>
+</html>

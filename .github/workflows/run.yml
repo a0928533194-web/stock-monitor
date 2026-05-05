@@ -1,14 +1,26 @@
 name: Daily_Stock_Monitor
 on:
-  workflow_dispatch: # 讓你可以手動點按鈕跑
+  workflow_dispatch:
 
 jobs:
   run_script:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # 賦予寫入權限
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
-      - run: pip install yfinance pandas
-      - run: python monitor.py.py
+          python-version: '3.10'
+      - name: Install packages
+        run: pip install yfinance pandas
+      - name: Run script
+        run: python monitor.py.py
+      - name: Commit and Push
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add index.html
+          git commit -m "自動更新漲跌數據: $(date)" || echo "資料無變動"
+          git push

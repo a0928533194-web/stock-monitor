@@ -23,14 +23,14 @@ def run_monitor():
     now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
     print(f"\n🚀 啟動台股成分股監測 - {now_str}")
-    print("-" * 70)
-    print(f"{'股票':<8} {'比例':<8} {'昨日(N-1)':<10} {'現價(N)':<10} {'貢獻值':<10}")
-    print("-" * 70)
+    print("-" * 75)
+    print(f"{'股票':<8} {'比例':<8} {'昨日(N-1)':<12} {'現價(N)':<10} {'貢獻值':<10}")
+    print("-" * 75)
 
     for name, (sid, weight) in stocks_data.items():
         try:
             stock = yf.Ticker(sid)
-            # 抓取 5 天內的資料過濾 NaN，確保 N-1 永遠是正確的前一交易日
+            # 抓取歷史資料確保取得昨日收盤價 (N-1)
             hist = stock.history(period="5d")
             hist = hist[hist['Close'].notna()]
             
@@ -38,19 +38,17 @@ def run_monitor():
                 # 取得昨日收盤 (N-1)
                 p_n1 = round(hist['Close'].iloc[-1], 2)
                 # 取得即時現價 (N)
-                p_n = stock.fast_info['lastPrice']
-                if p_n is None or p_n == 0:
-                    p_n = p_n1
-                p_n = round(p_n, 2)
+                p_n_raw = stock.fast_info['lastPrice']
+                p_n = round(p_n_raw if p_n_raw and p_n_raw != 0 else p_n1, 2)
                 
                 diff = round(p_n - p_n1, 2)
                 contribution = round(diff * (weight / 100), 4)
                 total_contribution += contribution
                 
-                # 1. 在 GitHub Actions 日誌印出詳細資料
+                # 1. 終端機日誌輸出 (用於 GitHub Actions 檢查)
                 print(f"{name:<8} {weight:>5.2f}% {p_n1:>12.2f} {p_n:>10.2f} {contribution:>+10.4f}")
                 
-                # 2. 生成網頁用的 HTML 表格列 (加入比例欄位)
+                # 2. 生成網頁用的 HTML 表格列 (嚴格對齊 5 個 <td> 欄位)
                 color_class = "up" if diff > 0 else "down" if diff < 0 else ""
                 table_rows += f"""
                 <tr>
@@ -61,30 +59,32 @@ def run_monitor():
                     <td class="{color_class}">{contribution:+.4f}</td>
                 </tr>
                 """
-            time.sleep(0.1) # 稍微延遲避免頻繁抓取
+            time.sleep(0.1) 
         except Exception as e:
-            print(f"❌ 處理 {name} 時出錯: {e}")
+            print(f"❌ 處理 {name} ({sid}) 時出錯: {e}")
 
     final_res = round(total_contribution, 4)
-    print("-" * 70)
+    print("-" * 75)
     print(f"🔥 預估基金總漲跌貢獻: {final_res:+.4f}")
-    print("-" * 70)
+    print("-" * 75)
 
-    # --- 關鍵修復：將數據填入 index.html ---
+    # --- 更新 index.html 檔案 ---
     if os.path.exists("index.html"):
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
         
         # 替換總額
         content = re.sub(r'<div id="total-sum">.*?</div>', f'<div id="total-sum">{final_res:+.4f}</div>', content)
-        # 替換表格詳細內容
+        # 替換表格內容 (對應 tbody 區塊)
         content = re.sub(r'<tbody id="stock-details">.*?</tbody>', f'<tbody id="stock-details">{table_rows}</tbody>', content, flags=re.DOTALL)
         # 替換更新時間
         content = re.sub(r'<div class="update-time" id="last-update">.*?</div>', f'<div class="update-time" id="last-update">最後更新：{now_str} (TW)</div>', content)
         
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
-        print("✅ 網頁明細更新完畢！")
+        print("✅ 網頁明細與昨日數據已成功寫入 index.html")
+    else:
+        print("⚠ 找不到 index.html，無法更新網頁畫面")
 
 if __name__ == "__main__":
     run_monitor()

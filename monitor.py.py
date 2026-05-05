@@ -1,9 +1,10 @@
-import pandas as pd
 import yfinance as yf
 from datetime import datetime
 import time
+import os
+import re
 
-# 持股資料 (v15.3 版本)
+# 你的 26 檔成分股與比例
 stocks_data = {
     "旺矽": ("6223.TW", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TW", 6.12),
     "精測": ("6510.TW", 5.68), "信驊": ("5274.TW", 5.63), "聯亞": ("3081.TWO", 4.56),
@@ -17,63 +18,37 @@ stocks_data = {
 }
 
 def run_monitor():
-    # 這裡顯示的是台灣時間 (UTC+8)
-    now_tw = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print(f"📊 監測時間 (TW): {now_tw}")
-    
-    results = []
     total_contribution = 0
+    now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
     for name, (sid, weight) in stocks_data.items():
         try:
             stock = yf.Ticker(sid)
-            
-            # 1. 抓取歷史資料獲取「昨日收盤價」 (N-1)
             hist = stock.history(period="5d")
             hist = hist[hist['Close'].notna()]
-            
-            if len(hist) < 1:
-                print(f"無法取得歷史數據: {name}")
-                continue
+            if len(hist) >= 1:
+                p_n1 = hist['Close'].iloc[-1]
+                p_n = stock.fast_info['lastPrice'] or p_n1
+                total_contribution += (p_n - p_n1) * (weight / 100)
+            time.sleep(0.1)
+        except: pass
 
-            # N-1 天：取歷史資料中最後一筆完整的收盤價
-            price_n1 = hist['Close'].iloc[-1]
-            
-            # 2. 抓取「最新即時價格」 (N)
-            # 使用 fast_info 可以避開歷史資料未更新的問題
-            price_n = stock.fast_info['lastPrice']
-            
-            # 如果即時價抓不到，再退而求其次用歷史最後一筆
-            if price_n is None or pd.isna(price_n):
-                 price_n = price_n1 
+    final_res = round(total_contribution, 4)
+    print(f"計算完成: {final_res}")
 
-            # 計算漲跌貢獻 (N - N-1) * 比例 / 100
-            change = price_n - price_n1
-            contribution = change * (weight / 100)
-            total_contribution += contribution
-            
-            results.append({
-                "名稱": name,
-                "昨日(N-1)": round(price_n1, 2),
-                "最新(N)": round(price_n, 2),
-                "漲跌": round(change, 2),
-                "貢獻": round(contribution, 4)
-            })
-            
-            time.sleep(0.2) # 稍微停頓
-            
-        except Exception as e:
-            print(f"處理 {name} ({sid}) 出錯: {e}")
-            
-    if results:
-        df = pd.DataFrame(results)
-        print("\n" + "="*75)
-        print(df.to_string(index=False))
-        print("="*75)
-        print(f"\n🔥 預估基金總漲跌貢獻 (N - N-1)： {round(total_contribution, 4)}")
-        print("="*75)
-    else:
-        print("\n❌ 錯誤：未能成功抓取任何數據。")
+    # --- 自動尋找並更新 index.html ---
+    if os.path.exists("index.html"):
+        with open("index.html", "r", encoding="utf-8") as f:
+            content = f.read()
+        
+        # 替換數字
+        content = re.sub(r'<div id="total-sum">.*?</div>', f'<div id="total-sum">{final_res}</div>', content)
+        # 替換更新時間
+        content = re.sub(r'<div class="update-time" id="last-update">.*?</div>', f'<div class="update-time" id="last-update">更新時間：{now_str} (TW)</div>', content)
+        
+        with open("index.html", "w", encoding="utf-8") as f:
+            f.write(content)
+        print("網頁檔案已在地端完成更新")
 
 if __name__ == "__main__":
     run_monitor()

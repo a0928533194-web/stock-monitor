@@ -3,7 +3,7 @@ import yfinance as yf
 from datetime import datetime
 import time
 
-# 持股資料維持不變
+# 持股資料 (v15.3 版本)
 stocks_data = {
     "旺矽": ("6223.TW", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TW", 6.12),
     "精測": ("6510.TW", 5.68), "信驊": ("5274.TW", 5.63), "聯亞": ("3081.TWO", 4.56),
@@ -17,50 +17,63 @@ stocks_data = {
 }
 
 def run_monitor():
-    print(f"查詢時間 (UTC): {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    # 這裡顯示的是台灣時間 (UTC+8)
+    now_tw = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"📊 監測時間 (TW): {now_tw}")
+    
     results = []
     total_contribution = 0
     
     for name, (sid, weight) in stocks_data.items():
         try:
-            # 增加抓取天數到 10 天，確保一定能跨過連假或週末
             stock = yf.Ticker(sid)
-            hist = stock.history(period="10d")
             
-            # 清除可能存在的空值 (NaN)
-            hist = hist.dropna(subset=['Close'])
+            # 1. 抓取歷史資料獲取「昨日收盤價」 (N-1)
+            hist = stock.history(period="5d")
+            hist = hist[hist['Close'].notna()]
             
-            if len(hist) >= 2:
-                p_n = hist['Close'].iloc[-1]   # 最新收盤價
-                p_n1 = hist['Close'].iloc[-2]  # 前一交易日收盤價
-                
-                contribution = (p_n - p_n1) * (weight / 100)
-                total_contribution += contribution
-                
-                results.append({
-                    "名稱": name,
-                    "昨日": round(p_n1, 1),
-                    "今天": round(p_n, 1),
-                    "漲跌": round(p_n - p_n1, 1),
-                    "貢獻": round(contribution, 4)
-                })
-            else:
-                print(f"無法取得足夠數據: {name} ({sid})")
+            if len(hist) < 1:
+                print(f"無法取得歷史數據: {name}")
+                continue
+
+            # N-1 天：取歷史資料中最後一筆完整的收盤價
+            price_n1 = hist['Close'].iloc[-1]
             
-            # 稍微停頓 0.5 秒，避免被 Yahoo 視為攻擊
-            time.sleep(0.5)
+            # 2. 抓取「最新即時價格」 (N)
+            # 使用 fast_info 可以避開歷史資料未更新的問題
+            price_n = stock.fast_info['lastPrice']
+            
+            # 如果即時價抓不到，再退而求其次用歷史最後一筆
+            if price_n is None or pd.isna(price_n):
+                 price_n = price_n1 
+
+            # 計算漲跌貢獻 (N - N-1) * 比例 / 100
+            change = price_n - price_n1
+            contribution = change * (weight / 100)
+            total_contribution += contribution
+            
+            results.append({
+                "名稱": name,
+                "昨日(N-1)": round(price_n1, 2),
+                "最新(N)": round(price_n, 2),
+                "漲跌": round(change, 2),
+                "貢獻": round(contribution, 4)
+            })
+            
+            time.sleep(0.2) # 稍微停頓
             
         except Exception as e:
-            print(f"處理 {name} 出錯: {e}")
+            print(f"處理 {name} ({sid}) 出錯: {e}")
             
     if results:
         df = pd.DataFrame(results)
-        print("\n" + "="*60)
+        print("\n" + "="*75)
         print(df.to_string(index=False))
-        print("="*60)
-        print(f"\n🔥 預估基金總漲跌貢獻： {round(total_contribution, 4)}")
+        print("="*75)
+        print(f"\n🔥 預估基金總漲跌貢獻 (N - N-1)： {round(total_contribution, 4)}")
+        print("="*75)
     else:
-        print("\n❌ 失敗：完全抓不到任何有效的股價數據，請稍後再試。")
+        print("\n❌ 錯誤：未能成功抓取任何數據。")
 
 if __name__ == "__main__":
     run_monitor()

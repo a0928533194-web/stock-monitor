@@ -1,7 +1,7 @@
 name: Daily_Stock_Monitor
 
 on:
-  # 1. 讓您可以隨時在手機手動點擊按鈕觸發
+  # 1. 讓您可以隨時在手機或電腦手動點擊按鈕觸發
   workflow_dispatch:
 
   # 2. 加入定時更新 (週一至週五)
@@ -20,7 +20,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          # 確保能夠拉取最新的 Commit，避免 Push 衝突
           fetch-depth: 0
 
       - name: Set up Python
@@ -39,9 +38,22 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          # 先拉取遠端最新變動，防止多次手動觸發導致的衝突
-          git pull --rebase origin main
+          
+          # 先把 Python 改好的 index.html 暫存起來
           git add index.html
-          # 如果 index.html 沒變動就跳過，不會報錯
-          git commit -m "自動更新數據: $(date +'%Y-%m-%d %H:%M:%S')" || exit 0
+          
+          # 暫存目前的改動 (Stash)，讓 Git 乾淨地拉取遠端更新，解決截圖中的衝突報錯
+          git stash
+          
+          # 拉取遠端最新的程式碼，避免衝突
+          git pull --rebase origin main
+          
+          # 把剛才暫存的 index.html 改動拿回來
+          git stash pop || echo "無暫存資料可還原"
+          
+          # 再次確認加入改動並提交
+          git add index.html
+          git commit -m "自動更新數據: $(date +'%Y-%m-%d %H:%M:%S')" || echo "資料無變動，跳過提交"
+          
+          # 推送到 GitHub
           git push

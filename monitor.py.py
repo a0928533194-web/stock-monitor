@@ -4,12 +4,12 @@ import time
 import os
 import re
 
-# 您的 26 檔成分股比例資料 (v15.3 權重)
+# 完全依照使用者提供之 2026/03/31 截圖明細修正
 stocks_data = {
     "旺矽": ("6223.TW", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TW", 6.12),
     "精測": ("6510.TW", 5.68), "信驊": ("5274.TW", 5.63), "聯亞": ("3081.TWO", 4.56),
     "群聯": ("8299.TWO", 3.95), "光聖": ("6442.TW", 3.75), "華星光": ("4979.TWO", 3.15),
-    "台燿": ("6274.TWO", 3.00), "沛亨": ("6291.TWO", 2.94), "力旺": ("3529.TWO", 2.94),
+    "台燿": ("6274.TWO", 3.00), "力旺": ("3529.TWO", 2.94), "沛亨": ("6291.TWO", 2.94),
     "聖暉*": ("5536.TWO", 2.63), "波若威": ("3163.TWO", 2.59), "京元電子": ("2449.TW", 2.58),
     "中光電": ("5371.TWO", 2.50), "邑錡": ("7402.TWO", 2.45), "日月光投控": ("3711.TW", 2.40),
     "環球晶": ("6488.TWO", 2.21), "新應材": ("4749.TWO", 2.10), "鴻勁": ("7769.TW", 1.85),
@@ -22,7 +22,7 @@ def run_monitor():
     table_rows = "" 
     now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
-    print(f"\n🚀 啟動台股成分股監測 - {now_str}")
+    print(f"\n🚀 元大店頭基金監測 (精確明細版) - {now_str}")
     print("-" * 75)
     print(f"{'股票':<8} {'比例':<8} {'昨日(N-1)':<12} {'現價(N)':<10} {'貢獻值':<10}")
     print("-" * 75)
@@ -30,14 +30,11 @@ def run_monitor():
     for name, (sid, weight) in stocks_data.items():
         try:
             stock = yf.Ticker(sid)
-            # 抓取歷史資料確保取得昨日收盤價 (N-1)
             hist = stock.history(period="5d")
             hist = hist[hist['Close'].notna()]
             
             if len(hist) >= 1:
-                # 取得昨日收盤 (N-1)
                 p_n1 = round(hist['Close'].iloc[-1], 2)
-                # 取得即時現價 (N)
                 p_n_raw = stock.fast_info['lastPrice']
                 p_n = round(p_n_raw if p_n_raw and p_n_raw != 0 else p_n1, 2)
                 
@@ -45,10 +42,8 @@ def run_monitor():
                 contribution = round(diff * (weight / 100), 4)
                 total_contribution += contribution
                 
-                # 1. 終端機日誌輸出 (用於 GitHub Actions 檢查)
                 print(f"{name:<8} {weight:>5.2f}% {p_n1:>12.2f} {p_n:>10.2f} {contribution:>+10.4f}")
                 
-                # 2. 生成網頁用的 HTML 表格列 (嚴格對齊 5 個 <td> 欄位)
                 color_class = "up" if diff > 0 else "down" if diff < 0 else ""
                 table_rows += f"""
                 <tr>
@@ -61,30 +56,21 @@ def run_monitor():
                 """
             time.sleep(0.1) 
         except Exception as e:
-            print(f"❌ 處理 {name} ({sid}) 時出錯: {e}")
+            print(f"❌ 錯誤: {name} - {e}")
 
     final_res = round(total_contribution, 4)
     print("-" * 75)
-    print(f"🔥 預估基金總漲跌貢獻: {final_res:+.4f}")
-    print("-" * 75)
+    print(f"🔥 預估店頭基金總漲跌貢獻: {final_res:+.4f}")
 
-    # --- 更新 index.html 檔案 ---
     if os.path.exists("index.html"):
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
-        
-        # 替換總額
         content = re.sub(r'<div id="total-sum">.*?</div>', f'<div id="total-sum">{final_res:+.4f}</div>', content)
-        # 替換表格內容 (對應 tbody 區塊)
         content = re.sub(r'<tbody id="stock-details">.*?</tbody>', f'<tbody id="stock-details">{table_rows}</tbody>', content, flags=re.DOTALL)
-        # 替換更新時間
         content = re.sub(r'<div class="update-time" id="last-update">.*?</div>', f'<div class="update-time" id="last-update">最後更新：{now_str} (TW)</div>', content)
-        
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
-        print("✅ 網頁明細與昨日數據已成功寫入 index.html")
-    else:
-        print("⚠ 找不到 index.html，無法更新網頁畫面")
+        print("✅ 網頁資料已根據截圖明細更新成功！")
 
 if __name__ == "__main__":
     run_monitor()

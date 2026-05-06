@@ -4,7 +4,7 @@ import time
 import os
 import re
 
-# 完全依照使用者提供之 2026/03/31 截圖明細修正
+# 依照您的截圖清單 (2026/03/31 明細)
 stocks_data = {
     "旺矽": ("6223.TW", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TW", 6.12),
     "精測": ("6510.TW", 5.68), "信驊": ("5274.TW", 5.63), "聯亞": ("3081.TWO", 4.56),
@@ -22,27 +22,28 @@ def run_monitor():
     table_rows = "" 
     now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
-    print(f"\n🚀 元大店頭基金監測 (精確明細版) - {now_str}")
+    print(f"\n🚀 啟動監測 - 修正昨日價格判定")
     print("-" * 75)
-    print(f"{'股票':<8} {'比例':<8} {'昨日(N-1)':<12} {'現價(N)':<10} {'貢獻值':<10}")
-    print("-" * 75)
-
+    
     for name, (sid, weight) in stocks_data.items():
         try:
             stock = yf.Ticker(sid)
-            hist = stock.history(period="5d")
+            # 抓取 7 天資料確保有足夠的交易日
+            hist = stock.history(period="7d")
             hist = hist[hist['Close'].notna()]
             
-            if len(hist) >= 1:
-                p_n1 = round(hist['Close'].iloc[-1], 2)
-                p_n_raw = stock.fast_info['lastPrice']
-                p_n = round(p_n_raw if p_n_raw and p_n_raw != 0 else p_n1, 2)
+            if len(hist) >= 2:
+                # 關鍵修正：
+                # 如果最後一筆資料的日期就是今天，則 N-1 是倒數第二筆
+                # 如果今天還沒開盤，則 N-1 可能是最後一筆，但為了保險我們檢查時間
+                p_n1 = round(hist['Close'].iloc[-2], 2) # 取倒數第二個交易日作為 N-1
+                p_n = round(stock.fast_info['lastPrice'] or hist['Close'].iloc[-1], 2) # 取最新價作為 N
                 
                 diff = round(p_n - p_n1, 2)
                 contribution = round(diff * (weight / 100), 4)
                 total_contribution += contribution
                 
-                print(f"{name:<8} {weight:>5.2f}% {p_n1:>12.2f} {p_n:>10.2f} {contribution:>+10.4f}")
+                print(f"{name:<8} {weight:>5.2f}% 昨日:{p_n1:>8.2f} 現價:{p_n:>8.2f} 貢獻:{contribution:>+8.4f}")
                 
                 color_class = "up" if diff > 0 else "down" if diff < 0 else ""
                 table_rows += f"""
@@ -56,21 +57,19 @@ def run_monitor():
                 """
             time.sleep(0.1) 
         except Exception as e:
-            print(f"❌ 錯誤: {name} - {e}")
+            print(f"❌ {name} 出錯: {e}")
 
     final_res = round(total_contribution, 4)
-    print("-" * 75)
-    print(f"🔥 預估店頭基金總漲跌貢獻: {final_res:+.4f}")
-
+    
+    # 更新 index.html
     if os.path.exists("index.html"):
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
         content = re.sub(r'<div id="total-sum">.*?</div>', f'<div id="total-sum">{final_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="stock-details">.*?</tbody>', f'<tbody id="stock-details">{table_rows}</tbody>', content, flags=re.DOTALL)
-        content = re.sub(r'<div class="update-time" id="last-update">.*?</div>', f'<div class="update-time" id="last-update">最後更新：{now_str} (TW)</div>', content)
+        content = re.sub(r'<div class="update-time" id="last-update">.*?</div>', f'<div class="update-time" id="last-update">最後更新：{now_str}</div>', content)
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
-        print("✅ 網頁資料已根據截圖明細更新成功！")
 
 if __name__ == "__main__":
     run_monitor()

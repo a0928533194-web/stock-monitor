@@ -1,70 +1,42 @@
 name: Daily_Stock_Monitor
 
 on:
-  # 1. 讓您可以隨時在手機手動點擊按鈕觸發
   workflow_dispatch:
-
-  # 2. 定時更新：週一至週五，每 30 分鐘執行一次 (台灣時間 09:00 - 13:30)
   schedule:
-    # 台灣 09:00, 09:30 (UTC 01:00, 01:30)
+    # 這裡的設定對應台灣時間 (UTC+8)
+    # 01:00 UTC = 09:00 TW (開盤)
     - cron: '0 1 * * 1-5'
     - cron: '30 1 * * 1-5'
-    # 台灣 10:00, 10:30 (UTC 02:00, 02:30)
+    # 02:00 UTC = 10:00 TW
     - cron: '0 2 * * 1-5'
     - cron: '30 2 * * 1-5'
-    # 台灣 11:00, 11:30 (UTC 03:00, 03:30)
+    # 03:00 UTC = 11:00 TW
     - cron: '0 3 * * 1-5'
     - cron: '30 3 * * 1-5'
-    # 台灣 12:00, 12:30 (UTC 04:00, 04:30)
+    # 04:00 UTC = 12:00 TW
     - cron: '0 4 * * 1-5'
     - cron: '30 4 * * 1-5'
-    # 台灣 13:00, 13:30 (UTC 05:00, 05:30)
+    # 05:00 UTC = 13:00 TW
     - cron: '0 5 * * 1-5'
-    - cron: '30 5 * * 1-5'
+    - cron: '30 5 * * 1-5' # 13:30 TW (收盤前)
+
+permissions:
+  contents: write
 
 jobs:
   run_script:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # 賦予寫入權限以更新 index.html
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # 獲取完整歷史紀錄以利 rebase
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-
-      - name: Install packages
-        run: |
-          pip install yfinance pandas
-
-      - name: Run Python script
-        run: python monitor.py.py
-
-      - name: Commit and Push Changes
+      - run: pip install yfinance pandas
+      - run: python monitor.py.py
+      - name: Commit and Push
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          
-          # 1. 先把 Python 更新好的 index.html 標記起來
           git add index.html
-          
-          # 2. 暫存改動，避免 pull 時發生衝突 (解決您截圖中的報錯)
-          git stash
-          
-          # 3. 拉取遠端最新代碼並合併
-          git pull --rebase origin main
-          
-          # 4. 把剛才更新的數據拿回來覆蓋
-          git stash pop || echo "無暫存資料可還原"
-          
-          # 5. 再次確認加入改動並提交
-          git add index.html
-          git commit -m "自動更新數據: $(date +'%Y-%m-%d %H:%M:%S')" || echo "資料無變動，跳過提交"
-          
-          # 6. 推送到 GitHub Pages
+          git commit -m "自動更新數據: $(date)" || echo "No changes"
           git push

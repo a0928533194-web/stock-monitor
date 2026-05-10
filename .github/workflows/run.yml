@@ -1,24 +1,19 @@
 name: Daily_Stock_Monitor
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # 手動觸發按鈕
   schedule:
-    # 這裡的設定對應台灣時間 (UTC+8)
-    # 01:00 UTC = 09:00 TW (開盤)
+    # 台灣時間 09:00 ~ 13:30 每 30 分鐘一次
     - cron: '0 1 * * 1-5'
     - cron: '30 1 * * 1-5'
-    # 02:00 UTC = 10:00 TW
     - cron: '0 2 * * 1-5'
     - cron: '30 2 * * 1-5'
-    # 03:00 UTC = 11:00 TW
     - cron: '0 3 * * 1-5'
     - cron: '30 3 * * 1-5'
-    # 04:00 UTC = 12:00 TW
     - cron: '0 4 * * 1-5'
     - cron: '30 4 * * 1-5'
-    # 05:00 UTC = 13:00 TW
     - cron: '0 5 * * 1-5'
-    - cron: '30 5 * * 1-5' # 13:30 TW (收盤前)
+    - cron: '30 5 * * 1-5'
 
 permissions:
   contents: write
@@ -27,16 +22,43 @@ jobs:
   run_script:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - run: pip install yfinance pandas
-      - run: python monitor.py.py
-      - name: Commit and Push
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas
+
+      - name: Run Python script
+        run: python monitor.py.py
+
+      - name: Commit and Push Changes
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
+          
+          # 1. 把 Python 更新好的 index.html 加入追蹤
           git add index.html
-          git commit -m "自動更新數據: $(date)" || echo "No changes"
+          
+          # 2. 暫存目前的改動，避免 pull 時衝突 (這步最關鍵)
+          git stash
+          
+          # 3. 拉取最新的遠端代碼並重新編排
+          git pull --rebase origin main
+          
+          # 4. 把剛剛暫存的 index.html 拿回來
+          git stash pop || echo "No changes to pop"
+          
+          # 5. 再次確認加入並提交
+          git add index.html
+          git commit -m "自動更新數據: $(date +'%Y-%m-%d %H:%M')" || echo "資料無變動"
+          
+          # 6. 推送到 GitHub
           git push

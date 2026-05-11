@@ -3,249 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>台股成分股監測 App</title>
+    <title>店頭基金監測站</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f4f7f9; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-        .app-card { background: white; width: 100%; max-width: 500px; border-radius: 20px; padding: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .total-box { background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%); color: white; border-radius: 15px; padding: 15px; text-align: center; margin-bottom: 15px; }
-        #total-sum { font-size: 32px; font-weight: bold; }
-        .stock-list { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-        .stock-list th { border-bottom: 2px solid #f0f0f0; padding: 8px 2px; text-align: left; color: #7f8c8d; }
-        .stock-list td { padding: 10px 2px; border-bottom: 1px solid #f9f9f9; word-break: break-all; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        /* 更新時間顯示樣式 */
+        .update-info {
+            text-align: center;
+            color: #666;
+            font-size: 0.85em;
+            margin-bottom: 20px;
+            background: #eee;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            width: fit-content;
+            align-self: center;
+        }
+        #update-time {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .total-card {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .total-label {
+            font-size: 1.1em;
+            color: #555;
+        }
+        #total-sum {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        th {
+            background-color: #f2f2f2;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .up { color: #eb4d4b; font-weight: bold; }
+        .down { color: #2ecc71; font-weight: bold; }
         
-        /* 設定欄位寬度比例 */
-        .col-name { width: 22%; }
-        .col-ratio { width: 18%; }
-        .col-prev { width: 20%; }
-        .col-now { width: 20%; }
-        .col-contri { width: 20%; }
-
-        .up { color: #e74c3c; font-weight: bold; }
-        .down { color: #27ae60; font-weight: bold; }
-        .update-time { font-size: 11px; color: #bdc3c7; text-align: center; margin-top: 10px; }
-        .btn-run { background: #eee; color: #7f8c8d; border: none; width: 100%; padding: 10px; border-radius: 10px; margin-top: 10px; cursor: pointer; text-decoration: none; display: block; text-align: center; font-size: 14px; }
+        /* 手動按鈕樣式 */
+        .manual-btn {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
-    <div class="app-card">
-        <div class="total-box">
-            <div style="font-size: 13px; opacity: 0.9;">預估總漲跌貢獻</div>
-            <div id="total-sum">+90.8807</div>
+
+    <div class="container">
+        <h1>店頭基金監測站</h1>
+        
+        <div style="display: flex; justify-content: center;">
+            <div class="update-info">
+                最後更新 (台灣)：<span id="update-time">等待數據載入...</span>
+            </div>
         </div>
-        <table class="stock-list">
+
+        <div class="total-card">
+            <div class="total-label">今日預估總漲跌貢獻</div>
+            <div id="total-sum">0.0000</div>
+        </div>
+
+        <table>
             <thead>
                 <tr>
-                    <th class="col-name">股票</th>
-                    <th class="col-ratio">比例</th>
-                    <th class="col-prev">昨日</th>
-                    <th class="col-now">現價</th>
-                    <th class="col-contri">貢獻值</th>
+                    <th>成分股</th>
+                    <th>權重</th>
+                    <th>昨收</th>
+                    <th>現價</th>
+                    <th>貢獻</th>
                 </tr>
             </thead>
             <tbody id="stock-details">
-                <tr>
-                    <td>旺矽</td>
-                    <td style="color:#666">9.7%</td>
-                    <td>5025.0</td>
-                    <td class="down">4985.0</td>
-                    <td class="down">-3.8800</td>
-                </tr>
-                
-                <tr>
-                    <td>台積電</td>
-                    <td style="color:#666">7.88%</td>
-                    <td>2290.0</td>
-                    <td class="down">2235.0</td>
-                    <td class="down">-4.3340</td>
-                </tr>
-                
-                <tr>
-                    <td>精測</td>
-                    <td style="color:#666">5.68%</td>
-                    <td>3580.0</td>
-                    <td class="up">3790.0</td>
-                    <td class="up">+11.9280</td>
-                </tr>
-                
-                <tr>
-                    <td>信驊</td>
-                    <td style="color:#666">5.63%</td>
-                    <td>16955.0</td>
-                    <td class="up">17825.0</td>
-                    <td class="up">+48.9810</td>
-                </tr>
-                
-                <tr>
-                    <td>聯亞</td>
-                    <td style="color:#666">4.56%</td>
-                    <td>2620.0</td>
-                    <td class="up">2780.0</td>
-                    <td class="up">+7.2960</td>
-                </tr>
-                
-                <tr>
-                    <td>群聯</td>
-                    <td style="color:#666">3.95%</td>
-                    <td>2430.0</td>
-                    <td class="up">2670.0</td>
-                    <td class="up">+9.4800</td>
-                </tr>
-                
-                <tr>
-                    <td>光聖</td>
-                    <td style="color:#666">3.75%</td>
-                    <td>1965.0</td>
-                    <td class="down">1950.0</td>
-                    <td class="down">-0.5625</td>
-                </tr>
-                
-                <tr>
-                    <td>華星光</td>
-                    <td style="color:#666">3.15%</td>
-                    <td>660.0</td>
-                    <td class="up">672.0</td>
-                    <td class="up">+0.3780</td>
-                </tr>
-                
-                <tr>
-                    <td>台燿</td>
-                    <td style="color:#666">3.0%</td>
-                    <td>1370.0</td>
-                    <td class="up">1455.0</td>
-                    <td class="up">+2.5500</td>
-                </tr>
-                
-                <tr>
-                    <td>力旺</td>
-                    <td style="color:#666">2.94%</td>
-                    <td>4335.0</td>
-                    <td class="up">4460.0</td>
-                    <td class="up">+3.6750</td>
-                </tr>
-                
-                <tr>
-                    <td>沛亨</td>
-                    <td style="color:#666">2.94%</td>
-                    <td>468.0</td>
-                    <td class="up">471.5</td>
-                    <td class="up">+0.1029</td>
-                </tr>
-                
-                <tr>
-                    <td>聖暉*</td>
-                    <td style="color:#666">2.63%</td>
-                    <td>860.0</td>
-                    <td class="up">896.0</td>
-                    <td class="up">+0.9468</td>
-                </tr>
-                
-                <tr>
-                    <td>波若威</td>
-                    <td style="color:#666">2.59%</td>
-                    <td>1010.0</td>
-                    <td class="up">1040.0</td>
-                    <td class="up">+0.7770</td>
-                </tr>
-                
-                <tr>
-                    <td>京元電子</td>
-                    <td style="color:#666">2.58%</td>
-                    <td>311.0</td>
-                    <td class="down">299.5</td>
-                    <td class="down">-0.2967</td>
-                </tr>
-                
-                <tr>
-                    <td>中光電</td>
-                    <td style="color:#666">2.5%</td>
-                    <td>74.3</td>
-                    <td class="down">70.5</td>
-                    <td class="down">-0.0950</td>
-                </tr>
-                
-                <tr>
-                    <td>邑錡</td>
-                    <td style="color:#666">2.45%</td>
-                    <td>125.5</td>
-                    <td class="down">114.5</td>
-                    <td class="down">-0.2695</td>
-                </tr>
-                
-                <tr>
-                    <td>日月光投控</td>
-                    <td style="color:#666">2.4%</td>
-                    <td>516.0</td>
-                    <td class="up">537.0</td>
-                    <td class="up">+0.5040</td>
-                </tr>
-                
-                <tr>
-                    <td>環球晶</td>
-                    <td style="color:#666">2.21%</td>
-                    <td>802.0</td>
-                    <td class="up">835.0</td>
-                    <td class="up">+0.7293</td>
-                </tr>
-                
-                <tr>
-                    <td>新應材</td>
-                    <td style="color:#666">2.1%</td>
-                    <td>1085.0</td>
-                    <td class="up">1175.0</td>
-                    <td class="up">+1.8900</td>
-                </tr>
-                
-                <tr>
-                    <td>鴻勁</td>
-                    <td style="color:#666">1.85%</td>
-                    <td>5800.0</td>
-                    <td class="up">6380.0</td>
-                    <td class="up">+10.7300</td>
-                </tr>
-                
-                <tr>
-                    <td>世禾</td>
-                    <td style="color:#666">1.79%</td>
-                    <td>210.0</td>
-                    <td class="up">218.0</td>
-                    <td class="up">+0.1432</td>
-                </tr>
-                
-                <tr>
-                    <td>台特化</td>
-                    <td style="color:#666">1.45%</td>
-                    <td>321.5</td>
-                    <td class="down">317.5</td>
-                    <td class="down">-0.0580</td>
-                </tr>
-                
-                <tr>
-                    <td>旺宏</td>
-                    <td style="color:#666">1.35%</td>
-                    <td>153.0</td>
-                    <td class="up">159.5</td>
-                    <td class="up">+0.0878</td>
-                </tr>
-                
-                <tr>
-                    <td>聯鈞</td>
-                    <td style="color:#666">1.07%</td>
-                    <td>410.0</td>
-                    <td class="up">428.0</td>
-                    <td class="up">+0.1926</td>
-                </tr>
-                
-                <tr>
-                    <td>大江</td>
-                    <td style="color:#666">1.01%</td>
-                    <td>122.0</td>
-                    <td class="down">120.5</td>
-                    <td class="down">-0.0152</td>
-                </tr>
                 </tbody>
         </table>
-        <div class="update-time" id="last-update">最後更新：2026-05-11 14:10:48</div>
-        <a class="btn-run" href="https://github.com/a0928533194-web/stock-monitor/actions">🔄 點此更新數據</a>
+
+        <a href="https://github.com/您的帳號/您的儲存庫/actions" class="manual-btn">
+            🔄 數據未更新？前往手動觸發
+        </a>
     </div>
+
 </body>
 </html>

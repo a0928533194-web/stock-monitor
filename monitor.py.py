@@ -4,7 +4,7 @@ import os
 import re
 import pytz
 
-# 元大大店頭基金成分股
+# 元大店頭
 yuanta_stocks = {
     "旺矽": ("6223.TWO", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TWO", 6.12),
     "精測": ("6510.TWO", 5.68), "信驊": ("5274.TWO", 5.63), "聯亞": ("3081.TWO", 4.56),
@@ -17,7 +17,7 @@ yuanta_stocks = {
     "聯鈞": ("3450.TW", 1.07), "大江": ("8436.TWO", 1.01)
 }
 
-# 瀚亞高科技基金成分股 (根據 image_9c7a06.png 錄入)
+# 瀚亞科技 (根據 image_9c7a06.png)
 eastspring_stocks = {
     "奇鋐": ("3017.TW", 8.25), "欣興": ("3037.TW", 8.07), "台積電": ("2330.TW", 7.90),
     "台光電": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00),
@@ -37,50 +37,32 @@ def get_fund_data(stocks_dict):
             stock = yf.Ticker(sid)
             hist = stock.history(period="2d")
             if len(hist) < 2: continue
-            
             p_yesterday = round(hist['Close'].iloc[-2], 2)
             p_current = round(stock.fast_info['lastPrice'], 2)
-            
             diff = round(p_current - p_yesterday, 2)
             contribution = round(diff * (weight / 100), 4)
             total_contribution += contribution
-            
             color_class = "up" if diff > 0 else "down" if diff < 0 else ""
-            table_rows += f"""
-                <tr>
-                    <td>{name}</td>
-                    <td style='color:#666'>{weight}%</td>
-                    <td>{p_yesterday}</td>
-                    <td class='{color_class}'>{p_current}</td>
-                    <td class='{color_class}'>{contribution:+.4f}</td>
-                </tr>"""
+            table_rows += f"<tr><td>{name}</td><td style='color:#666'>{weight}%</td><td>{p_yesterday}</td><td class='{color_class}'>{p_current}</td><td class='{color_class}'>{contribution:+.4f}</td></tr>"
         except: pass
     return round(total_contribution, 4), table_rows
 
 def run_monitor():
     tw_tz = pytz.timezone('Asia/Taipei')
     now_tw = datetime.now(tw_tz).strftime('%Y-%m-%d %H:%M:%S')
-    
-    # 計算元大數據
     y_res, y_rows = get_fund_data(yuanta_stocks)
-    # 計算瀚亞數據
     e_res, e_rows = get_fund_data(eastspring_stocks)
 
     if os.path.exists("index.html"):
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
-        
-        # 更新時間與數據 (透過 ID 定位)
         content = re.sub(r'<span id="update-time">.*?</span>', f'<span id="update-time">{now_tw}</span>', content)
-        
-        # 元大區塊更新
+        # 更新元大店頭
         content = re.sub(r'<div id="yuanta-sum">.*?</div>', f'<div id="yuanta-sum">{y_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="yuanta-details">.*?</tbody>', f'<tbody id="yuanta-details">{y_rows}</tbody>', content, flags=re.DOTALL)
-        
-        # 瀚亞區塊更新
+        # 更新瀚亞科技
         content = re.sub(r'<div id="east-sum">.*?</div>', f'<div id="east-sum">{e_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
-
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
 

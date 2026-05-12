@@ -1,70 +1,69 @@
-import yfinance as yf
-from datetime import datetime
-import os
-import re
-import pytz
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基金即時監測</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f4f7f9; margin: 0; padding: 12px; }
+        .container { max-width: 500px; margin: auto; background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .time-info { text-align: center; color: #888; font-size: 0.8em; margin-bottom: 15px; }
+        .tabs { display: flex; background: #eee; border-radius: 10px; padding: 4px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; color: #666; background: none; }
+        .tab-btn.active { background: white; color: #007bff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .total-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .total-sum { font-size: 2.5em; font-weight: bold; margin-top: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+        th { text-align: left; color: #999; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        td { padding: 12px 5px; border-bottom: 1px solid #fcfcfc; }
+        .up { color: #e74c3c; font-weight: bold; }
+        .down { color: #2ecc71; font-weight: bold; }
+    </style>
+</head>
+<body>
 
-# 元大店頭
-yuanta_stocks = {
-    "旺矽": ("6223.TWO", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TWO", 6.12),
-    "精測": ("6510.TWO", 5.68), "信驊": ("5274.TWO", 5.63), "聯亞": ("3081.TWO", 4.56),
-    "群聯": ("8299.TWO", 3.95), "光聖": ("6442.TW", 3.75), "華星光": ("4979.TWO", 3.15),
-    "台燿": ("6274.TWO", 3.00), "力旺": ("3529.TWO", 2.94), "沛亨": ("6291.TWO", 2.94),
-    "聖暉*": ("5536.TWO", 2.63), "波若威": ("3163.TWO", 2.59), "京元電子": ("2449.TW", 2.58),
-    "中光電": ("5371.TWO", 2.50), "邑錡": ("7402.TWO", 2.45), "日月光投控": ("3711.TW", 2.40),
-    "環球晶": ("6488.TWO", 2.21), "新應材": ("4749.TWO", 2.10), "鴻勁": ("7769.TW", 1.85),
-    "世禾": ("3551.TWO", 1.79), "台特化": ("4772.TWO", 1.45), "旺宏": ("2337.TW", 1.35),
-    "聯鈞": ("3450.TW", 1.07), "大江": ("8436.TWO", 1.01)
-}
+<div class="container">
+    <div class="time-info">最後更新：<span id="update-time">讀取中...</span></div>
 
-# 瀚亞科技 (根據 image_9c7a06.png)
-eastspring_stocks = {
-    "奇鋐": ("3017.TW", 8.25), "欣興": ("3037.TW", 8.07), "台積電": ("2330.TW", 7.90),
-    "台光電": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00),
-    "台燿": ("6274.TWO", 5.55), "光寶科": ("2301.TW", 5.20), "光聖": ("6442.TW", 5.17),
-    "聯亞": ("3081.TWO", 5.03), "強茂": ("2481.TW", 4.51), "聯發科": ("2454.TW", 4.01),
-    "華碩": ("2357.TW", 3.68), "健策": ("3653.TW", 3.38), "振樺電": ("8114.TW", 2.73),
-    "旺矽": ("6223.TWO", 2.20), "致茂": ("2360.TW", 2.17), "川湖": ("2059.TW", 1.99),
-    "緯創": ("3231.TW", 1.92), "南電": ("8046.TW", 1.80), "華星光": ("4979.TWO", 1.40),
-    "精測": ("6510.TWO", 1.23)
-}
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab(event, 'yuanta')">元大店頭</button>
+        <button class="tab-btn" onclick="showTab(event, 'east')">瀚亞科技</button>
+    </div>
 
-def get_fund_data(stocks_dict):
-    total_contribution = 0
-    table_rows = ""
-    for name, (sid, weight) in stocks_dict.items():
-        try:
-            stock = yf.Ticker(sid)
-            hist = stock.history(period="2d")
-            if len(hist) < 2: continue
-            p_yesterday = round(hist['Close'].iloc[-2], 2)
-            p_current = round(stock.fast_info['lastPrice'], 2)
-            diff = round(p_current - p_yesterday, 2)
-            contribution = round(diff * (weight / 100), 4)
-            total_contribution += contribution
-            color_class = "up" if diff > 0 else "down" if diff < 0 else ""
-            table_rows += f"<tr><td>{name}</td><td style='color:#666'>{weight}%</td><td>{p_yesterday}</td><td class='{color_class}'>{p_current}</td><td class='{color_class}'>{contribution:+.4f}</td></tr>"
-        except: pass
-    return round(total_contribution, 4), table_rows
+    <!-- 元大店頭 -->
+    <div id="yuanta" class="tab-content active">
+        <div class="total-card">
+            <div style="color:#555">今日預估總貢獻</div>
+            <div id="yuanta-sum" class="total-sum">0.0000</div>
+        </div>
+        <table>
+            <thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻</th></tr></thead>
+            <tbody id="yuanta-details"></tbody>
+        </table>
+    </div>
 
-def run_monitor():
-    tw_tz = pytz.timezone('Asia/Taipei')
-    now_tw = datetime.now(tw_tz).strftime('%Y-%m-%d %H:%M:%S')
-    y_res, y_rows = get_fund_data(yuanta_stocks)
-    e_res, e_rows = get_fund_data(eastspring_stocks)
+    <!-- 瀚亞科技 -->
+    <div id="east" class="tab-content">
+        <div class="total-card">
+            <div style="color:#555">今日預估總貢獻</div>
+            <div id="east-sum" class="total-sum">0.0000</div>
+        </div>
+        <table>
+            <thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻</th></tr></thead>
+            <tbody id="east-details"></tbody>
+        </table>
+    </div>
+</div>
 
-    if os.path.exists("index.html"):
-        with open("index.html", "r", encoding="utf-8") as f:
-            content = f.read()
-        content = re.sub(r'<span id="update-time">.*?</span>', f'<span id="update-time">{now_tw}</span>', content)
-        # 更新元大店頭
-        content = re.sub(r'<div id="yuanta-sum">.*?</div>', f'<div id="yuanta-sum">{y_res:+.4f}</div>', content)
-        content = re.sub(r'<tbody id="yuanta-details">.*?</tbody>', f'<tbody id="yuanta-details">{y_rows}</tbody>', content, flags=re.DOTALL)
-        # 更新瀚亞科技
-        content = re.sub(r'<div id="east-sum">.*?</div>', f'<div id="east-sum">{e_res:+.4f}</div>', content)
-        content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
-        with open("index.html", "w", encoding="utf-8") as f:
-            f.write(content)
-
-if __name__ == "__main__":
-    run_monitor()
+<script>
+    function showTab(evt, name) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(name).classList.add('active');
+        evt.currentTarget.classList.add('active');
+    }
+</script>
+</body>
+</html>

@@ -1,28 +1,16 @@
 name: Daily_Stock_Monitor
 
 on:
-  # 支援手機端手動點擊 Run workflow 觸發
+  # 支援手動點擊按鈕觸發
   workflow_dispatch:
 
-  # 自動定時：週一至週五，台灣開盤時段每 30 分鐘執行一次
+  # 自動定時：週一至週五全天候，每 30 分鐘執行一次
   schedule:
-    # 台灣 09:00, 09:30 (UTC 01:00, 01:30)
-    - cron: '0 1 * * 1-5'
-    - cron: '30 1 * * 1-5'
-    # 台灣 10:00, 10:30 (UTC 02:00, 02:30)
-    - cron: '0 2 * * 1-5'
-    - cron: '30 2 * * 1-5'
-    # 台灣 11:00, 11:30 (UTC 03:00, 03:30)
-    - cron: '0 3 * * 1-5'
-    - cron: '30 3 * * 1-5'
-    # 台灣 12:00, 12:30 (UTC 04:00, 04:30)
-    - cron: '0 4 * * 1-5'
-    - cron: '30 4 * * 1-5'
-    # 台灣 13:00, 13:30 (UTC 05:00, 05:30)
-    - cron: '0 5 * * 1-5'
-    - cron: '30 5 * * 1-5'
+    # 使用 UTC 時間 (台灣時間 -8 小時)
+    # 設定在每小時的第 5 分鐘與 35 分鐘執行，避開整點塞車時段
+    - cron: '5/30 * * * 1-5'
 
-# 賦予讀寫權限，讓 Actions 能更新 index.html 並推送到儲存庫
+# 設定權限，允許 Actions 修改檔案並推送到 GitHub
 permissions:
   contents: write
 
@@ -30,39 +18,40 @@ jobs:
   run_script:
     runs-on: ubuntu-latest
     steps:
-      - name: 檢出程式碼
+      - name: 1. 檢出最新程式碼
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 獲取完整紀錄以利 rebase 合併
+          fetch-depth: 0 
 
-      - name: 設定 Python 環境
+      - name: 2. 設定 Python 環境
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: 安裝必要套件
+      - name: 3. 安裝必要套件 (含時區處理)
         run: |
           pip install yfinance pandas pytz
 
-      - name: 執行監控程式
+      - name: 4. 執行監控程式
         run: python monitor.py.py
 
-      - name: 提交並推送更新
+      - name: 5. 提交並推送更新 (防衝突邏輯)
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           
-          # 加入修改後的 index.html
+          # 標記 index.html 準備提交
           git add index.html
           
-          # 解決您看到的衝突問題：先暫存改動，拉取遠端最新代碼後再推回
+          # 防衝突處理：先暫存、拉取最新、再合併更新
           git stash
           git pull --rebase origin main
-          git stash pop || echo "無改動可恢復"
+          git stash pop || echo "無改動需恢復"
           
-          # 再次確認加入並 commit
+          # 再次加入檔案並 Commit
           git add index.html
-          git commit -m "自動更新數據 (台灣時間): $(date)" || echo "數據無變動，跳過提交"
+          # 使用當前時間作為提交訊息
+          git commit -m "自動更新數據: $(date +'%Y-%m-%d %H:%M')" || echo "資料無變動"
           
-          # 推送到 GitHub 
+          # 推送到 GitHub
           git push

@@ -3,8 +3,9 @@ from datetime import datetime
 import os
 import re
 import pytz
+import time
 
-# 元大店頭
+# 元大店頭 (保留原始清單)
 yuanta_stocks = {
     "旺矽": ("6223.TWO", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TWO", 6.12),
     "精測": ("6510.TWO", 5.68), "信驊": ("5274.TWO", 5.63), "聯亞": ("3081.TWO", 4.56),
@@ -17,7 +18,7 @@ yuanta_stocks = {
     "聯鈞": ("3450.TW", 1.07), "大江": ("8436.TWO", 1.01)
 }
 
-# 瀚亞科技
+# 瀚亞科技 (保留原始清單)
 eastspring_stocks = {
     "奇鋐": ("3017.TW", 8.25), "欣興": ("3037.TW", 8.07), "台積電": ("2330.TW", 7.90),
     "台光電": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00),
@@ -57,11 +58,18 @@ def run_monitor():
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
         
+        # 使用正規表達式更新內容
         content = re.sub(r'id="update-time">.*?</span>', f'id="update-time">{now_tw}</span>', content)
         content = re.sub(r'id="yuanta-sum".*?>.*?</div>', f'id="yuanta-sum" class="total-sum">{y_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="yuanta-details">.*?</tbody>', f'<tbody id="yuanta-details">{y_rows}</tbody>', content, flags=re.DOTALL)
         content = re.sub(r'id="east-sum".*?>.*?</div>', f'id="east-sum" class="total-sum">{e_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
+
+        # 關鍵修正：在檔案末尾強迫加入隱藏的時間戳記註解，確保 GitHub 會偵測到檔案變動
+        force_id = int(time.time())
+        # 先移除舊的註解 (如果有的話)
+        content = re.sub(r'<!-- Force Update ID: .*? -->', '', content)
+        content += f"\n<!-- Force Update ID: {force_id} -->"
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)

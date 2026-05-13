@@ -2,27 +2,37 @@ name: Daily_Stock_Monitor
 
 on:
   schedule:
+    # 台北時間週一至週五 09:00 - 14:30 執行 (對應 UTC 01:00 - 06:30)
     - cron: '*/30 1-6 * * 1-5'
   workflow_dispatch:
 
-# --- 加入這段程式碼 ---
 permissions:
   contents: write
-# --------------------
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 檢出儲存庫代碼
+      - name: 1. 檢出儲存庫代碼
         uses: actions/checkout@v3
-        
-      # ... 中間維持您原本的設定 ...
 
-      - name: 提交並推送到儲存庫
+      - name: 2. 設定 Python 環境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: 3. 安裝必要套件
+        run: |
+          pip install yfinance pandas pytz
+
+      - name: 4. 執行監測程式
+        run: python monitor.py.py
+
+      - name: 5. 提交並強迫推送到儲存庫
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add index.html
-          git commit -m "Update stock data [skip ci]" || exit 0
+          # 強迫 commit，即便抓到的數據沒變，因為有 timestamp 註解，這裡一定會成功
+          git commit -m "Auto Update Data: $(date +'%Y-%m-%d %H:%M:%S')" || exit 0
           git push

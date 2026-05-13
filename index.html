@@ -62,9 +62,7 @@
             <thead>
                 <tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻</th></tr>
             </thead>
-            <tbody id="yuanta-details">
-                <!-- 資料由 Python 自動填入 -->
-            </tbody>
+            <tbody id="yuanta-details"></tbody>
         </table>
     </div>
 
@@ -78,9 +76,7 @@
             <thead>
                 <tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻</th></tr>
             </thead>
-            <tbody id="east-details">
-                <!-- 資料由 Python 自動填入 -->
-            </tbody>
+            <tbody id="east-details"></tbody>
         </table>
     </div>
 </div>
@@ -98,11 +94,11 @@
 
     // 觸發 GitHub Actions
     async function triggerUpdate() {
-        // --- 設定區 ---
-        const OWNER = 'a0928533194-web'; // 您的 GitHub 帳號
-        const REPO = 'stock-monitor';    // 您的專案名稱
-        const WORKFLOW_ID = 'main.yml';  // 您的 YAML 檔案名稱
-        // --------------
+        // --- 根據截圖優化後的正確設定 ---
+        const OWNER = 'a0928533194-web'; 
+        const REPO = 'stock-monitor';    
+        const WORKFLOW_ID = 'run.yml';  // 👈 您的檔案名稱是 run.yml
+        // ------------------------------
 
         const token = prompt("請貼上您的 GitHub PAT (Key):");
         if (!token) return;
@@ -112,7 +108,6 @@
         btn.innerText = '⏳ 指令傳送中...';
 
         try {
-            // 注意：API 網址中的 WORKFLOW_ID 必須與實際檔案名稱一致
             const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`;
             
             const response = await fetch(url, {
@@ -125,9 +120,9 @@
             });
 
             if (response.status === 204) {
-                alert('✅ 指令已發送成功！\n請等待約 1 分鐘讓伺服器運行，然後重新整理網頁。');
+                alert('✅ 指令已發送成功！\n請等待約 1 分鐘讓伺服器執行 [run.yml]，然後重新整理網頁。');
             } else if (response.status === 404) {
-                alert('❌ 失敗：找不到路徑 (Not Found)。\n請檢查 OWNER、REPO 與 WORKFLOW_ID 是否正確。');
+                alert('❌ 失敗：找不到路徑。\n請確認 Token 權限是否包含 workflow。');
             } else {
                 const err = await response.json();
                 alert('❌ 失敗：' + (err.message || '未知錯誤'));

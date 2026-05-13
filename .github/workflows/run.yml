@@ -1,57 +1,40 @@
 name: Daily_Stock_Monitor
 
 on:
-  # 支援手動點擊按鈕觸發
+  # 1. 定時排程 (使用 UTC 時間)
+  schedule:
+    # 台灣時間週一至五 09:00 - 14:30，每 30 分鐘執行一次
+    # UTC 01:00 - 06:30 (1:00, 1:30, ..., 6:30)
+    - cron: '*/30 1-6 * * 1-5'
+  
+  # 2. 手動觸發 (讓 index.html 的按鈕可以運作)
   workflow_dispatch:
 
-  # 自動定時：週一至週五全天候，每 30 分鐘執行一次
-  schedule:
-    # 使用 UTC 時間 (台灣時間 -8 小時)
-    # 設定在每小時的第 5 分鐘與 35 分鐘執行，避開整點塞車時段
-    - cron: '5/30 * * * 1-5'
-
-# 設定權限，允許 Actions 修改檔案並推送到 GitHub
-permissions:
-  contents: write
-
 jobs:
-  run_script:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: 1. 檢出最新程式碼
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 
+      - name: 檢出程式碼
+        uses: actions/checkout@v3
 
-      - name: 2. 設定 Python 環境
-        uses: actions/setup-python@v5
+      - name: 設定 Python 環境
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.9'
 
-      - name: 3. 安裝必要套件 (含時區處理)
+      - name: 安裝必要套件
         run: |
           pip install yfinance pandas pytz
 
-      - name: 4. 執行監控程式
+      - name: 執行監控程式
         run: python monitor.py.py
 
-      - name: 5. 提交並推送更新 (防衝突邏輯)
+      - name: 提交並推送到儲存庫
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          
-          # 標記 index.html 準備提交
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add index.html
-          
-          # 防衝突處理：先暫存、拉取最新、再合併更新
-          git stash
-          git pull --rebase origin main
-          git stash pop || echo "無改動需恢復"
-          
-          # 再次加入檔案並 Commit
-          git add index.html
-          # 使用當前時間作為提交訊息
-          git commit -m "自動更新數據: $(date +'%Y-%m-%d %H:%M')" || echo "資料無變動"
-          
-          # 推送到 GitHub
+          # 只有在 index.html 有變動時才提交，避免錯誤
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update stock data [skip ci]"
           git push

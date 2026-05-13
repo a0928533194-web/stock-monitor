@@ -1,40 +1,28 @@
 name: Daily_Stock_Monitor
 
 on:
-  # 1. 定時排程 (使用 UTC 時間)
   schedule:
-    # 台灣時間週一至五 09:00 - 14:30，每 30 分鐘執行一次
-    # UTC 01:00 - 06:30 (1:00, 1:30, ..., 6:30)
     - cron: '*/30 1-6 * * 1-5'
-  
-  # 2. 手動觸發 (讓 index.html 的按鈕可以運作)
   workflow_dispatch:
+
+# --- 加入這段程式碼 ---
+permissions:
+  contents: write
+# --------------------
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 檢出程式碼
+      - name: 檢出儲存庫代碼
         uses: actions/checkout@v3
-
-      - name: 設定 Python 環境
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: 安裝必要套件
-        run: |
-          pip install yfinance pandas pytz
-
-      - name: 執行監控程式
-        run: python monitor.py.py
+        
+      # ... 中間維持您原本的設定 ...
 
       - name: 提交並推送到儲存庫
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add index.html
-          # 只有在 index.html 有變動時才提交，避免錯誤
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update stock data [skip ci]"
+          git commit -m "Update stock data [skip ci]" || exit 0
           git push

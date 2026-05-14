@@ -5,7 +5,7 @@ import re
 import pytz
 import time
 
-# 元大店頭 (保留原始清單)
+# 元大店頭
 yuanta_stocks = {
     "旺矽": ("6223.TWO", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TWO", 6.12),
     "精測": ("6510.TWO", 5.68), "信驊": ("5274.TWO", 5.63), "聯亞": ("3081.TWO", 4.56),
@@ -18,7 +18,7 @@ yuanta_stocks = {
     "聯鈞": ("3450.TW", 1.07), "大江": ("8436.TWO", 1.01)
 }
 
-# 瀚亞科技 (保留原始清單)
+# 瀚亞科技
 eastspring_stocks = {
     "奇鋐": ("3017.TW", 8.25), "欣興": ("3037.TW", 8.07), "台積電": ("2330.TW", 7.90),
     "台光電": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00),
@@ -38,13 +38,28 @@ def get_fund_data(stocks_dict):
             stock = yf.Ticker(sid)
             hist = stock.history(period="2d")
             if len(hist) < 2: continue
+            
             p_yesterday = round(hist['Close'].iloc[-2], 2)
             p_current = round(stock.fast_info['lastPrice'], 2)
             diff = round(p_current - p_yesterday, 2)
+            
+            # 新增：計算貢獻趴數 (漲跌幅)
+            percent_change = (diff / p_yesterday) * 100
+            
             contribution = round(diff * (weight / 100), 4)
             total_contribution += contribution
+            
             color_class = "up" if diff > 0 else "down" if diff < 0 else ""
-            table_rows += f"<tr><td>{name}</td><td class='weight'>{weight}%</td><td>{p_yesterday}</td><td class='{color_class}'>{p_current}</td><td class='{color_class}'>{contribution:+.4f}</td></tr>"
+            
+            # 在表格中加入 <td>{percent_change:+.2f}%</td>
+            table_rows += f"""<tr>
+                <td>{name}</td>
+                <td class='weight'>{weight}%</td>
+                <td>{p_yesterday}</td>
+                <td class='{color_class}'>{p_current}</td>
+                <td class='{color_class}'>{percent_change:+.2f}%</td>
+                <td class='{color_class}'>{contribution:+.4f}</td>
+            </tr>"""
         except: pass
     return round(total_contribution, 4), table_rows
 
@@ -58,16 +73,14 @@ def run_monitor():
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
         
-        # 使用正規表達式更新內容
         content = re.sub(r'id="update-time">.*?</span>', f'id="update-time">{now_tw}</span>', content)
         content = re.sub(r'id="yuanta-sum".*?>.*?</div>', f'id="yuanta-sum" class="total-sum">{y_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="yuanta-details">.*?</tbody>', f'<tbody id="yuanta-details">{y_rows}</tbody>', content, flags=re.DOTALL)
         content = re.sub(r'id="east-sum".*?>.*?</div>', f'id="east-sum" class="total-sum">{e_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
 
-        # 關鍵修正：在檔案末尾強迫加入隱藏的時間戳記註解，確保 GitHub 會偵測到檔案變動
+        # 強制變動 ID 註解
         force_id = int(time.time())
-        # 先移除舊的註解 (如果有的話)
         content = re.sub(r'<!-- Force Update ID: .*? -->', '', content)
         content += f"\n<!-- Force Update ID: {force_id} -->"
 

@@ -6,7 +6,7 @@
     <title>基金即時監測</title>
     <style>
         body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; background: #f4f7f9; margin: 0; padding: 12px; color: #333; }
-        .container { max-width: 500px; margin: auto; background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .container { max-width: 600px; margin: auto; background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .time-info { text-align: center; color: #888; font-size: 0.85em; margin-bottom: 10px; }
         
         /* 手動更新按鈕 */
@@ -26,10 +26,18 @@
         .total-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #edf1f5; }
         .total-sum { font-size: 2.5em; font-weight: bold; font-family: "SF Mono", "Courier New", monospace; }
         
-        /* 表格樣式 */
-        table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+        /* 表格樣式優化：適應更多欄位 */
+        table { width: 100%; border-collapse: collapse; font-size: 0.82em; table-layout: fixed; }
         th { text-align: left; color: #999; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-        td { padding: 12px 5px; border-bottom: 1px solid #fcfcfc; }
+        td { padding: 10px 2px; border-bottom: 1px solid #fcfcfc; word-break: break-all; }
+        
+        /* 設定特定欄位寬度 */
+        th:nth-child(1), td:nth-child(1) { width: 22%; } /* 成分股 */
+        th:nth-child(2), td:nth-child(2) { width: 14%; } /* 權重 */
+        th:nth-child(3), td:nth-child(3) { width: 15%; } /* 昨收 */
+        th:nth-child(4), td:nth-child(4) { width: 15%; } /* 現價 */
+        th:nth-child(5), td:nth-child(5) { width: 16%; } /* 貢獻趴數 */
+        th:nth-child(6), td:nth-child(6) { width: 18%; } /* 貢獻度 */
         
         .up { color: #e74c3c; font-weight: bold; }
         .down { color: #2ecc71; font-weight: bold; }
@@ -56,13 +64,22 @@
     <div id="yuanta" class="tab-content active">
         <div class="total-card">
             <div style="color:#666; font-size:0.9em;">今日預估總貢獻</div>
-            <div id="yuanta-sum" class="total-sum">+100.8167</div>
+            <div id="yuanta-sum" class="total-sum">+0.0000</div>
         </div>
         <table>
             <thead>
-                <tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻</th></tr>
+                <tr>
+                    <th>成分股</th>
+                    <th>權重</th>
+                    <th>昨收</th>
+                    <th>現價</th>
+                    <th>貢獻%</th>
+                    <th>貢獻度</th>
+                </tr>
             </thead>
-            <tbody id="yuanta-details"><tr><td>旺矽</td><td class='weight'>9.7%</td><td>5720.0</td><td class='up'>6290.0</td><td class='up'>+55.2900</td></tr><tr><td>台積電</td><td class='weight'>7.88%</td><td>2220.0</td><td class='up'>2270.0</td><td class='up'>+3.9400</td></tr><tr><td>精測</td><td class='weight'>5.68%</td><td>3775.0</td><td class='up'>4150.0</td><td class='up'>+21.3000</td></tr><tr><td>信驊</td><td class='weight'>5.63%</td><td>17820.0</td><td class='down'>17810.0</td><td class='down'>-0.5630</td></tr><tr><td>聯亞</td><td class='weight'>4.56%</td><td>2835.0</td><td class='up'>2945.0</td><td class='up'>+5.0160</td></tr><tr><td>群聯</td><td class='weight'>3.95%</td><td>2620.0</td><td class='up'>2880.0</td><td class='up'>+10.2700</td></tr><tr><td>光聖</td><td class='weight'>3.75%</td><td>1805.0</td><td class='up'>1855.0</td><td class='up'>+1.8750</td></tr><tr><td>華星光</td><td class='weight'>3.15%</td><td>600.0</td><td class='down'>589.0</td><td class='down'>-0.3465</td></tr><tr><td>台燿</td><td class='weight'>3.0%</td><td>1450.0</td><td class=''>1450.0</td><td class=''>+0.0000</td></tr><tr><td>力旺</td><td class='weight'>2.94%</td><td>3920.0</td><td class=''>3920.0</td><td class=''>+0.0000</td></tr><tr><td>沛亨</td><td class='weight'>2.94%</td><td>489.5</td><td class='up'>509.0</td><td class='up'>+0.5733</td></tr><tr><td>聖暉*</td><td class='weight'>2.63%</td><td>950.0</td><td class='up'>1010.0</td><td class='up'>+1.5780</td></tr><tr><td>波若威</td><td class='weight'>2.59%</td><td>1035.0</td><td class='down'>1020.0</td><td class='down'>-0.3885</td></tr><tr><td>京元電子</td><td class='weight'>2.58%</td><td>305.0</td><td class='down'>296.0</td><td class='down'>-0.2322</td></tr><tr><td>中光電</td><td class='weight'>2.5%</td><td>68.3</td><td class='up'>68.6</td><td class='up'>+0.0075</td></tr><tr><td>邑錡</td><td class='weight'>2.45%</td><td>109.0</td><td class='down'>101.5</td><td class='down'>-0.1838</td></tr><tr><td>日月光投控</td><td class='weight'>2.4%</td><td>548.0</td><td class=''>548.0</td><td class=''>+0.0000</td></tr><tr><td>環球晶</td><td class='weight'>2.21%</td><td>750.0</td><td class='up'>788.0</td><td class='up'>+0.8398</td></tr><tr><td>新應材</td><td class='weight'>2.1%</td><td>1130.0</td><td class='down'>1120.0</td><td class='down'>-0.2100</td></tr><tr><td>鴻勁</td><td class='weight'>1.85%</td><td>7440.0</td><td class='up'>7560.0</td><td class='up'>+2.2200</td></tr><tr><td>世禾</td><td class='weight'>1.79%</td><td>210.5</td><td class='up'>214.5</td><td class='up'>+0.0716</td></tr><tr><td>台特化</td><td class='weight'>1.45%</td><td>308.5</td><td class='down'>305.0</td><td class='down'>-0.0507</td></tr><tr><td>旺宏</td><td class='weight'>1.35%</td><td>168.0</td><td class='up'>169.0</td><td class='up'>+0.0135</td></tr><tr><td>聯鈞</td><td class='weight'>1.07%</td><td>441.0</td><td class='down'>422.0</td><td class='down'>-0.2033</td></tr><tr><td>大江</td><td class='weight'>1.01%</td><td>119.0</td><td class=''>119.0</td><td class=''>+0.0000</td></tr></tbody>
+            <tbody id="yuanta-details">
+                <!-- 由 Python 自動填入 -->
+            </tbody>
         </table>
     </div>
 
@@ -70,19 +87,27 @@
     <div id="east" class="tab-content">
         <div class="total-card">
             <div style="color:#666; font-size:0.9em;">今日預估總貢獻</div>
-            <div id="east-sum" class="total-sum">+20.9480</div>
+            <div id="east-sum" class="total-sum">+0.0000</div>
         </div>
         <table>
             <thead>
-                <tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻</th></tr>
+                <tr>
+                    <th>成分股</th>
+                    <th>權重</th>
+                    <th>昨收</th>
+                    <th>現價</th>
+                    <th>貢獻%</th>
+                    <th>貢獻度</th>
+                </tr>
             </thead>
-            <tbody id="east-details"><tr><td>奇鋐</td><td class='weight'>8.25%</td><td>2585.0</td><td class='down'>2555.0</td><td class='down'>-2.4750</td></tr><tr><td>欣興</td><td class='weight'>8.07%</td><td>892.0</td><td class='down'>881.0</td><td class='down'>-0.8877</td></tr><tr><td>台積電</td><td class='weight'>7.9%</td><td>2220.0</td><td class='up'>2270.0</td><td class='up'>+3.9500</td></tr><tr><td>台光電</td><td class='weight'>6.74%</td><td>4930.0</td><td class='down'>4920.0</td><td class='down'>-0.6740</td></tr><tr><td>台達電</td><td class='weight'>6.47%</td><td>2165.0</td><td class='down'>2155.0</td><td class='down'>-0.6470</td></tr><tr><td>智邦</td><td class='weight'>6.0%</td><td>2435.0</td><td class='up'>2675.0</td><td class='up'>+14.4000</td></tr><tr><td>台燿</td><td class='weight'>5.55%</td><td>1450.0</td><td class=''>1450.0</td><td class=''>+0.0000</td></tr><tr><td>光寶科</td><td class='weight'>5.2%</td><td>211.5</td><td class='down'>207.0</td><td class='down'>-0.2340</td></tr><tr><td>光聖</td><td class='weight'>5.17%</td><td>1805.0</td><td class='up'>1855.0</td><td class='up'>+2.5850</td></tr><tr><td>聯亞</td><td class='weight'>5.03%</td><td>2835.0</td><td class='up'>2945.0</td><td class='up'>+5.5330</td></tr><tr><td>強茂</td><td class='weight'>4.51%</td><td>121.0</td><td class='down'>115.5</td><td class='down'>-0.2480</td></tr><tr><td>聯發科</td><td class='weight'>4.01%</td><td>3495.0</td><td class='down'>3405.0</td><td class='down'>-3.6090</td></tr><tr><td>華碩</td><td class='weight'>3.68%</td><td>663.0</td><td class='up'>679.0</td><td class='up'>+0.5888</td></tr><tr><td>健策</td><td class='weight'>3.38%</td><td>3530.0</td><td class='down'>3365.0</td><td class='down'>-5.5770</td></tr><tr><td>振樺電</td><td class='weight'>2.73%</td><td>247.0</td><td class='down'>240.0</td><td class='down'>-0.1911</td></tr><tr><td>旺矽</td><td class='weight'>2.2%</td><td>5720.0</td><td class='up'>6290.0</td><td class='up'>+12.5400</td></tr><tr><td>致茂</td><td class='weight'>2.17%</td><td>2405.0</td><td class='down'>2260.0</td><td class='down'>-3.1465</td></tr><tr><td>川湖</td><td class='weight'>1.99%</td><td>5250.0</td><td class='down'>5010.0</td><td class='down'>-4.7760</td></tr><tr><td>緯創</td><td class='weight'>1.92%</td><td>140.5</td><td class='down'>138.0</td><td class='down'>-0.0480</td></tr><tr><td>南電</td><td class='weight'>1.8%</td><td>880.0</td><td class='down'>847.0</td><td class='down'>-0.5940</td></tr><tr><td>華星光</td><td class='weight'>1.4%</td><td>600.0</td><td class='down'>589.0</td><td class='down'>-0.1540</td></tr><tr><td>精測</td><td class='weight'>1.23%</td><td>3775.0</td><td class='up'>4150.0</td><td class='up'>+4.6125</td></tr></tbody>
+            <tbody id="east-details">
+                <!-- 由 Python 自動填入 -->
+            </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // 頁籤切換
     function showTab(evt, name) {
         const contents = document.getElementsByClassName("tab-content");
         for (let i = 0; i < contents.length; i++) contents[i].classList.remove("active");
@@ -92,13 +117,10 @@
         evt.currentTarget.classList.add("active");
     }
 
-    // 觸發 GitHub Actions
     async function triggerUpdate() {
-        // --- 根據截圖優化後的正確設定 ---
         const OWNER = 'a0928533194-web'; 
         const REPO = 'stock-monitor';    
-        const WORKFLOW_ID = 'run.yml';  // 👈 您的檔案名稱是 run.yml
-        // ------------------------------
+        const WORKFLOW_ID = 'run.yml';  
 
         const token = prompt("請貼上您的 GitHub PAT (Key):");
         if (!token) return;
@@ -109,7 +131,6 @@
 
         try {
             const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`;
-            
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -121,8 +142,6 @@
 
             if (response.status === 204) {
                 alert('✅ 指令已發送成功！\n請等待約 1 分鐘讓伺服器執行 [run.yml]，然後重新整理網頁。');
-            } else if (response.status === 404) {
-                alert('❌ 失敗：找不到路徑。\n請確認 Token 權限是否包含 workflow。');
             } else {
                 const err = await response.json();
                 alert('❌ 失敗：' + (err.message || '未知錯誤'));
@@ -138,11 +157,4 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
 <!-- Force Update ID: 1778752690 -->

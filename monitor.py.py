@@ -43,16 +43,17 @@ def get_fund_data(stocks_dict):
             p_current = round(stock.fast_info['lastPrice'], 2)
             diff = round(p_current - p_yesterday, 2)
             
-            # 修正公式：(現價 - 昨收) / 昨收 * 權重 (此時 weight 已是百分比數值，例如 9.70 代表 9.70%)
-            # 漲跌幅 = diff / p_yesterday
-            # 貢獻趴數 = 漲跌幅 * weight
+            # 🚀 計算新欄位：貢獻趴數 = (限價 - 昨收) / 昨收 * 權重
+            # 例如：((6290 - 5720) / 5720) * 9.70 = +0.9664%
             contrib_percent = (diff / p_yesterday) * weight
             
+            # 原有的絕對金額貢獻度
             contribution = round(diff * (weight / 100), 4)
             total_contribution += contribution
             
             color_class = "up" if diff > 0 else "down" if diff < 0 else ""
             
+            # 輸出包含新欄位的 6 個 <td> 結構
             table_rows += f"""<tr>
                 <td>{name}</td>
                 <td class='weight'>{weight}%</td>
@@ -80,7 +81,7 @@ def run_monitor():
         content = re.sub(r'id="east-sum".*?>.*?</div>', f'id="east-sum" class="total-sum">{e_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
 
-        # 強制變動 ID 註解
+        # 強制更新 ID
         force_id = int(time.time())
         content = re.sub(r'', '', content)
         content += f"\n"

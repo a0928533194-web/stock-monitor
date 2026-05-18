@@ -43,21 +43,22 @@ def get_fund_data(stocks_dict):
             p_current = round(stock.fast_info['lastPrice'], 2)
             diff = round(p_current - p_yesterday, 2)
             
-            # 新增：計算貢獻趴數 (漲跌幅)
-            percent_change = (diff / p_yesterday) * 100
+            # 修正公式：(現價 - 昨收) / 昨收 * 權重 (此時 weight 已是百分比數值，例如 9.70 代表 9.70%)
+            # 漲跌幅 = diff / p_yesterday
+            # 貢獻趴數 = 漲跌幅 * weight
+            contrib_percent = (diff / p_yesterday) * weight
             
             contribution = round(diff * (weight / 100), 4)
             total_contribution += contribution
             
             color_class = "up" if diff > 0 else "down" if diff < 0 else ""
             
-            # 在表格中加入 <td>{percent_change:+.2f}%</td>
             table_rows += f"""<tr>
                 <td>{name}</td>
                 <td class='weight'>{weight}%</td>
                 <td>{p_yesterday}</td>
                 <td class='{color_class}'>{p_current}</td>
-                <td class='{color_class}'>{percent_change:+.2f}%</td>
+                <td class='{color_class}'>{contrib_percent:+.2f}%</td>
                 <td class='{color_class}'>{contribution:+.4f}</td>
             </tr>"""
         except: pass
@@ -81,8 +82,8 @@ def run_monitor():
 
         # 強制變動 ID 註解
         force_id = int(time.time())
-        content = re.sub(r'<!-- Force Update ID: .*? -->', '', content)
-        content += f"\n<!-- Force Update ID: {force_id} -->"
+        content = re.sub(r'', '', content)
+        content += f"\n"
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)

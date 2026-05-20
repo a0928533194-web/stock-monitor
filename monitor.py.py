@@ -20,54 +20,63 @@ eastspring_stocks = {
 }
 
 def fetch_yuanta_holdings():
-    """ 🚀 到 MoneyDJ 網站抓取元大店頭基金的最新成分股與權重（加強防阻擋與偽裝機制） """
+    """ 🚀 100% 從 MoneyDJ 網頁抓取元大店頭基金成分股與權重 """
     url = "https://www.moneydj.com/funddj/yp/yp013000.djhtm?a=ACYT07"
-    
-    # 建立一個模擬真實瀏覽器的會話 (Session) 並附帶完整的偽裝標頭
-    session = requests.Session()
-    session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-        "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-        "Cache-Control": "max-age=0",
-        "Connection": "keep-alive"
-    })
-    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
     stocks = {}
     try:
-        # 先行訪問首頁建立 Cookie 以規避機器人偵測
-        session.get("https://www.moneydj.com/", timeout=10)
-        
-        # 真正抓取成分股網頁
-        res = session.get(url, timeout=15)
-        res.encoding = 'utf-8'
+        res = requests.get(url, headers=headers, timeout=15)
+        # 自動識別 MoneyDJ 的網頁編碼 (通常是 Big5 或 cp950)，防止文字變亂碼導致後面查不到 yfinance
+        res.encoding = res.apparent_encoding if res.apparent_encoding else 'big5'
         
         soup = BeautifulSoup(res.text, 'html.parser')
         
-        # 解析 MoneyDJ 的成分股表格
+        # 掃描網頁中的所有表格行
         for tr in soup.find_all('tr'):
-            a_tag = tr.find('a', href=re.compile(r'\?a='))
-            if a_tag:
-                name = a_tag.text.strip()
-                href = a_tag.get('href', '')
-                match = re.search(r'\?a=([0-9A-Za-z]+)', href)
-                if match and name:
-                    code = match.group(1)
-                    # 台股代碼為純數字且長度大於等於 4
-                    if code.isdigit() and len(code) >= 4:
-                        tds = [td.text.strip() for td in tr.find_all('td')]
-                        for text in tds:
-                            text_clean = text.replace('%', '').strip()
-                            try:
-                                val = float(text_clean)
-                                if 0 < val < 100:
-                                    stocks[name] = (code, val)
-                                    break
-                            except ValueError:
-                                continue
-        print(f"【爬蟲通知】成功從 MoneyDJ 網站抓取到 {len(stocks)} 檔元大店頭成分股。")
+            tds = [td.text.strip() for td in tr.find_all('td')]
+            
+            # MoneyDJ 的成分股表格通常一行有 3~5 個欄位 (名稱、比例、前後期對比等)
+            if len(tds) >= 2:
+                # 欄位一通常是股票名稱（例如 "旺矽(6223)" 或 "旺矽"）
+                name_field = tds[0]
+                
+                # 利用正規表達式把名稱中的 4 碼以上數字（代號）抓出來
+                code_match = re.search(r'(\d{4,5})', name_field)
+                
+                # 如果名稱欄沒寫代號，就去這行裡面的超連結 (a tag) 找有沒有代號
+                if not code_match:
+                    a_tag = tr.find('a')
+                    if a_tag:
+                        href = a_tag.get('href', '')
+                        code_match = re.search(r'a=(\d{4,5})', href) or re.search(r'\'(\d{4,5})\'', href)
+                
+                if code_match:
+                    code = code_match.group(1)
+                    # 清理名稱，把括號和代號去掉，只留純中文名稱
+                    clean_name = re.sub(r'[\(\)\d\s]', '', name_field)
+                    if not clean_name and a_tag: 
+                        clean_name = a_tag.text.strip()
+                    
+                    # 在同一行中尋找帶有百分比 (%) 或是可以轉成 float 的權重數字
+                    weight = None
+                    for text in tds[1:]:
+                        text_clean = text.replace('%', '').strip()
+                        try:
+                            val = float(text_clean)
+                            if 0.1 < val < 99.0: # 合理的單一成分股權重範圍
+                                weight = val
+                                break
+                        except ValueError:
+                            continue
+                    
+                    if clean_name and code and weight is not None:
+                        stocks[clean_name] = (code, weight)
+                        
+        print(f"【網頁抓取成功】成功從 MoneyDJ 撈到 {len(stocks)} 檔成分股。")
     except Exception as e:
-        print(f"【爬蟲失敗】抓取 MoneyDJ 網站出錯: {e}")
+        print(f"【網頁抓取失敗】錯誤原因: {e}")
         
     return stocks
 
@@ -79,7 +88,7 @@ def get_fund_data(stocks_dict, is_dynamic=False):
         try:
             if is_dynamic:
                 sid, weight = data
-                # 🔄 自動上市(.TW)與上櫃(.TWO)市場代碼識別機制
+                # 🔄 自動上市(.TW)與上櫃(.TWO)代碼市場容錯識別機制
                 stock = yf.Ticker(f"{sid}.TW")
                 hist = stock.history(period="2d")
                 if len(hist) < 2:
@@ -120,10 +129,9 @@ def run_monitor():
     tw_tz = pytz.timezone('Asia/Taipei')
     now_tw = datetime.now(tw_tz).strftime('%Y-%m-%d %H:%M:%S')
     
-    # 執行加強防禦版網頁爬蟲，直接從網站動態撈取元大店頭持股
+    # 執行修正版全網頁解析爬蟲
     yuanta_dynamic_stocks = fetch_yuanta_holdings()
     
-    # 計算數據
     y_res, y_rows = get_fund_data(yuanta_dynamic_stocks, is_dynamic=True)
     e_res, e_rows = get_fund_data(eastspring_stocks, is_dynamic=False)
 
@@ -137,7 +145,6 @@ def run_monitor():
         content = re.sub(r'id="east-sum".*?>.*?</div>', f'id="east-sum" class="total-sum">{e_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
 
-        # 強制變動 ID 註解避免快取
         force_id = int(time.time())
         content = re.sub(r'', '', content)
         content += f"\n"

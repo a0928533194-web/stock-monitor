@@ -4,24 +4,13 @@ import os
 import re
 import pytz
 import time
+import requests
+from bs4 import BeautifulSoup
 
-# 元大店頭
-yuanta_stocks = {
-    "旺矽": ("6223.TWO", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TWO", 6.12),
-    "精測": ("6510.TWO", 5.68), "信驊": ("5274.TWO", 5.63), "聯亞": ("3081.TWO", 4.56),
-    "群聯": ("8299.TWO", 3.95), "光聖": ("6442.TW", 3.75), "華星光": ("4979.TWO", 3.15),
-    "台燿": ("6274.TWO", 3.00), "力旺": ("3529.TWO", 2.94), "沛亨": ("6291.TWO", 2.94),
-    "聖暉*": ("5536.TWO", 2.63), "波若威": ("3163.TWO", 2.59), "京元電子": ("2449.TW", 2.58),
-    "中光電": ("5371.TWO", 2.50), "邑錡": ("7402.TWO", 2.45), "日月光投控": ("3711.TW", 2.40),
-    "環球晶": ("6488.TWO", 2.21), "新應材": ("4749.TWO", 2.10), "鴻勁": ("7769.TW", 1.85),
-    "世禾": ("3551.TWO", 1.79), "台特化": ("4772.TWO", 1.45), "旺宏": ("2337.TW", 1.35),
-    "聯鈞": ("3450.TW", 1.07), "大江": ("8436.TWO", 1.01)
-}
-
-# 瀚亞科技
+# 瀚亞科技 (先維持原本你給的固定清單)
 eastspring_stocks = {
     "奇鋐": ("3017.TW", 8.25), "欣興": ("3037.TW", 8.07), "台積電": ("2330.TW", 7.90),
-    "台光電": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00),
+    "台光电": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00),
     "台燿": ("6274.TWO", 5.55), "光寶科": ("2301.TW", 5.20), "光聖": ("6442.TW", 5.17),
     "聯亞": ("3081.TWO", 5.03), "強茂": ("2481.TW", 4.51), "聯發科": ("2454.TW", 4.01),
     "華碩": ("2357.TW", 3.68), "健策": ("3653.TW", 3.38), "振樺電": ("8114.TW", 2.73),
@@ -30,30 +19,77 @@ eastspring_stocks = {
     "精測": ("6510.TWO", 1.23)
 }
 
-def get_fund_data(stocks_dict):
+def fetch_yuanta_holdings():
+    """ 🚀 專職去 MoneyDJ 網站抓取元大店頭基金的成分股與權重 """
+    url = "https://www.moneydj.com/funddj/yp/yp013000.djhtm?a=ACYT07"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+    stocks = {}
+    try:
+        res = requests.get(url, headers=headers, timeout=15)
+        res.encoding = 'utf-8'
+        soup = BeautifulSoup(res.text, 'html.parser')
+        
+        # 尋找網頁表格中的股票超連結
+        for tr in soup.find_all('tr'):
+            a_tag = tr.find('a', href=re.compile(r'\?a='))
+            if a_tag:
+                name = a_tag.text.strip()
+                href = a_tag.get('href', '')
+                match = re.search(r'\?a=([0-9A-Za-z]+)', href)
+                if match and name:
+                    code = match.group(1)
+                    if code.isdigit() and len(code) >= 4:
+                        # 找同一行裡面的持股百分比
+                        tds = [td.text.strip() for td in tr.find_all('td')]
+                        for text in tds:
+                            text_clean = text.replace('%', '').strip()
+                            try:
+                                val = float(text_clean)
+                                if 0 < val < 100:
+                                    stocks[name] = (code, val)
+                                    break
+                            except ValueError:
+                                continue
+    except Exception as e:
+        print(f"抓取網站失敗: {e}")
+    return stocks
+
+def get_fund_data(stocks_dict, is_dynamic=False):
     total_contribution = 0
     table_rows = ""
-    for name, (sid, weight) in stocks_dict.items():
+    
+    for name, data in stocks_dict.items():
         try:
-            stock = yf.Ticker(sid)
-            hist = stock.history(period="2d")
+            if is_dynamic:
+                sid, weight = data
+                # 判斷上市或上櫃後端代碼
+                stock = yf.Ticker(f"{sid}.TW")
+                hist = stock.history(period="2d")
+                if len(hist) < 2:
+                    stock = yf.Ticker(f"{sid}.TWO")
+                    hist = stock.history(period="2d")
+            else:
+                ticker_str, weight = data
+                stock = yf.Ticker(ticker_str)
+                hist = stock.history(period="2d")
+                
             if len(hist) < 2: continue
             
             p_yesterday = round(hist['Close'].iloc[-2], 2)
             p_current = round(stock.fast_info['lastPrice'], 2)
             diff = round(p_current - p_yesterday, 2)
             
-            # 🚀 計算新欄位：貢獻趴數 = (限價 - 昨收) / 昨收 * 權重
-            # 例如：((6290 - 5720) / 5720) * 9.70 = +0.9664%
+            # 欄位：貢獻趴數 = (限價 - 昨收) / 昨收 * 權重
             contrib_percent = (diff / p_yesterday) * weight
             
-            # 原有的絕對金額貢獻度
+            # 原金額預估貢獻
             contribution = round(diff * (weight / 100), 4)
             total_contribution += contribution
             
             color_class = "up" if diff > 0 else "down" if diff < 0 else ""
             
-            # 輸出包含新欄位的 6 個 <td> 結構
             table_rows += f"""<tr>
                 <td>{name}</td>
                 <td class='weight'>{weight}%</td>
@@ -68,8 +104,12 @@ def get_fund_data(stocks_dict):
 def run_monitor():
     tw_tz = pytz.timezone('Asia/Taipei')
     now_tw = datetime.now(tw_tz).strftime('%Y-%m-%d %H:%M:%S')
-    y_res, y_rows = get_fund_data(yuanta_stocks)
-    e_res, e_rows = get_fund_data(eastspring_stocks)
+    
+    # 改從網站動態抓
+    yuanta_dynamic_stocks = fetch_yuanta_holdings()
+    
+    y_res, y_rows = get_fund_data(yuanta_dynamic_stocks, is_dynamic=True)
+    e_res, e_rows = get_fund_data(eastspring_stocks, is_dynamic=False)
 
     if os.path.exists("index.html"):
         with open("index.html", "r", encoding="utf-8") as f:
@@ -81,7 +121,6 @@ def run_monitor():
         content = re.sub(r'id="east-sum".*?>.*?</div>', f'id="east-sum" class="total-sum">{e_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
 
-        # 強制更新 ID
         force_id = int(time.time())
         content = re.sub(r'', '', content)
         content += f"\n"

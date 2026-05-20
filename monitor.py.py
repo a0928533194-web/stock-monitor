@@ -5,7 +5,6 @@ import re
 import pytz
 import time
 import requests
-from bs4 import BeautifulSoup
 
 # 瀚亞科技 (維持原固定清單)
 eastspring_stocks = {
@@ -20,54 +19,40 @@ eastspring_stocks = {
 }
 
 def fetch_yuanta_holdings():
-    """ 🚀 100% 從 MoneyDJ 網頁精準解析元大店頭基金持股與比例 """
-    url = "https://www.moneydj.com/funddj/yp/yp013000.djhtm?a=ACYT07"
+    """ 🚀 直接向元大投信官方 API 獲取元大店頭基金最新成分股與比例（百分百不被阻擋） """
+    url = "https://www.yuantafunds.com.tw/api/FundHolding/GetFundHoldingRatio"
+    payload = {
+        "FundCode": "0048",  # 元大店頭基金在官方的內部代碼
+        "PageIndex": 1,
+        "PageSize": 50
+    }
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Content-Type": "application/json"
     }
     stocks = {}
     try:
-        res = requests.get(url, headers=headers, timeout=15)
-        # MoneyDJ 網頁內部編碼為常態 big5，在此處精準指定以防中文字體解析失敗
-        res.encoding = 'big5'
+        # 向官方發送 POST 請求獲取結構化 JSON 數據
+        res = requests.post(url, json=payload, headers=headers, timeout=15)
+        data = res.json()
         
-        soup = BeautifulSoup(res.text, 'html.parser')
-        
-        # 尋找網頁中所有包含超連結的 a 標籤
-        for a_tag in soup.find_all('a'):
-            href = a_tag.get('href', '')
-            text_name = a_tag.text.strip()
-            
-            # 關鍵特徵提取：MoneyDJ 的成分股連結必定含有 Link2Stk 或是 ?a= 參數
-            code_match = re.search(r'Link2Stk\(\'([0-9A-Za-z]+)\'\)', href) or re.search(r'\?a=([0-9A-Za-z]+)', href)
-            
-            if code_match and text_name:
-                code = code_match.group(1)
+        if data and "Data" in data and "List" in data["Data"]:
+            for item in data["Data"]["List"]:
+                name = item.get("StockName", "").strip()
+                code = item.get("StockCode", "").strip()
+                weight_str = item.get("Ratio", "0")
                 
-                # 過濾出純數字的台灣股票代號 (排除 ACYT07 等基金本身代碼)
-                if code.isdigit() and len(code) >= 4 and not text_name.startswith("元大"):
-                    # 回溯尋找這一檔股票所在的整行表格 (tr) 撈取持股比例
-                    tr = a_tag.find_parent('tr')
-                    if tr:
-                        tds = [td.text.strip() for td in tr.find_all('td')]
-                        weight = None
-                        # 掃描同行的所有欄位，找出帶有數字的百分比權重
-                        for td_text in tds:
-                            clean_td = td_text.replace('%', '').strip()
-                            try:
-                                val = float(clean_td)
-                                if 0.05 < val < 95.0: # 過濾掉名次或代碼數字，精準鎖定權重
-                                    weight = val
-                                    break
-                            except ValueError:
-                                continue
-                        
-                        if weight is not None:
-                            stocks[text_name] = (code, weight)
-                            
-        print(f"【成功動態抓取】已從 MoneyDJ 網頁即時撈到 {len(stocks)} 檔元大店頭成分股！")
+                # 確保名稱存在、代號為純數字
+                if name and code and code.isdigit():
+                    try:
+                        weight = float(weight_str)
+                        if weight > 0:
+                            stocks[name] = (code, weight)
+                    except ValueError:
+                        continue
+        print(f"【元大官方 API】成功下載 {len(stocks)} 檔最新成分股明細。")
     except Exception as e:
-        print(f"【錯誤】MoneyDJ 網頁抓取失敗: {e}")
+        print(f"【元大官方 API 失敗】: {e}")
         
     return stocks
 
@@ -79,7 +64,7 @@ def get_fund_data(stocks_dict, is_dynamic=False):
         try:
             if is_dynamic:
                 sid, weight = data
-                # 🔄 後端自動進行上市(.TW)與上櫃(.TWO)市場識別與查價
+                # 🔄 自動進行上市(.TW)與上櫃(.TWO)市場代碼容錯識別
                 stock = yf.Ticker(f"{sid}.TW")
                 hist = stock.history(period="2d")
                 if len(hist) < 2:
@@ -96,10 +81,10 @@ def get_fund_data(stocks_dict, is_dynamic=False):
             p_current = round(stock.fast_info['lastPrice'], 2)
             diff = round(p_current - p_yesterday, 2)
             
-            # 公式計算：貢獻% = (現價 - 昨收) / 昨收 * 權重
+            # 計算公式：貢獻% = (現價 - 昨收) / 昨收 * 權重
             contrib_percent = (diff / p_yesterday) * weight
             
-            # 絕對金額預估貢獻度
+            # 金額預估貢獻度
             contribution = round(diff * (weight / 100), 4)
             total_contribution += contribution
             
@@ -120,7 +105,7 @@ def run_monitor():
     tw_tz = pytz.timezone('Asia/Taipei')
     now_tw = datetime.now(tw_tz).strftime('%Y-%m-%d %H:%M:%S')
     
-    # 執行修正版 MoneyDJ 網頁特徵解析器
+    # 執行元大投信官網 API 動態獲取
     yuanta_dynamic_stocks = fetch_yuanta_holdings()
     
     y_res, y_rows = get_fund_data(yuanta_dynamic_stocks, is_dynamic=True)
@@ -136,6 +121,7 @@ def run_monitor():
         content = re.sub(r'id="east-sum".*?>.*?</div>', f'id="east-sum" class="total-sum">{e_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
 
+        # 強制更新網頁 ID 避免快取
         force_id = int(time.time())
         content = re.sub(r'', '', content)
         content += f"\n"

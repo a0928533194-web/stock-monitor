@@ -7,10 +7,10 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-# 瀚亞科技 (先維持原本你給的固定清單)
+# 瀚亞科技 (維持原固定清單)
 eastspring_stocks = {
     "奇鋐": ("3017.TW", 8.25), "欣興": ("3037.TW", 8.07), "台積電": ("2330.TW", 7.90),
-    "台光电": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00),
+    "台光電": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00),
     "台燿": ("6274.TWO", 5.55), "光寶科": ("2301.TW", 5.20), "光聖": ("6442.TW", 5.17),
     "聯亞": ("3081.TWO", 5.03), "強茂": ("2481.TW", 4.51), "聯發科": ("2454.TW", 4.01),
     "華碩": ("2357.TW", 3.68), "健策": ("3653.TW", 3.38), "振樺電": ("8114.TW", 2.73),
@@ -20,18 +20,31 @@ eastspring_stocks = {
 }
 
 def fetch_yuanta_holdings():
-    """ 🚀 專職去 MoneyDJ 網站抓取元大店頭基金的成分股與權重 """
+    """ 🚀 到 MoneyDJ 網站抓取元大店頭基金的最新成分股與權重（加強防阻擋與偽裝機制） """
     url = "https://www.moneydj.com/funddj/yp/yp013000.djhtm?a=ACYT07"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-    }
+    
+    # 建立一個模擬真實瀏覽器的會話 (Session) 並附帶完整的偽裝標頭
+    session = requests.Session()
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Cache-Control": "max-age=0",
+        "Connection": "keep-alive"
+    })
+    
     stocks = {}
     try:
-        res = requests.get(url, headers=headers, timeout=15)
+        # 先行訪問首頁建立 Cookie 以規避機器人偵測
+        session.get("https://www.moneydj.com/", timeout=10)
+        
+        # 真正抓取成分股網頁
+        res = session.get(url, timeout=15)
         res.encoding = 'utf-8'
+        
         soup = BeautifulSoup(res.text, 'html.parser')
         
-        # 尋找網頁表格中的股票超連結
+        # 解析 MoneyDJ 的成分股表格
         for tr in soup.find_all('tr'):
             a_tag = tr.find('a', href=re.compile(r'\?a='))
             if a_tag:
@@ -40,8 +53,8 @@ def fetch_yuanta_holdings():
                 match = re.search(r'\?a=([0-9A-Za-z]+)', href)
                 if match and name:
                     code = match.group(1)
+                    # 台股代碼為純數字且長度大於等於 4
                     if code.isdigit() and len(code) >= 4:
-                        # 找同一行裡面的持股百分比
                         tds = [td.text.strip() for td in tr.find_all('td')]
                         for text in tds:
                             text_clean = text.replace('%', '').strip()
@@ -52,8 +65,10 @@ def fetch_yuanta_holdings():
                                     break
                             except ValueError:
                                 continue
+        print(f"【爬蟲通知】成功從 MoneyDJ 網站抓取到 {len(stocks)} 檔元大店頭成分股。")
     except Exception as e:
-        print(f"抓取網站失敗: {e}")
+        print(f"【爬蟲失敗】抓取 MoneyDJ 網站出錯: {e}")
+        
     return stocks
 
 def get_fund_data(stocks_dict, is_dynamic=False):
@@ -64,7 +79,7 @@ def get_fund_data(stocks_dict, is_dynamic=False):
         try:
             if is_dynamic:
                 sid, weight = data
-                # 判斷上市或上櫃後端代碼
+                # 🔄 自動上市(.TW)與上櫃(.TWO)市場代碼識別機制
                 stock = yf.Ticker(f"{sid}.TW")
                 hist = stock.history(period="2d")
                 if len(hist) < 2:
@@ -81,10 +96,10 @@ def get_fund_data(stocks_dict, is_dynamic=False):
             p_current = round(stock.fast_info['lastPrice'], 2)
             diff = round(p_current - p_yesterday, 2)
             
-            # 欄位：貢獻趴數 = (限價 - 昨收) / 昨收 * 權重
+            # 公式：貢獻趴數 = (限價 - 昨收) / 昨收 * 權重
             contrib_percent = (diff / p_yesterday) * weight
             
-            # 原金額預估貢獻
+            # 原金額預估貢獻度
             contribution = round(diff * (weight / 100), 4)
             total_contribution += contribution
             
@@ -105,9 +120,10 @@ def run_monitor():
     tw_tz = pytz.timezone('Asia/Taipei')
     now_tw = datetime.now(tw_tz).strftime('%Y-%m-%d %H:%M:%S')
     
-    # 改從網站動態抓
+    # 執行加強防禦版網頁爬蟲，直接從網站動態撈取元大店頭持股
     yuanta_dynamic_stocks = fetch_yuanta_holdings()
     
+    # 計算數據
     y_res, y_rows = get_fund_data(yuanta_dynamic_stocks, is_dynamic=True)
     e_res, e_rows = get_fund_data(eastspring_stocks, is_dynamic=False)
 
@@ -121,6 +137,7 @@ def run_monitor():
         content = re.sub(r'id="east-sum".*?>.*?</div>', f'id="east-sum" class="total-sum">{e_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
 
+        # 強制變動 ID 註解避免快取
         force_id = int(time.time())
         content = re.sub(r'', '', content)
         content += f"\n"

@@ -3,14 +3,14 @@ from datetime import datetime
 import pytz
 import time
 
-# 數據設定
+# 數據設定：已更新為 2026/04/30 最新權重
 FUNDS_CONFIG = {
     "yuanta": {
         "name": "元大店頭基金",
         "stocks": {
-            "旺矽": ("6223", 9.70), "台積電": ("2330", 7.88), "穎崴": ("6515", 6.12), 
-            "精測": ("6510", 5.68), "信驊": ("5274", 5.63), "聯亞": ("3081", 4.56), 
-            "群聯": ("8299", 3.95), "光聖": ("6442", 3.75), "華星光": ("4979", 3.15), "台燿": ("6274", 3.00)
+            "旺矽": ("6223", 8.71), "信驊": ("5274", 6.66), "台積電": ("2330", 6.47), 
+            "穎崴": ("6515", 5.77), "精測": ("6510", 5.74), "聯亞": ("3081", 4.80), 
+            "華星光": ("4979", 4.31), "台燿": ("6274", 4.08), "群聯": ("8299", 3.84), "力旺": ("3529", 3.35)
         }
     },
     "shinkin_three": {
@@ -94,12 +94,9 @@ def run_monitor():
     body {{ font-family: sans-serif; background: #f8f9fa; padding: 10px; margin: 0; }}
     .container {{ width: 100%; max-width: 500px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
     .fund-section {{ display: none; }} .fund-section.active {{ display: block; }}
-    
-    /* 手機滑動表格設定 */
     .table-responsive {{ width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }}
     table {{ width: 100%; min-width: 400px; border-collapse: collapse; font-size: 12px; }}
     th, td {{ padding: 8px 4px; text-align: right; border-bottom: 1px solid #eee; white-space: nowrap; }}
-    
     .dashboard {{ text-align: center; margin-bottom: 15px; }}
     .total-sum {{ font-size: 22px; font-weight: bold; margin-bottom: 5px; }}
     .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
@@ -117,7 +114,7 @@ def run_monitor():
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("【更新成功】index.html 已生成")
+    print("【更新成功】index.html 已生成（權重已同步為 2026/04/30 版本）")
 
 if __name__ == "__main__":
     run_monitor()

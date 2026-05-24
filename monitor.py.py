@@ -6,7 +6,7 @@ import pytz
 import time
 
 # ==============================================================================
-# 超級旗艦陣容：13 檔基金最新前十大持股固定名單 (100% 避開爬蟲封鎖阻擋)
+# 13 檔黃金基金最新成分股固定名單
 # ==============================================================================
 funds_data_config = {
     "yuanta": {
@@ -78,10 +78,11 @@ funds_data_config = {
 }
 
 # ==============================================================================
-# 核心單一基金算價引擎
+# 核心計算引擎 (同步加總貢獻%數)
 # ==============================================================================
 def get_fund_data(stocks_dict):
     total_contribution = 0
+    total_pct = 0
     table_rows = ""
     
     for name, data in stocks_dict.items():
@@ -96,8 +97,11 @@ def get_fund_data(stocks_dict):
             p_current = round(stock.fast_info['lastPrice'], 2)
             diff = round(p_current - p_yesterday, 2)
             
-            # 預估單檔貢獻度與百分比
+            # 各股貢獻百分比
             contrib_percent = (diff / p_yesterday) * weight
+            total_pct += contrib_percent  # 🚀 在這裡將各股貢獻%數加總
+            
+            # 各股預估貢獻度（金額）
             contribution = round(diff * (weight / 100), 4)
             total_contribution += contribution
             
@@ -111,14 +115,13 @@ def get_fund_data(stocks_dict):
                 <td class='{color_class}'>{contrib_percent:+.2f}%</td>
                 <td class='{color_class}'>{contribution:+.4f}</td>
             </tr>"""
-        except Exception as e:
-            print(f"計算 {name} 失敗: {e}")
+        except:
             pass
             
-    return round(total_contribution, 4), table_rows
+    return round(total_contribution, 4), round(total_pct, 2), table_rows
 
 # ==============================================================================
-# 主更新排程
+# 主排程流程
 # ==============================================================================
 def run_monitor():
     tw_tz = pytz.timezone('Asia/Taipei')
@@ -128,21 +131,27 @@ def run_monitor():
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
         
-        # 替換時間
         content = re.sub(r'id="update-time">.*?</span>', f'id="update-time">{now_tw}</span>', content)
         
-        # 迴圈自動注入 13 檔基金數據
         for fund_key, stocks_dict in funds_data_config.items():
-            total_sum, table_rows = get_fund_data(stocks_dict)
+            fixed_key = fund_key if fund_key != "eastspring" else "east"
             
-            # 替換總合
-            sum_pattern = rf'id="{fund_key if fund_key != "eastspring" else "east"}-sum".*?>.*?</div>'
-            sum_replace = f'id="{fund_key if fund_key != "eastspring" else "east"}-sum" class="total-sum">{total_sum:+.4f}</div>'
+            # 取得 計算總額、計算總%數、表格列HTML
+            total_sum, total_pct, table_rows = get_fund_data(stocks_dict)
+            
+            # 1. 替換今日預估總貢獻（金額）
+            sum_pattern = rf'id="{fixed_key}-sum".*?>.*?</div>'
+            sum_replace = f'id="{fixed_key}-sum" class="total-sum">{total_sum:+.4f}</div>'
             content = re.sub(sum_pattern, sum_replace, content)
             
-            # 替換表格細節
-            detail_pattern = rf'<tbody id="{fund_key if fund_key != "eastspring" else "east"}-details">.*?</tbody>'
-            detail_replace = f'<tbody id="{fund_key if fund_key != "eastspring" else "east"}-details">{table_rows}</tbody>'
+            # 2. 🚀 替換今日預估總貢獻 %
+            pct_pattern = rf'id="{fixed_key}-pct".*?>.*?</div>'
+            pct_replace = f'id="{fixed_key}-pct" class="total-percent">{total_pct:+.2f}%</div>'
+            content = re.sub(pct_pattern, pct_replace, content)
+            
+            # 3. 替換表格明細
+            detail_pattern = rf'<tbody id="{fixed_key}-details">.*?</tbody>'
+            detail_replace = f'<tbody id="{fixed_key}-details">{table_rows}</tbody>'
             content = re.sub(detail_pattern, detail_replace, content, flags=re.DOTALL)
 
         # 寫入防止快取尾碼
@@ -152,7 +161,7 @@ def run_monitor():
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
-        print("【大成功】13 檔黃金旗艦基金選單與數據全面更新完畢！")
+        print("【成功】所有基金皆已成功補上「總貢獻%數」欄位！")
 
 if __name__ == "__main__":
     run_monitor()

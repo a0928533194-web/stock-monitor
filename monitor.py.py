@@ -6,7 +6,7 @@ import pytz
 import time
 
 # ==============================================================================
-# 1. 元大店頭基金：最新前十大成分股固定清單 (100% 避開網頁阻擋)
+# 1. 元大店頭基金：最新前十大成分股固定清單 (確保 yfinance 100% 查得到價)
 # ==============================================================================
 yuanta_stocks = {
     "旺矽": ("6223.TWO", 9.70),
@@ -22,7 +22,7 @@ yuanta_stocks = {
 }
 
 # ==============================================================================
-# 2. 瀚亞科技基金：固定清單 (維持原樣)
+# 2. 瀚亞科技基金：固定清單
 # ==============================================================================
 eastspring_stocks = {
     "奇鋐": ("3017.TW", 8.25), "欣興": ("3037.TW", 8.07), "台積電": ("2330.TW", 7.90),
@@ -36,7 +36,7 @@ eastspring_stocks = {
 }
 
 # ==============================================================================
-# 3. 核心數據計算：沿用你最原本、能動的 yfinance 邏輯
+# 3. 核心數據計算邏輯
 # ==============================================================================
 def get_fund_data(stocks_dict):
     total_contribution = 0
@@ -45,8 +45,6 @@ def get_fund_data(stocks_dict):
     for name, data in stocks_dict.items():
         try:
             ticker_str, weight = data
-            
-            # 使用原本能動的代號直接查價
             stock = yf.Ticker(ticker_str)
             hist = stock.history(period="2d")
             
@@ -80,13 +78,13 @@ def get_fund_data(stocks_dict):
     return round(total_contribution, 4), table_rows
 
 # ==============================================================================
-# 4. 主程式流程：結合數據並覆寫網頁檔案
+# 4. 主程式流程
 # ==============================================================================
 def run_monitor():
     tw_tz = pytz.timezone('Asia/Taipei')
     now_tw = datetime.now(tw_tz).strftime('%Y-%m-%d %H:%M:%S')
     
-    # 直接用固定名單去跑查價，100% 不會失敗
+    # 進行計算
     y_res, y_rows = get_fund_data(yuanta_stocks)
     e_res, e_rows = get_fund_data(eastspring_stocks)
 
@@ -94,20 +92,21 @@ def run_monitor():
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
         
+        # 精準動態取代新 HTML 架構裡的欄位值
         content = re.sub(r'id="update-time">.*?</span>', f'id="update-time">{now_tw}</span>', content)
         content = re.sub(r'id="yuanta-sum".*?>.*?</div>', f'id="yuanta-sum" class="total-sum">{y_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="yuanta-details">.*?</tbody>', f'<tbody id="yuanta-details">{y_rows}</tbody>', content, flags=re.DOTALL)
         content = re.sub(r'id="east-sum".*?>.*?</div>', f'id="east-sum" class="total-sum">{e_res:+.4f}</div>', content)
         content = re.sub(r'<tbody id="east-details">.*?</tbody>', f'<tbody id="east-details">{e_rows}</tbody>', content, flags=re.DOTALL)
 
-        # 根除快取問題
+        # 寫入防止瀏覽器快取的 ID
         force_id = int(time.time())
         content = re.sub(r'', '', content)
         content += f"\n"
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
-        print("【成功】雙固定基金名單網頁更新完畢！")
+        print("【成功】下拉式選單雙基金數據皆已順利更新！")
 
 if __name__ == "__main__":
     run_monitor()

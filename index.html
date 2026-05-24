@@ -5,12 +5,9 @@
     body { font-family: sans-serif; background: #f8f9fa; padding: 10px; margin: 0; }
     .container { width: 100%; max-width: 500px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .fund-section { display: none; } .fund-section.active { display: block; }
-    
-    /* 手機滑動表格設定 */
     .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
     table { width: 100%; min-width: 400px; border-collapse: collapse; font-size: 12px; }
     th, td { padding: 8px 4px; text-align: right; border-bottom: 1px solid #eee; white-space: nowrap; }
-    
     .dashboard { text-align: center; margin-bottom: 15px; }
     .total-sum { font-size: 22px; font-weight: bold; margin-bottom: 5px; }
     .up { color: var(--up); font-weight: bold; } .down { color: var(--down); font-weight: bold; }
@@ -18,7 +15,7 @@
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; margin-bottom:15px;">🕒 更新：2026-05-24 20:08:04</div>
+    <div style="text-align:center; margin-bottom:15px;">🕒 更新：2026-05-24 22:30:08</div>
     <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')" style="width:100%; padding:10px;">
         <option value="yuanta">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option>
     </select>
@@ -26,83 +23,83 @@
         <div id="sector-yuanta" class="fund-section active">
             <div class="dashboard">
                 <div class="dashboard-title">元大店頭基金 - 今日預估總貢獻</div>
-                <div class="total-sum">+87.5700</div>
+                <div class="total-sum">+101.1467</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+1.90%</div>
+                <div class="total-percent">+1.99%</div>
             </div>
             <div class="table-responsive">
                 <table>
                     <thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead>
                     <tbody><tr>
             <td>旺矽</td>
-            <td class='weight'>9.7%</td>
+            <td class='weight'>8.71%</td>
             <td>5650.0</td>
             <td class='up'>6035.0</td>
-            <td class='up'>+0.66%</td>
-            <td class='up'>+37.3450</td>
+            <td class='up'>+0.59%</td>
+            <td class='up'>+33.5335</td>
+        </tr><tr>
+            <td>信驊</td>
+            <td class='weight'>6.66%</td>
+            <td>16440.0</td>
+            <td class='up'>17780.0</td>
+            <td class='up'>+0.54%</td>
+            <td class='up'>+89.2440</td>
         </tr><tr>
             <td>台積電</td>
-            <td class='weight'>7.88%</td>
+            <td class='weight'>6.47%</td>
             <td>2230.0</td>
             <td class='up'>2255.0</td>
-            <td class='up'>+0.09%</td>
-            <td class='up'>+1.9700</td>
+            <td class='up'>+0.07%</td>
+            <td class='up'>+1.6175</td>
         </tr><tr>
             <td>穎崴</td>
-            <td class='weight'>6.12%</td>
+            <td class='weight'>5.77%</td>
             <td>9510.0</td>
             <td class='down'>8700.0</td>
-            <td class='down'>-0.52%</td>
-            <td class='down'>-49.5720</td>
+            <td class='down'>-0.49%</td>
+            <td class='down'>-46.7370</td>
         </tr><tr>
             <td>精測</td>
-            <td class='weight'>5.68%</td>
+            <td class='weight'>5.74%</td>
             <td>3350.0</td>
             <td class='up'>3405.0</td>
             <td class='up'>+0.09%</td>
-            <td class='up'>+3.1240</td>
-        </tr><tr>
-            <td>信驊</td>
-            <td class='weight'>5.63%</td>
-            <td>16440.0</td>
-            <td class='up'>17780.0</td>
-            <td class='up'>+0.46%</td>
-            <td class='up'>+75.4420</td>
+            <td class='up'>+3.1570</td>
         </tr><tr>
             <td>聯亞</td>
-            <td class='weight'>4.56%</td>
+            <td class='weight'>4.8%</td>
             <td>2555.0</td>
             <td class='up'>2710.0</td>
-            <td class='up'>+0.28%</td>
-            <td class='up'>+7.0680</td>
+            <td class='up'>+0.29%</td>
+            <td class='up'>+7.4400</td>
+        </tr><tr>
+            <td>華星光</td>
+            <td class='weight'>4.31%</td>
+            <td>593.0</td>
+            <td class='up'>630.0</td>
+            <td class='up'>+0.27%</td>
+            <td class='up'>+1.5947</td>
+        </tr><tr>
+            <td>台燿</td>
+            <td class='weight'>4.08%</td>
+            <td>1325.0</td>
+            <td class='up'>1455.0</td>
+            <td class='up'>+0.40%</td>
+            <td class='up'>+5.3040</td>
         </tr><tr>
             <td>群聯</td>
-            <td class='weight'>3.95%</td>
+            <td class='weight'>3.84%</td>
             <td>2335.0</td>
             <td class='up'>2430.0</td>
             <td class='up'>+0.16%</td>
-            <td class='up'>+3.7525</td>
+            <td class='up'>+3.6480</td>
         </tr><tr>
-            <td>光聖</td>
-            <td class='weight'>3.75%</td>
-            <td>1785.0</td>
-            <td class='up'>1875.0</td>
-            <td class='up'>+0.19%</td>
-            <td class='up'>+3.3750</td>
-        </tr><tr>
-            <td>華星光</td>
-            <td class='weight'>3.15%</td>
-            <td>593.0</td>
-            <td class='up'>630.0</td>
-            <td class='up'>+0.20%</td>
-            <td class='up'>+1.1655</td>
-        </tr><tr>
-            <td>台燿</td>
-            <td class='weight'>3.0%</td>
-            <td>1325.0</td>
-            <td class='up'>1455.0</td>
-            <td class='up'>+0.29%</td>
-            <td class='up'>+3.9000</td>
+            <td>力旺</td>
+            <td class='weight'>3.35%</td>
+            <td>3555.0</td>
+            <td class='up'>3625.0</td>
+            <td class='up'>+0.07%</td>
+            <td class='up'>+2.3450</td>
         </tr></tbody>
                 </table>
             </div>

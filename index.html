@@ -5,118 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>旗艦基金即時監測系統</title>
     <style>
-        :root {
-            --primary: #007bff;
-            --bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --text: #333333;
-            --up-color: #ff4d4f;
-            --down-color: #52c41a;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            box-sizing: border-box;
-        }
-        .header {
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 15px;
-        }
-        .btn-update {
-            display: block;
-            width: 60%;
-            margin: 0 auto 20px auto;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .select-container {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .fund-select {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            border: 2px solid #e8e8e8;
-            border-radius: 10px;
-            background-color: #fff;
-            color: var(--primary);
-            cursor: pointer;
-            outline: none;
-        }
-        .fund-select:focus {
-            border-color: var(--primary);
-        }
-        .home-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .overview-card {
-            background: var(--bg);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.03);
-            cursor: pointer;
-        }
-        .card-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .card-sum { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
-        .card-pct { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
-        .dashboard {
-            background: var(--bg);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .dashboard-row { margin-bottom: 10px; }
-        .dashboard-row:last-child { margin-bottom: 0; }
-        .dashboard-title { font-size: 14px; color: #666; margin-bottom: 2px; }
-        .total-sum { font-size: 30px; font-weight: 800; color: #333; }
-        .total-percent { font-size: 22px; font-weight: 700; color: #555; }
-        .table-container { overflow-x: auto; width: 100%; }
+        :root { --primary: #007bff; --bg: #f8f9fa; --card-bg: #ffffff; --text: #333; --up-color: #ff4d4f; --down-color: #52c41a; }
+        body { font-family: sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .header { text-align: center; font-size: 14px; color: #666; margin-bottom: 15px; }
+        .btn-update { display: block; width: 60%; margin: 0 auto 20px auto; background: var(--primary); color: white; padding: 10px; border-radius: 20px; text-align: center; text-decoration: none; font-size: 14px; }
+        .fund-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #e8e8e8; border-radius: 10px; color: var(--primary); }
+        .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .overview-card { background: var(--bg); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; }
+        .dashboard { background: var(--bg); border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px; }
+        .total-sum { font-size: 30px; font-weight: 800; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th, td { padding: 10px 6px; text-align: right; border-bottom: 1px solid #f0f0f0; }
-        th:first-child, td:first-child { text-align: left; }
-        th { color: #999; font-weight: 500; }
-        .weight { color: #666; font-weight: bold; }
-        .up { color: var(--up-color); font-weight: bold; }
-        .down { color: var(--down-color); font-weight: bold; }
         .fund-section { display: none; }
         .fund-section.active { display: block; }
     </style>
@@ -124,240 +24,53 @@
 <body>
 
 <div class="container">
-    <div class="header">
-        🕒 最後更新：<span id="update-time">2026-05-24 18:21:28</span>
-    </div>
-    
-    <a href="https://github.com/a0928533194-web/github.io/actions/workflows/dynamic.yml/trigger" class="btn-update" target="_blank">🚀 手動更新數據</a>
+    <div class="header">🕒 最後更新：<span id="update-time">2026-05-24 18:21:28</span></div>
+    <a href="#" class="btn-update">🚀 手動更新數據</a>
 
-    <div class="select-container">
-        <select id="fundSelector" class="fund-select" onchange="switchFund(this.value)">
-            <option value="home">📊 總覽首頁 (全部基金牆)</option>
-            <option value="yuanta">元大店頭基金</option>
-            <option value="eastspring">瀚亞科技基金</option>
-            <option value="shinkin_three">新光大三通基金</option>
-            <option value="upmc_allweather">統一全天候基金</option>
-            <option value="allianz_taiwan">安聯台灣大壩基金</option>
-        </select>
-    </div>
+    <select id="fundSelector" class="fund-select" onchange="switchFund(this.value)">
+        <option value="home">📊 總覽首頁</option>
+        <option value="yuanta">元大店頭基金</option>
+        <option value="eastspring">瀚亞科技基金</option>
+        <option value="shinkin_three">新光大三通基金</option>
+        <option value="upmc_allweather">統一全天候基金</option>
+        <option value="allianz_taiwan">安聯台灣大壩基金</option>
+        <option value="allianz_tech">安聯台灣科技基金</option>
+        <option value="allianz_intel">安聯台灣智聯基金</option>
+        <option value="allianz_twgrowth">安聯台灣大盤基金</option>
+        <option value="fubon_premium">富邦首選基金</option>
+        <option value="fubon_dividend">富邦高股息基金</option>
+        <option value="fubon_core">富邦台灣核心二號基金</option>
+        <option value="nomura_etech">野村e科技基金</option>
+        <option value="nomura_premium">野村優質基金</option>
+        <option value="nomura_growth">野村成長基金</option>
+        <option value="nomura_fortune">野村鴻運基金</option>
+        <option value="nomura_tech">野村高科技基金</option>
+        <option value="nomura_twdpremium">野村優質基金-台幣</option>
+    </select>
 
     <div id="sector-home" class="fund-section active">
-        <div class="home-grid" id="home-cards-container">
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='yuanta'; switchFund('yuanta');">
-                <div class="card-title">元大店頭基金</div>
-                <div class="card-sum up">+137.1420</div>
-                <div class="card-pct up">+2.42%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='eastspring'; switchFund('eastspring');">
-                <div class="card-title">瀚亞科技基金</div>
-                <div class="card-sum up">+55.9765</div>
-                <div class="card-pct up">+2.64%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='shinkin_three'; switchFund('shinkin_three');">
-                <div class="card-title">新光大三通基金</div>
-                <div class="card-sum up">+46.2689</div>
-                <div class="card-pct up">+2.96%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='upmc_allweather'; switchFund('upmc_allweather');">
-                <div class="card-title">統一全天候基金</div>
-                <div class="card-sum up">+69.4735</div>
-                <div class="card-pct up">+2.70%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='allianz_taiwan'; switchFund('allianz_taiwan');">
-                <div class="card-title">安聯台灣大壩基金</div>
-                <div class="card-sum up">+153.5005</div>
-                <div class="card-pct up">+2.84%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='allianz_tech'; switchFund('allianz_tech');">
-                <div class="card-title">安聯台灣科技基金</div>
-                <div class="card-sum up">+125.1336</div>
-                <div class="card-pct up">+2.30%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='allianz_intel'; switchFund('allianz_intel');">
-                <div class="card-title">安聯台灣智聯基金</div>
-                <div class="card-sum up">+176.7320</div>
-                <div class="card-pct up">+3.31%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='allianz_twgrowth'; switchFund('allianz_twgrowth');">
-                <div class="card-title">安聯台灣大盤基金</div>
-                <div class="card-sum up">+142.6250</div>
-                <div class="card-pct up">+2.40%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='fubon_premium'; switchFund('fubon_premium');">
-                <div class="card-title">富邦首選基金</div>
-                <div class="card-sum up">+66.3638</div>
-                <div class="card-pct up">+3.12%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='fubon_dividend'; switchFund('fubon_dividend');">
-                <div class="card-title">富邦高股息基金</div>
-                <div class="card-sum up">+54.0533</div>
-                <div class="card-pct up">+3.41%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='fubon_core'; switchFund('fubon_core');">
-                <div class="card-title">富邦台灣核心二號基金</div>
-                <div class="card-sum up">+65.1168</div>
-                <div class="card-pct up">+3.33%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='nomura_etech'; switchFund('nomura_etech');">
-                <div class="card-title">野村e科技基金</div>
-                <div class="card-sum up">+45.5453</div>
-                <div class="card-pct up">+3.08%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='nomura_premium'; switchFund('nomura_premium');">
-                <div class="card-title">野村優質基金</div>
-                <div class="card-sum up">+86.5635</div>
-                <div class="card-pct up">+2.76%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='nomura_growth'; switchFund('nomura_growth');">
-                <div class="card-title">野村成長基金</div>
-                <div class="card-sum up">+75.7795</div>
-                <div class="card-pct up">+2.75%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='nomura_fortune'; switchFund('nomura_fortune');">
-                <div class="card-title">野村鴻運基金</div>
-                <div class="card-sum up">+73.2000</div>
-                <div class="card-pct up">+2.46%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='nomura_tech'; switchFund('nomura_tech');">
-                <div class="card-title">野村高科技基金</div>
-                <div class="card-sum up">+45.6098</div>
-                <div class="card-pct up">+3.34%</div>
-            </div>
-            
-            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='nomura_twdpremium'; switchFund('nomura_twdpremium');">
-                <div class="card-title">野村優質基金-台幣</div>
-                <div class="card-sum up">+83.2185</div>
-                <div class="card-pct up">+2.66%</div>
-            </div>
-            </div>
-                <div class="card-sum up">+137.1420</div>
-                <div class="card-pct up">+2.42%</div>
-            </div>
-            <div class="overview-card" onclick="document.getElementById('fundSelector').value='eastspring'; switchFund('eastspring');">
-                <div class="card-title">瀚亞科技基金</div>
-                <div class="card-sum up">+55.9765</div>
-                <div class="card-pct up">+2.64%</div>
-            </div>
-            <div class="overview-card" onclick="document.getElementById('fundSelector').value='shinkin_three'; switchFund('shinkin_three');">
-                <div class="card-title">新光大三通基金</div>
-                <div class="card-sum up">+46.2689</div>
-                <div class="card-pct up">+2.96%</div>
-            </div>
-            <div class="overview-card" onclick="document.getElementById('fundSelector').value='upmc_allweather'; switchFund('upmc_allweather');">
-                <div class="card-title">統一全天候基金</div>
-                <div class="card-sum up">+69.4735</div>
-                <div class="card-pct up">+2.70%</div>
-            </div>
-            <div class="overview-card" onclick="document.getElementById('fundSelector').value='allianz_taiwan'; switchFund('allianz_taiwan');">
-                <div class="card-title">安聯台灣大壩基金</div>
-                <div class="card-sum up">+153.5005</div>
-                <div class="card-pct up">+2.84%</div>
-            </div>
-        </div>
+        <p>總覽頁面內容...</p>
     </div>
 
     <div id="sector-yuanta" class="fund-section">
         <div class="dashboard">
-            <div class="dashboard-row"><div class="dashboard-title">今日預估總貢獻</div><div id="yuanta-sum" class="total-sum">+137.1420</div></div>
-            <div class="dashboard-row"><div class="dashboard-title">今日預估總貢獻 %</div><div id="yuanta-pct" class="total-percent">+2.42%</div></div>
+            <div class="total-sum" id="yuanta-sum">0.00</div>
         </div>
-        <div class="table-container">
-            <table>
-                <thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead>
-                <tbody id="yuanta-details"><tr>
-                <td>旺矽</td>
-                <td class='weight'>9.7%</td>
-                <td>5650.0</td>
-                <td class='up'>6035.0</td>
-                <td class='up'>+0.66%</td>
-                <td class='up'>+37.3450</td>
-            </tr><tr>
-                <td>台積電</td>
-                <td class='weight'>7.88%</td>
-                <td>2230.0</td>
-                <td class='up'>2255.0</td>
-                <td class='up'>+0.09%</td>
-                <td class='up'>+1.9700</td>
-            </tr><tr>
-                <td>精測</td>
-                <td class='weight'>5.68%</td>
-                <td>3350.0</td>
-                <td class='up'>3405.0</td>
-                <td class='up'>+0.09%</td>
-                <td class='up'>+3.1240</td>
-            </tr><tr>
-                <td>信驊</td>
-                <td class='weight'>5.63%</td>
-                <td>16440.0</td>
-                <td class='up'>17780.0</td>
-                <td class='up'>+0.46%</td>
-                <td class='up'>+75.4420</td>
-            </tr><tr>
-                <td>聯亞</td>
-                <td class='weight'>4.56%</td>
-                <td>2555.0</td>
-                <td class='up'>2710.0</td>
-                <td class='up'>+0.28%</td>
-                <td class='up'>+7.0680</td>
-            </tr><tr>
-                <td>群聯</td>
-                <td class='weight'>3.95%</td>
-                <td>2335.0</td>
-                <td class='up'>2430.0</td>
-                <td class='up'>+0.16%</td>
-                <td class='up'>+3.7525</td>
-            </tr><tr>
-                <td>光聖</td>
-                <td class='weight'>3.75%</td>
-                <td>1785.0</td>
-                <td class='up'>1875.0</td>
-                <td class='up'>+0.19%</td>
-                <td class='up'>+3.3750</td>
-            </tr><tr>
-                <td>華星光</td>
-                <td class='weight'>3.15%</td>
-                <td>593.0</td>
-                <td class='up'>630.0</td>
-                <td class='up'>+0.20%</td>
-                <td class='up'>+1.1655</td>
-            </tr><tr>
-                <td>台燿</td>
-                <td class='weight'>3.0%</td>
-                <td>1325.0</td>
-                <td class='up'>1455.0</td>
-                <td class='up'>+0.29%</td>
-                <td class='up'>+3.9000</td>
-            </tr></tbody>
-            </table>
-        </div>
+        <table>
+            <thead><tr><th>成分股</th><th>貢獻度</th></tr></thead>
+            <tbody id="yuanta-details"></tbody>
+        </table>
     </div>
-    
+
     </div>
 
 <script>
-function switchFund(fundValue) {
-    const sections = document.querySelectorAll('.fund-section');
-    sections.forEach(section => section.classList.remove('active'));
-    const targetSection = document.getElementById('sector-' + fundValue);
-    if (targetSection) targetSection.classList.add('active');
-}
+    function switchFund(fundValue) {
+        document.querySelectorAll('.fund-section').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById('sector-' + fundValue);
+        if (target) target.classList.add('active');
+    }
 </script>
 
 </body>
 </html>
-

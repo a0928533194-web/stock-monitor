@@ -4,17 +4,20 @@
     :root { --up: #ff4d4f; --down: #52c41a; }
     body { font-family: sans-serif; background: #f8f9fa; padding: 15px; display: flex; flex-direction: column; align-items: center; }
     .container { width: 100%; max-width: 500px; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .fund-select { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
+    .fund-select { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; font-weight: bold; }
     .fund-section { display: none; } .fund-section.active { display: block; }
     .dashboard { text-align: center; margin-bottom: 20px; }
-    .total-sum { font-size: 28px; font-weight: bold; }
+    .dashboard-title { font-size: 14px; color: #666; }
+    .total-sum { font-size: 28px; font-weight: bold; color: #333; }
+    .total-percent { font-size: 20px; font-weight: bold; color: #555; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th, td { padding: 8px; text-align: right; border-bottom: 1px solid #eee; }
     .up { color: var(--up); font-weight: bold; } .down { color: var(--down); font-weight: bold; }
+    .weight { color: #666; }
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; margin-bottom:10px;">🕒 更新：2026-05-24 18:49:51</div>
+    <div style="text-align:center; margin-bottom:10px;">🕒 更新：2026-05-24 18:56:32</div>
     <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')">
         <option value="yuanta">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option>
     </select>

@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 import time
 
-# 數據設定：代號為純數字字串
+# 數據設定
 FUNDS_CONFIG = {
     "yuanta": {
         "name": "元大店頭基金",
@@ -31,7 +31,6 @@ def get_fund_data(stocks_dict):
         success = False
         p_yesterday, p_current, diff = 0.0, 0.0, 0.0
         
-        # 嘗試抓取
         for suffix in ["", ".TW", ".TWO"]:
             try:
                 stock = yf.Ticker(f"{ticker_base}{suffix}")
@@ -44,12 +43,8 @@ def get_fund_data(stocks_dict):
                     break
             except: continue
         
-        # --- 修正後的科學計算公式 ---
-        # 個股單日漲跌幅 %
         stock_change_pct = (diff / p_yesterday * 100) if p_yesterday != 0 else 0
-        # 加權貢獻 % = 個股漲跌幅 * 權重比例
         contrib_pct = stock_change_pct * (weight / 100)
-        # 貢獻度點數 = 價格差 * 權重比例
         contribution = diff * (weight / 100)
         
         total_pct += contrib_pct
@@ -84,19 +79,31 @@ def run_monitor():
                 <div class="dashboard-title">今日預估總貢獻 %</div>
                 <div class="total-percent">{total_pct:+.2f}%</div>
             </div>
-            <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody>{table_rows}</tbody></table>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead>
+                    <tbody>{table_rows}</tbody>
+                </table>
+            </div>
         </div>'''
 
     html_content = f"""<!DOCTYPE html>
 <html lang="zh-TW"><head><meta charset="UTF-8"><title>基金監測系統</title>
 <style>
     :root {{ --up: #ff4d4f; --down: #52c41a; }}
-    body {{ font-family: sans-serif; background: #f8f9fa; padding: 20px; }}
-    .container {{ max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
+    body {{ font-family: sans-serif; background: #f8f9fa; padding: 10px; margin: 0; }}
+    .container {{ width: 100%; max-width: 500px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
     .fund-section {{ display: none; }} .fund-section.active {{ display: block; }}
-    table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
-    th, td {{ padding: 8px; text-align: right; border-bottom: 1px solid #eee; }}
+    
+    /* 手機滑動表格設定 */
+    .table-responsive {{ width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }}
+    table {{ width: 100%; min-width: 400px; border-collapse: collapse; font-size: 12px; }}
+    th, td {{ padding: 8px 4px; text-align: right; border-bottom: 1px solid #eee; white-space: nowrap; }}
+    
+    .dashboard {{ text-align: center; margin-bottom: 15px; }}
+    .total-sum {{ font-size: 22px; font-weight: bold; margin-bottom: 5px; }}
     .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
+    .dashboard-title {{ font-size: 12px; color: #666; }}
 </style></head>
 <body>
 <div class="container">

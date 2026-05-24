@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 import time
 
-# 完整定義成分股清單
+# 數據設定
 FUNDS_CONFIG = {
     "yuanta": {
         "name": "元大店頭基金",
@@ -27,32 +27,30 @@ def get_fund_data(stocks_dict):
     total_contribution, total_pct = 0, 0
     table_rows = ""
     for name, (ticker_str, weight) in stocks_dict.items():
-        time.sleep(0.6) # 減緩請求速度，防止被封鎖
-        found = False
-        for attempt in range(3):
-            try:
-                stock = yf.Ticker(ticker_str)
-                hist = stock.history(period="5d")
-                if len(hist) < 2: continue
-                
-                p_yesterday = round(hist['Close'].iloc[-2], 2)
-                p_current = round(stock.fast_info.get('lastPrice', hist['Close'].iloc[-1]), 2)
-                
-                diff = round(p_current - p_yesterday, 2)
-                contrib_pct = (diff / p_yesterday) * weight
-                contribution = round(diff * (weight / 100), 4)
-                
-                total_pct += contrib_pct
-                total_contribution += contribution
-                
-                color = "up" if diff > 0 else "down" if diff < 0 else ""
-                table_rows += f"<tr><td>{name}</td><td class='weight'>{weight}%</td><td>{p_yesterday}</td><td class='{color}'>{p_current}</td><td class='{color}'>{contrib_pct:+.2f}%</td><td class='{color}'>{contribution:+.4f}</td></tr>"
-                found = True
-                break
-            except:
-                time.sleep(1)
-        if not found:
-            print(f"【警告】無法抓取 {name} ({ticker_str})")
+        print(f"處理中: {name} ({ticker_str})")
+        stock = yf.Ticker(ticker_str)
+        hist = stock.history(period="5d")
+        
+        # 即使只有 1 筆資料也嘗試計算，避免漏掉股票
+        if len(hist) < 1:
+            print(f"  -> 無法取得 {name} 資料")
+            continue
+            
+        # 若 len < 2，昨收與現價暫時設為相同
+        p_current = round(stock.fast_info.get('lastPrice', hist['Close'].iloc[-1]), 2)
+        p_yesterday = round(hist['Close'].iloc[-2], 2) if len(hist) >= 2 else p_current
+        
+        diff = round(p_current - p_yesterday, 2)
+        contrib_pct = (diff / p_yesterday * 100) if p_yesterday != 0 else 0
+        contrib_weight = (contrib_pct / 100) * weight
+        contribution = round(diff * (weight / 100), 4)
+        
+        total_pct += (contrib_pct * (weight/100))
+        total_contribution += contribution
+        
+        color = "up" if diff > 0 else "down" if diff < 0 else ""
+        table_rows += f"<tr><td>{name}</td><td class='weight'>{weight}%</td><td>{p_yesterday}</td><td class='{color}'>{p_current}</td><td class='{color}'>{contrib_pct * (weight/100):+.2f}%</td><td class='{color}'>{contribution:+.4f}</td></tr>"
+        
     return round(total_contribution, 4), round(total_pct, 2), table_rows
 
 def run_monitor():
@@ -87,10 +85,11 @@ def run_monitor():
     table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
     th, td {{ padding: 8px; text-align: right; border-bottom: 1px solid #eee; }}
     .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
+    .weight {{ color: #666; }}
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; margin-bottom:10px;">🕒 更新：{now_tw}</div>
+    <div style="text-align:center; margin-bottom:10px;">🕒 最後更新：{now_tw}</div>
     <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')">
         {options_html}
     </select>
@@ -100,7 +99,7 @@ def run_monitor():
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("【更新成功】index.html 已生成")
+    print("【更新完成】請重新整理瀏覽器查看 index.html")
 
 if __name__ == "__main__":
     run_monitor()

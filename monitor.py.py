@@ -4,7 +4,7 @@ import os
 import re
 import pytz
 
-# 17檔基金名稱對照表 (保持不變)
+# 17檔基金名稱對照表
 FUND_NAMES = {
     "yuanta": "元大店頭基金", "eastspring": "瀚亞科技基金", "shinkin_three": "新光大三通基金", "upmc_allweather": "統一全天候基金",
     "allianz_taiwan": "安聯台灣大壩基金", "allianz_tech": "安聯台灣科技基金", "allianz_intel": "安聯台灣智聯基金", "allianz_twgrowth": "安聯台灣大盤基金",
@@ -13,7 +13,22 @@ FUND_NAMES = {
     "nomura_dividend": "野村台灣高股息基金", "nomura_twdpremium": "野村優質基金-台幣"
 }
 
-# (funds_data_config 區塊保持不變，為節省空間此處略過，請保留你原有的內容)
+# 【完整字典定義】：這裡定義好，下方 run_monitor 才能抓得到
+funds_data_config = {
+    "nomura_etech": {
+        "南電": ("8046.TW", 9.18),
+        "欣興": ("3037.TW", 8.94),
+        "聯亞": ("3081.TW", 7.45),
+        "台積電": ("2330.TW", 6.36),
+        "奇鋐": ("3017.TW", 6.05),
+        "華星光": ("4979.TW", 5.10),
+        "聯發科": ("2454.TW", 3.96),
+        "景碩": ("3189.TW", 3.79),
+        "臻鼎-KY": ("4958.TW", 3.65),
+        "致茂": ("2360.TW", 3.59)
+    }
+    # 請依照此格式補齊其他基金的資料
+}
 
 def get_fund_data(stocks_dict):
     total_contribution = 0
@@ -43,7 +58,8 @@ def get_fund_data(stocks_dict):
                 <td class='{color_class}'>{contrib_percent:+.2f}%</td>
                 <td class='{color_class}'>{contribution:+.4f}</td>
             </tr>"""
-        except:
+        except Exception as e:
+            print(f"Error processing {name}: {e}")
             pass
     return round(total_contribution, 4), round(total_pct, 2), table_rows
 
@@ -57,7 +73,6 @@ def run_monitor():
         
         content = re.sub(r'id="update-time">.*?</span>', f'id="update-time">{now_tw}</span>', content)
         
-        # 產生簡潔清單
         home_table_html = """
         <table class="overview-table" style="width:100%; border-collapse:collapse; margin-top:20px;">
             <thead>
@@ -72,12 +87,14 @@ def run_monitor():
         
         for fund_key, fund_name in FUND_NAMES.items():
             stocks_dict = funds_data_config.get(fund_key, {})
+            # 如果是空的字典，跳過計算以免報錯
+            if not stocks_dict: continue
+            
             total_sum, total_pct, table_rows = get_fund_data(stocks_dict)
             fixed_key = fund_key if fund_key != "eastspring" else "east"
             
             color_class = "up" if total_sum > 0 else "down" if total_sum < 0 else ""
             
-            # 清單列
             home_table_html += f"""
             <tr onclick="document.getElementById('fundSelector').value='{fund_key}'; switchFund('{fund_key}');" style="cursor:pointer; border-bottom:1px solid #eee;">
                 <td style="padding:10px;">{fund_name}</td>
@@ -86,7 +103,6 @@ def run_monitor():
             </tr>
             """
             
-            # 同時更新詳細頁面資訊
             content = re.sub(rf'id="{fixed_key}-sum".*?>.*?</div>', f'id="{fixed_key}-sum" class="total-sum">{total_sum:+.4f}</div>', content)
             content = re.sub(rf'id="{fixed_key}-pct".*?>.*?</div>', f'id="{fixed_key}-pct" class="total-percent">{total_pct:+.2f}%</div>', content)
             content = re.sub(rf'<tbody id="{fixed_key}-details">.*?</tbody>', f'<tbody id="{fixed_key}-details">{table_rows}</tbody>', content, flags=re.DOTALL)
@@ -96,7 +112,7 @@ def run_monitor():
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
-        print("【成功】首頁清單模式更新完成！")
+        print("【成功】程式執行完畢！")
 
 if __name__ == "__main__":
     run_monitor()

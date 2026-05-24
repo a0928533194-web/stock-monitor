@@ -6,22 +6,22 @@
     .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .fund-section { display: none; } .fund-section.active { display: block; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th, td { padding: 6px; text-align: right; border-bottom: 1px solid #eee; }
-    .up { color: var(--up); } .down { color: var(--down); }
+    th, td { padding: 8px; text-align: right; border-bottom: 1px solid #eee; }
+    .up { color: var(--up); font-weight: bold; } .down { color: var(--down); font-weight: bold; }
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center;">🕒 最後更新：2026-05-24 19:20:11</div>
-    <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')">
+    <div style="text-align:center; margin-bottom:15px;">🕒 最後更新：2026-05-24 19:24:29</div>
+    <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')" style="width:100%; padding:10px;">
         <option value="yuanta">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option>
     </select>
     
         <div id="sector-yuanta" class="fund-section active">
             <div class="dashboard">
                 <div class="dashboard-title">元大店頭基金 - 今日預估總貢獻</div>
-                <div class="total-sum">+137.1420</div>
+                <div class="total-sum">+87.5700</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+2.42%</div>
+                <div class="total-percent">+1.90%</div>
             </div>
             <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr>
             <td>旺矽</td>
@@ -40,10 +40,10 @@
         </tr><tr>
             <td>穎崴</td>
             <td class='weight'>6.12%</td>
-            <td>N/A</td>
-            <td class=''>N/A</td>
-            <td class=''>+0.00%</td>
-            <td class=''>+0.0000</td>
+            <td>9510.0</td>
+            <td class='down'>8700.0</td>
+            <td class='down'>-8.52%</td>
+            <td class='down'>-49.5720</td>
         </tr><tr>
             <td>精測</td>
             <td class='weight'>5.68%</td>
@@ -98,9 +98,9 @@
         <div id="sector-shinkin_three" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">新光大三通基金 - 今日預估總貢獻</div>
-                <div class="total-sum">+46.2689</div>
+                <div class="total-sum">+52.2089</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+2.96%</div>
+                <div class="total-percent">+3.18%</div>
             </div>
             <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr>
             <td>欣興</td>
@@ -154,10 +154,10 @@
         </tr><tr>
             <td>弘塑</td>
             <td class='weight'>4.95%</td>
-            <td>N/A</td>
-            <td class=''>N/A</td>
-            <td class=''>+0.00%</td>
-            <td class=''>+0.0000</td>
+            <td>2700.0</td>
+            <td class='up'>2820.0</td>
+            <td class='up'>+4.44%</td>
+            <td class='up'>+5.9400</td>
         </tr><tr>
             <td>旺宏</td>
             <td class='weight'>3.94%</td>

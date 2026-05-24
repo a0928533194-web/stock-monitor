@@ -24,7 +24,7 @@
 <body>
 
 <div class="container">
-    <div class="header">🕒 最後更新：<span id="update-time">2026-05-24 18:21:28</span></div>
+    <div class="header">🕒 最後更新：<span id="update-time">2026-05-24 18:27:12</span></div>
     <a href="#" class="btn-update">🚀 手動更新數據</a>
 
     <select id="fundSelector" class="fund-select" onchange="switchFund(this.value)">
@@ -54,11 +54,74 @@
 
     <div id="sector-yuanta" class="fund-section">
         <div class="dashboard">
-            <div class="total-sum" id="yuanta-sum">0.00</div>
+            <div class="total-sum" id="yuanta-sum" class="total-sum">+137.1420</div>
         </div>
         <table>
             <thead><tr><th>成分股</th><th>貢獻度</th></tr></thead>
-            <tbody id="yuanta-details"></tbody>
+            <tbody id="yuanta-details"><tr>
+                <td>旺矽</td>
+                <td class='weight'>9.7%</td>
+                <td>5650.0</td>
+                <td class='up'>6035.0</td>
+                <td class='up'>+0.66%</td>
+                <td class='up'>+37.3450</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td class='weight'>7.88%</td>
+                <td>2230.0</td>
+                <td class='up'>2255.0</td>
+                <td class='up'>+0.09%</td>
+                <td class='up'>+1.9700</td>
+            </tr><tr>
+                <td>精測</td>
+                <td class='weight'>5.68%</td>
+                <td>3350.0</td>
+                <td class='up'>3405.0</td>
+                <td class='up'>+0.09%</td>
+                <td class='up'>+3.1240</td>
+            </tr><tr>
+                <td>信驊</td>
+                <td class='weight'>5.63%</td>
+                <td>16440.0</td>
+                <td class='up'>17780.0</td>
+                <td class='up'>+0.46%</td>
+                <td class='up'>+75.4420</td>
+            </tr><tr>
+                <td>聯亞</td>
+                <td class='weight'>4.56%</td>
+                <td>2555.0</td>
+                <td class='up'>2710.0</td>
+                <td class='up'>+0.28%</td>
+                <td class='up'>+7.0680</td>
+            </tr><tr>
+                <td>群聯</td>
+                <td class='weight'>3.95%</td>
+                <td>2335.0</td>
+                <td class='up'>2430.0</td>
+                <td class='up'>+0.16%</td>
+                <td class='up'>+3.7525</td>
+            </tr><tr>
+                <td>光聖</td>
+                <td class='weight'>3.75%</td>
+                <td>1785.0</td>
+                <td class='up'>1875.0</td>
+                <td class='up'>+0.19%</td>
+                <td class='up'>+3.3750</td>
+            </tr><tr>
+                <td>華星光</td>
+                <td class='weight'>3.15%</td>
+                <td>593.0</td>
+                <td class='up'>630.0</td>
+                <td class='up'>+0.20%</td>
+                <td class='up'>+1.1655</td>
+            </tr><tr>
+                <td>台燿</td>
+                <td class='weight'>3.0%</td>
+                <td>1325.0</td>
+                <td class='up'>1455.0</td>
+                <td class='up'>+0.29%</td>
+                <td class='up'>+3.9000</td>
+            </tr></tbody>
         </table>
     </div>
 
@@ -74,3 +137,4 @@
 
 </body>
 </html>
+

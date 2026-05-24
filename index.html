@@ -1,39 +1,178 @@
 <!DOCTYPE html>
-<html lang="zh-TW"><head><meta charset="UTF-8"><title>旗艦基金即時監測系統</title>
+<html lang="zh-TW"><head><meta charset="UTF-8"><title>基金監測系統</title>
 <style>
     :root { --up: #ff4d4f; --down: #52c41a; }
-    body { font-family: sans-serif; background: #f8f9fa; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-    .container { width: 100%; max-width: 500px; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .fund-select { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; font-weight: bold; }
+    body { font-family: sans-serif; background: #f8f9fa; padding: 20px; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .fund-section { display: none; } .fund-section.active { display: block; }
-    .dashboard { text-align: center; margin-bottom: 20px; }
-    .total-sum { font-size: 28px; font-weight: bold; color: #333; }
-    .total-percent { font-size: 20px; font-weight: bold; color: #555; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 8px; text-align: right; border-bottom: 1px solid #eee; }
-    .up { color: var(--up); font-weight: bold; } .down { color: var(--down); font-weight: bold; }
-    .weight { color: #666; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 6px; text-align: right; border-bottom: 1px solid #eee; }
+    .up { color: var(--up); } .down { color: var(--down); }
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; margin-bottom:10px;">🕒 最後更新：2026-05-24 19:11:48</div>
+    <div style="text-align:center;">🕒 最後更新：2026-05-24 19:20:11</div>
     <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')">
         <option value="yuanta">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option>
     </select>
     
         <div id="sector-yuanta" class="fund-section active">
             <div class="dashboard">
-                <div class="dashboard-row"><div class="dashboard-title">元大店頭基金 - 今日預估總貢獻</div><div class="total-sum">+137.1420</div></div>
-                <div class="dashboard-row"><div class="dashboard-title">今日預估總貢獻 %</div><div class="total-percent">+2.42%</div></div>
+                <div class="dashboard-title">元大店頭基金 - 今日預估總貢獻</div>
+                <div class="total-sum">+137.1420</div>
+                <div class="dashboard-title">今日預估總貢獻 %</div>
+                <div class="total-percent">+2.42%</div>
             </div>
-            <div class="table-container"><table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>旺矽</td><td class='weight'>9.7%</td><td>5650.0</td><td class='up'>6035.0</td><td class='up'>+0.66%</td><td class='up'>+37.3450</td></tr><tr><td>台積電</td><td class='weight'>7.88%</td><td>2230.0</td><td class='up'>2255.0</td><td class='up'>+0.09%</td><td class='up'>+1.9700</td></tr><tr><td>精測</td><td class='weight'>5.68%</td><td>3350.0</td><td class='up'>3405.0</td><td class='up'>+0.09%</td><td class='up'>+3.1240</td></tr><tr><td>信驊</td><td class='weight'>5.63%</td><td>16440.0</td><td class='up'>17780.0</td><td class='up'>+0.46%</td><td class='up'>+75.4420</td></tr><tr><td>聯亞</td><td class='weight'>4.56%</td><td>2555.0</td><td class='up'>2710.0</td><td class='up'>+0.28%</td><td class='up'>+7.0680</td></tr><tr><td>群聯</td><td class='weight'>3.95%</td><td>2335.0</td><td class='up'>2430.0</td><td class='up'>+0.16%</td><td class='up'>+3.7525</td></tr><tr><td>光聖</td><td class='weight'>3.75%</td><td>1785.0</td><td class='up'>1875.0</td><td class='up'>+0.19%</td><td class='up'>+3.3750</td></tr><tr><td>華星光</td><td class='weight'>3.15%</td><td>593.0</td><td class='up'>630.0</td><td class='up'>+0.20%</td><td class='up'>+1.1655</td></tr><tr><td>台燿</td><td class='weight'>3.0%</td><td>1325.0</td><td class='up'>1455.0</td><td class='up'>+0.29%</td><td class='up'>+3.9000</td></tr></tbody></table></div>
+            <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr>
+            <td>旺矽</td>
+            <td class='weight'>9.7%</td>
+            <td>5650.0</td>
+            <td class='up'>6035.0</td>
+            <td class='up'>+6.81%</td>
+            <td class='up'>+37.3450</td>
+        </tr><tr>
+            <td>台積電</td>
+            <td class='weight'>7.88%</td>
+            <td>2230.0</td>
+            <td class='up'>2255.0</td>
+            <td class='up'>+1.12%</td>
+            <td class='up'>+1.9700</td>
+        </tr><tr>
+            <td>穎崴</td>
+            <td class='weight'>6.12%</td>
+            <td>N/A</td>
+            <td class=''>N/A</td>
+            <td class=''>+0.00%</td>
+            <td class=''>+0.0000</td>
+        </tr><tr>
+            <td>精測</td>
+            <td class='weight'>5.68%</td>
+            <td>3350.0</td>
+            <td class='up'>3405.0</td>
+            <td class='up'>+1.64%</td>
+            <td class='up'>+3.1240</td>
+        </tr><tr>
+            <td>信驊</td>
+            <td class='weight'>5.63%</td>
+            <td>16440.0</td>
+            <td class='up'>17780.0</td>
+            <td class='up'>+8.15%</td>
+            <td class='up'>+75.4420</td>
+        </tr><tr>
+            <td>聯亞</td>
+            <td class='weight'>4.56%</td>
+            <td>2555.0</td>
+            <td class='up'>2710.0</td>
+            <td class='up'>+6.07%</td>
+            <td class='up'>+7.0680</td>
+        </tr><tr>
+            <td>群聯</td>
+            <td class='weight'>3.95%</td>
+            <td>2335.0</td>
+            <td class='up'>2430.0</td>
+            <td class='up'>+4.07%</td>
+            <td class='up'>+3.7525</td>
+        </tr><tr>
+            <td>光聖</td>
+            <td class='weight'>3.75%</td>
+            <td>1785.0</td>
+            <td class='up'>1875.0</td>
+            <td class='up'>+5.04%</td>
+            <td class='up'>+3.3750</td>
+        </tr><tr>
+            <td>華星光</td>
+            <td class='weight'>3.15%</td>
+            <td>593.0</td>
+            <td class='up'>630.0</td>
+            <td class='up'>+6.24%</td>
+            <td class='up'>+1.1655</td>
+        </tr><tr>
+            <td>台燿</td>
+            <td class='weight'>3.0%</td>
+            <td>1325.0</td>
+            <td class='up'>1455.0</td>
+            <td class='up'>+9.81%</td>
+            <td class='up'>+3.9000</td>
+        </tr></tbody></table>
         </div>
         <div id="sector-shinkin_three" class="fund-section ">
             <div class="dashboard">
-                <div class="dashboard-row"><div class="dashboard-title">新光大三通基金 - 今日預估總貢獻</div><div class="total-sum">+46.2689</div></div>
-                <div class="dashboard-row"><div class="dashboard-title">今日預估總貢獻 %</div><div class="total-percent">+2.96%</div></div>
+                <div class="dashboard-title">新光大三通基金 - 今日預估總貢獻</div>
+                <div class="total-sum">+46.2689</div>
+                <div class="dashboard-title">今日預估總貢獻 %</div>
+                <div class="total-percent">+2.96%</div>
             </div>
-            <div class="table-container"><table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>欣興</td><td class='weight'>9.47%</td><td>905.0</td><td class='up'>970.0</td><td class='up'>+0.68%</td><td class='up'>+6.1555</td></tr><tr><td>景碩</td><td class='weight'>7.1%</td><td>554.0</td><td class='up'>609.0</td><td class='up'>+0.70%</td><td class='up'>+3.9050</td></tr><tr><td>世芯-KY</td><td class='weight'>6.93%</td><td>4905.0</td><td class='down'>4895.0</td><td class='down'>-0.01%</td><td class='down'>-0.6930</td></tr><tr><td>台積電</td><td class='weight'>6.59%</td><td>2230.0</td><td class='up'>2255.0</td><td class='up'>+0.07%</td><td class='up'>+1.6475</td></tr><tr><td>旺矽</td><td class='weight'>6.27%</td><td>5650.0</td><td class='up'>6035.0</td><td class='up'>+0.43%</td><td class='up'>+24.1395</td></tr><tr><td>大量</td><td class='weight'>6.06%</td><td>756.0</td><td class='up'>831.0</td><td class='up'>+0.60%</td><td class='up'>+4.5450</td></tr><tr><td>台達電</td><td class='weight'>5.37%</td><td>2030.0</td><td class='up'>2095.0</td><td class='up'>+0.17%</td><td class='up'>+3.4905</td></tr><tr><td>旺宏</td><td class='weight'>3.94%</td><td>141.0</td><td class='up'>149.5</td><td class='up'>+0.24%</td><td class='up'>+0.3349</td></tr><tr><td>力旺</td><td class='weight'>3.92%</td><td>3555.0</td><td class='up'>3625.0</td><td class='up'>+0.08%</td><td class='up'>+2.7440</td></tr></tbody></table></div>
+            <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr>
+            <td>欣興</td>
+            <td class='weight'>9.47%</td>
+            <td>905.0</td>
+            <td class='up'>970.0</td>
+            <td class='up'>+7.18%</td>
+            <td class='up'>+6.1555</td>
+        </tr><tr>
+            <td>景碩</td>
+            <td class='weight'>7.1%</td>
+            <td>554.0</td>
+            <td class='up'>609.0</td>
+            <td class='up'>+9.93%</td>
+            <td class='up'>+3.9050</td>
+        </tr><tr>
+            <td>世芯-KY</td>
+            <td class='weight'>6.93%</td>
+            <td>4905.0</td>
+            <td class='down'>4895.0</td>
+            <td class='down'>-0.20%</td>
+            <td class='down'>-0.6930</td>
+        </tr><tr>
+            <td>台積電</td>
+            <td class='weight'>6.59%</td>
+            <td>2230.0</td>
+            <td class='up'>2255.0</td>
+            <td class='up'>+1.12%</td>
+            <td class='up'>+1.6475</td>
+        </tr><tr>
+            <td>旺矽</td>
+            <td class='weight'>6.27%</td>
+            <td>5650.0</td>
+            <td class='up'>6035.0</td>
+            <td class='up'>+6.81%</td>
+            <td class='up'>+24.1395</td>
+        </tr><tr>
+            <td>大量</td>
+            <td class='weight'>6.06%</td>
+            <td>756.0</td>
+            <td class='up'>831.0</td>
+            <td class='up'>+9.92%</td>
+            <td class='up'>+4.5450</td>
+        </tr><tr>
+            <td>台達電</td>
+            <td class='weight'>5.37%</td>
+            <td>2030.0</td>
+            <td class='up'>2095.0</td>
+            <td class='up'>+3.20%</td>
+            <td class='up'>+3.4905</td>
+        </tr><tr>
+            <td>弘塑</td>
+            <td class='weight'>4.95%</td>
+            <td>N/A</td>
+            <td class=''>N/A</td>
+            <td class=''>+0.00%</td>
+            <td class=''>+0.0000</td>
+        </tr><tr>
+            <td>旺宏</td>
+            <td class='weight'>3.94%</td>
+            <td>141.0</td>
+            <td class='up'>149.5</td>
+            <td class='up'>+6.03%</td>
+            <td class='up'>+0.3349</td>
+        </tr><tr>
+            <td>力旺</td>
+            <td class='weight'>3.92%</td>
+            <td>3555.0</td>
+            <td class='up'>3625.0</td>
+            <td class='up'>+1.97%</td>
+            <td class='up'>+2.7440</td>
+        </tr></tbody></table>
         </div>
 </div>
 </body></html>

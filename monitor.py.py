@@ -1,6 +1,7 @@
 import yfinance as yf
 from datetime import datetime
 import pytz
+import time
 
 # 數據設定
 FUNDS_CONFIG = {
@@ -26,21 +27,30 @@ def get_fund_data(stocks_dict):
     total_contribution, total_pct = 0, 0
     table_rows = ""
     for name, (ticker_str, weight) in stocks_dict.items():
-        try:
-            stock = yf.Ticker(ticker_str)
-            hist = stock.history(period="2d")
-            if len(hist) < 2: continue
-            p_yesterday = round(hist['Close'].iloc[-2], 2)
-            p_current = round(stock.fast_info.get('lastPrice', hist['Close'].iloc[-1]), 2)
-            diff = round(p_current - p_yesterday, 2)
-            contrib_pct = (diff / p_yesterday) * weight
-            total_pct += contrib_pct
-            contribution = round(diff * (weight / 100), 4)
-            total_contribution += contribution
-            color = "up" if diff > 0 else "down" if diff < 0 else ""
-            table_rows += f"<tr><td>{name}</td><td class='weight'>{weight}%</td><td>{p_yesterday}</td><td class='{color}'>{p_current}</td><td class='{color}'>{contrib_pct:+.2f}%</td><td class='{color}'>{contribution:+.4f}</td></tr>"
-        except Exception as e:
-            print(f"Error processing {name}: {e}")
+        # 增加重試機制，避免網路瞬斷導致標的消失
+        for attempt in range(3):
+            try:
+                stock = yf.Ticker(ticker_str)
+                hist = stock.history(period="5d") # 拉長週期確保資料完整
+                if len(hist) < 2:
+                    time.sleep(1)
+                    continue
+                
+                p_yesterday = round(hist['Close'].iloc[-2], 2)
+                p_current = round(stock.fast_info.get('lastPrice', hist['Close'].iloc[-1]), 2)
+                diff = round(p_current - p_yesterday, 2)
+                contrib_pct = (diff / p_yesterday) * weight
+                contribution = round(diff * (weight / 100), 4)
+                
+                total_pct += contrib_pct
+                total_contribution += contribution
+                
+                color = "up" if diff > 0 else "down" if diff < 0 else ""
+                table_rows += f"<tr><td>{name}</td><td class='weight'>{weight}%</td><td>{p_yesterday}</td><td class='{color}'>{p_current}</td><td class='{color}'>{contrib_pct:+.2f}%</td><td class='{color}'>{contribution:+.4f}</td></tr>"
+                break 
+            except Exception as e:
+                print(f"Error processing {name} (attempt {attempt+1}): {e}")
+                time.sleep(1)
     return round(total_contribution, 4), round(total_pct, 2), table_rows
 
 def run_monitor():
@@ -67,13 +77,16 @@ def run_monitor():
     :root {{ --up: #ff4d4f; --down: #52c41a; }}
     body {{ font-family: sans-serif; background: #f8f9fa; padding: 15px; display: flex; flex-direction: column; align-items: center; }}
     .container {{ width: 100%; max-width: 500px; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
-    .fund-select {{ width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }}
+    .fund-select {{ width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; font-weight: bold; }}
     .fund-section {{ display: none; }} .fund-section.active {{ display: block; }}
     .dashboard {{ text-align: center; margin-bottom: 20px; }}
-    .total-sum {{ font-size: 28px; font-weight: bold; }}
+    .dashboard-title {{ font-size: 14px; color: #666; }}
+    .total-sum {{ font-size: 28px; font-weight: bold; color: #333; }}
+    .total-percent {{ font-size: 20px; font-weight: bold; color: #555; }}
     table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
     th, td {{ padding: 8px; text-align: right; border-bottom: 1px solid #eee; }}
     .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
+    .weight {{ color: #666; }}
 </style></head>
 <body>
 <div class="container">

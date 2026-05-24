@@ -5,391 +5,204 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>基金即時監測</title>
     <style>
-        body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; background: #f4f7f9; margin: 0; padding: 12px; color: #333; }
-        .container { max-width: 600px; margin: auto; background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .time-info { text-align: center; color: #888; font-size: 0.85em; margin-bottom: 10px; }
+        :root {
+            --primary: #007bff;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --up-color: #ff4d4f;
+            --down-color: #52c41a;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+        .header {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .btn-update {
+            display: block;
+            width: 60%;
+            margin: 0 auto 20px auto;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        /* 下拉選單樣式 */
+        .select-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .fund-select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            background-color: #fff;
+            color: var(--primary);
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .fund-select:focus {
+            border-color: var(--primary);
+        }
+        .dashboard {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .dashboard-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .total-sum {
+            font-size: 32px;
+            font-weight: 800;
+            color: #333;
+        }
+        /* 表格響應式 */
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 10px 6px;
+            text-align: right;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        th:first-child, td:first-child {
+            text-align: left;
+        }
+        th {
+            color: #999;
+            font-weight: 500;
+        }
+        .weight { color: #666; font-weight: bold; }
+        .up { color: var(--up-color); font-weight: bold; }
+        .down { color: var(--down-color); font-weight: bold; }
         
-        /* 手動更新按鈕 */
-        .btn-container { text-align: center; margin-bottom: 15px; }
-        #run-btn { background: #007bff; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: background 0.3s; box-shadow: 0 2px 4px rgba(0,123,255,0.3); }
-        #run-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
-
-        /* 分頁切換鈕 */
-        .tabs { display: flex; background: #eee; border-radius: 10px; padding: 4px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; color: #666; background: none; font-size: 1em; }
-        .tab-btn.active { background: white; color: #007bff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        /* 數據卡片 */
-        .total-card { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #edf1f5; }
-        .total-sum { font-size: 2.5em; font-weight: bold; font-family: "SF Mono", "Courier New", monospace; }
-        
-        /* 表格樣式優化：適應更多欄位 */
-        table { width: 100%; border-collapse: collapse; font-size: 0.82em; table-layout: fixed; }
-        th { text-align: left; color: #999; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-        td { padding: 10px 2px; border-bottom: 1px solid #fcfcfc; word-break: break-all; }
-        
-        /* 設定特定欄位寬度 */
-        th:nth-child(1), td:nth-child(1) { width: 22%; } /* 成分股 */
-        th:nth-child(2), td:nth-child(2) { width: 14%; } /* 權重 */
-        th:nth-child(3), td:nth-child(3) { width: 15%; } /* 昨收 */
-        th:nth-child(4), td:nth-child(4) { width: 15%; } /* 現價 */
-        th:nth-child(5), td:nth-child(5) { width: 16%; } /* 貢獻趴數 */
-        th:nth-child(6), td:nth-child(6) { width: 18%; } /* 貢獻度 */
-        
-        .up { color: #e74c3c; font-weight: bold; }
-        .down { color: #2ecc71; font-weight: bold; }
-        .weight { color: #999; font-size: 0.85em; }
+        /* 基金區塊顯示與隱藏邏輯 */
+        .fund-section {
+            display: none;
+        }
+        .fund-section.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="time-info">🕒 最後更新：<span id="update-time">2026-05-22 19:34:49</span></div>
+    <div class="header">
+        🕒 最後更新：<span id="update-time">2026-05-24 00:00:00</span>
+    </div>
+    
+    <a href="https://github.com/a0928533194-web/github.io/actions/workflows/dynamic.yml/trigger" class="btn-update" target="_blank">🚀 手動更新數據</a>
 
-    <!-- 手動更新功能 -->
-    <div class="btn-container">
-        <button id="run-btn" onclick="triggerUpdate()">🚀 手動更新數據</button>
+    <div class="select-container">
+        <select id="fundSelector" class="fund-select" onchange="switchFund(this.value)">
+            <option value="yuanta">元大店頭基金</option>
+            <option value="eastspring">瀚亞科技基金</option>
+        </select>
     </div>
 
-    <!-- 分頁標籤 -->
-    <div class="tabs">
-        <button class="tab-btn active" onclick="showTab(event, 'yuanta')">元大店頭</button>
-        <button class="tab-btn" onclick="showTab(event, 'east')">瀚亞科技</button>
-    </div>
-
-    <!-- 元大店頭內容 -->
-    <div id="yuanta" class="tab-content active">
-        <div class="total-card">
-            <div style="color:#666; font-size:0.9em;">今日預估總貢獻</div>
-            <div id="yuanta-sum" class="total-sum">+137.1420</div>
+    <div id="sector-yuanta" class="fund-section active">
+        <div class="dashboard">
+            <div class="dashboard-title">今日預估總貢獻</div>
+            <div id="yuanta-sum" class="total-sum">+0.0000</div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>成分股</th>
-                    <th>權重</th>
-                    <th>昨收</th>
-                    <th>現價</th>
-                    <th>貢獻%</th>
-                    <th>貢獻度</th>
-                </tr>
-            </thead>
-            <tbody id="yuanta-details"><tr>
-                <td>旺矽</td>
-                <td class='weight'>9.7%</td>
-                <td>5650.0</td>
-                <td class='up'>6035.0</td>
-                <td class='up'>+0.66%</td>
-                <td class='up'>+37.3450</td>
-            </tr><tr>
-                <td>台積電</td>
-                <td class='weight'>7.88%</td>
-                <td>2230.0</td>
-                <td class='up'>2255.0</td>
-                <td class='up'>+0.09%</td>
-                <td class='up'>+1.9700</td>
-            </tr><tr>
-                <td>精測</td>
-                <td class='weight'>5.68%</td>
-                <td>3350.0</td>
-                <td class='up'>3405.0</td>
-                <td class='up'>+0.09%</td>
-                <td class='up'>+3.1240</td>
-            </tr><tr>
-                <td>信驊</td>
-                <td class='weight'>5.63%</td>
-                <td>16440.0</td>
-                <td class='up'>17780.0</td>
-                <td class='up'>+0.46%</td>
-                <td class='up'>+75.4420</td>
-            </tr><tr>
-                <td>聯亞</td>
-                <td class='weight'>4.56%</td>
-                <td>2555.0</td>
-                <td class='up'>2710.0</td>
-                <td class='up'>+0.28%</td>
-                <td class='up'>+7.0680</td>
-            </tr><tr>
-                <td>群聯</td>
-                <td class='weight'>3.95%</td>
-                <td>2335.0</td>
-                <td class='up'>2430.0</td>
-                <td class='up'>+0.16%</td>
-                <td class='up'>+3.7525</td>
-            </tr><tr>
-                <td>光聖</td>
-                <td class='weight'>3.75%</td>
-                <td>1785.0</td>
-                <td class='up'>1875.0</td>
-                <td class='up'>+0.19%</td>
-                <td class='up'>+3.3750</td>
-            </tr><tr>
-                <td>華星光</td>
-                <td class='weight'>3.15%</td>
-                <td>593.0</td>
-                <td class='up'>630.0</td>
-                <td class='up'>+0.20%</td>
-                <td class='up'>+1.1655</td>
-            </tr><tr>
-                <td>台燿</td>
-                <td class='weight'>3.0%</td>
-                <td>1325.0</td>
-                <td class='up'>1455.0</td>
-                <td class='up'>+0.29%</td>
-                <td class='up'>+3.9000</td>
-            </tr></tbody>
-        </table>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>成分股</th>
+                        <th>權重</th>
+                        <th>昨收</th>
+                        <th>現價</th>
+                        <th>貢獻%</th>
+                        <th>貢獻度</th>
+                    </tr>
+                </thead>
+                <tbody id="yuanta-details">
+                    </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- 瀚亞科技內容 -->
-    <div id="east" class="tab-content">
-        <div class="total-card">
-            <div style="color:#666; font-size:0.9em;">今日預估總貢獻</div>
-            <div id="east-sum" class="total-sum">+95.1606</div>
+    <div id="sector-eastspring" class="fund-section">
+        <div class="dashboard">
+            <div class="dashboard-title">今日預估總貢獻</div>
+            <div id="east-sum" class="total-sum">+0.0000</div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>成分股</th>
-                    <th>權重</th>
-                    <th>昨收</th>
-                    <th>現價</th>
-                    <th>貢獻%</th>
-                    <th>貢獻度</th>
-                </tr>
-            </thead>
-            <tbody id="east-details"><tr>
-                <td>奇鋐</td>
-                <td class='weight'>8.25%</td>
-                <td>2495.0</td>
-                <td class='up'>2545.0</td>
-                <td class='up'>+0.17%</td>
-                <td class='up'>+4.1250</td>
-            </tr><tr>
-                <td>欣興</td>
-                <td class='weight'>8.07%</td>
-                <td>905.0</td>
-                <td class='up'>970.0</td>
-                <td class='up'>+0.58%</td>
-                <td class='up'>+5.2455</td>
-            </tr><tr>
-                <td>台積電</td>
-                <td class='weight'>7.9%</td>
-                <td>2230.0</td>
-                <td class='up'>2255.0</td>
-                <td class='up'>+0.09%</td>
-                <td class='up'>+1.9750</td>
-            </tr><tr>
-                <td>台光電</td>
-                <td class='weight'>6.74%</td>
-                <td>4690.0</td>
-                <td class='up'>5005.0</td>
-                <td class='up'>+0.45%</td>
-                <td class='up'>+21.2310</td>
-            </tr><tr>
-                <td>台達電</td>
-                <td class='weight'>6.47%</td>
-                <td>2030.0</td>
-                <td class='up'>2095.0</td>
-                <td class='up'>+0.21%</td>
-                <td class='up'>+4.2055</td>
-            </tr><tr>
-                <td>智邦</td>
-                <td class='weight'>6.0%</td>
-                <td>2480.0</td>
-                <td class='down'>2470.0</td>
-                <td class='down'>-0.02%</td>
-                <td class='down'>-0.6000</td>
-            </tr><tr>
-                <td>台燿</td>
-                <td class='weight'>5.55%</td>
-                <td>1325.0</td>
-                <td class='up'>1455.0</td>
-                <td class='up'>+0.54%</td>
-                <td class='up'>+7.2150</td>
-            </tr><tr>
-                <td>光寶科</td>
-                <td class='weight'>5.2%</td>
-                <td>204.5</td>
-                <td class='up'>207.0</td>
-                <td class='up'>+0.06%</td>
-                <td class='up'>+0.1300</td>
-            </tr><tr>
-                <td>光聖</td>
-                <td class='weight'>5.17%</td>
-                <td>1785.0</td>
-                <td class='up'>1875.0</td>
-                <td class='up'>+0.26%</td>
-                <td class='up'>+4.6530</td>
-            </tr><tr>
-                <td>聯亞</td>
-                <td class='weight'>5.03%</td>
-                <td>2555.0</td>
-                <td class='up'>2710.0</td>
-                <td class='up'>+0.31%</td>
-                <td class='up'>+7.7965</td>
-            </tr><tr>
-                <td>強茂</td>
-                <td class='weight'>4.51%</td>
-                <td>132.5</td>
-                <td class='up'>133.5</td>
-                <td class='up'>+0.03%</td>
-                <td class='up'>+0.0451</td>
-            </tr><tr>
-                <td>聯發科</td>
-                <td class='weight'>4.01%</td>
-                <td>3550.0</td>
-                <td class='up'>3860.0</td>
-                <td class='up'>+0.35%</td>
-                <td class='up'>+12.4310</td>
-            </tr><tr>
-                <td>華碩</td>
-                <td class='weight'>3.68%</td>
-                <td>656.0</td>
-                <td class='up'>682.0</td>
-                <td class='up'>+0.15%</td>
-                <td class='up'>+0.9568</td>
-            </tr><tr>
-                <td>健策</td>
-                <td class='weight'>3.38%</td>
-                <td>3330.0</td>
-                <td class='up'>3660.0</td>
-                <td class='up'>+0.33%</td>
-                <td class='up'>+11.1540</td>
-            </tr><tr>
-                <td>振樺電</td>
-                <td class='weight'>2.73%</td>
-                <td>242.0</td>
-                <td class='down'>236.5</td>
-                <td class='down'>-0.06%</td>
-                <td class='down'>-0.1502</td>
-            </tr><tr>
-                <td>旺矽</td>
-                <td class='weight'>2.2%</td>
-                <td>5650.0</td>
-                <td class='up'>6035.0</td>
-                <td class='up'>+0.15%</td>
-                <td class='up'>+8.4700</td>
-            </tr><tr>
-                <td>致茂</td>
-                <td class='weight'>2.17%</td>
-                <td>2270.0</td>
-                <td class=''>2270.0</td>
-                <td class=''>+0.00%</td>
-                <td class=''>+0.0000</td>
-            </tr><tr>
-                <td>川湖</td>
-                <td class='weight'>1.99%</td>
-                <td>4895.0</td>
-                <td class='up'>5090.0</td>
-                <td class='up'>+0.08%</td>
-                <td class='up'>+3.8805</td>
-            </tr><tr>
-                <td>緯創</td>
-                <td class='weight'>1.92%</td>
-                <td>140.0</td>
-                <td class='up'>144.5</td>
-                <td class='up'>+0.06%</td>
-                <td class='up'>+0.0864</td>
-            </tr><tr>
-                <td>南電</td>
-                <td class='weight'>1.8%</td>
-                <td>872.0</td>
-                <td class='up'>934.0</td>
-                <td class='up'>+0.13%</td>
-                <td class='up'>+1.1160</td>
-            </tr><tr>
-                <td>華星光</td>
-                <td class='weight'>1.4%</td>
-                <td>593.0</td>
-                <td class='up'>630.0</td>
-                <td class='up'>+0.09%</td>
-                <td class='up'>+0.5180</td>
-            </tr><tr>
-                <td>精測</td>
-                <td class='weight'>1.23%</td>
-                <td>3350.0</td>
-                <td class='up'>3405.0</td>
-                <td class='up'>+0.02%</td>
-                <td class='up'>+0.6765</td>
-            </tr></tbody>
-        </table>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>成分股</th>
+                        <th>權重</th>
+                        <th>昨收</th>
+                        <th>現價</th>
+                        <th>貢獻%</th>
+                        <th>貢獻度</th>
+                    </tr>
+                </thead>
+                <tbody id="east-details">
+                    </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
-    function showTab(evt, name) {
-        const contents = document.getElementsByClassName("tab-content");
-        for (let i = 0; i < contents.length; i++) contents[i].classList.remove("active");
-        const btns = document.getElementsByClassName("tab-btn");
-        for (let i = 0; i < btns.length; i++) btns[i].classList.remove("active");
-        document.getElementById(name).classList.add("active");
-        evt.currentTarget.classList.add("active");
-    }
-
-    async function triggerUpdate() {
-        const OWNER = 'a0928533194-web'; 
-        const REPO = 'stock-monitor';    
-        const WORKFLOW_ID = 'run.yml';  
-
-        const token = prompt("請貼上您的 GitHub PAT (Key):");
-        if (!token) return;
-
-        const btn = document.getElementById('run-btn');
-        btn.disabled = true;
-        btn.innerText = '⏳ 指令傳送中...';
-
-        try {
-            const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`;
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                },
-                body: JSON.stringify({ ref: 'main' })
-            });
-
-            if (response.status === 204) {
-                alert('✅ 指令已發送成功！\n請等待約 1 分鐘讓伺服器執行 [run.yml]，然後重新整理網頁。');
-            } else {
-                const err = await response.json();
-                alert('❌ 失敗：' + (err.message || '未知錯誤'));
-            }
-        } catch (e) {
-            alert('❌ 網路連線錯誤：' + e.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = '🚀 手動更新數據';
+    // 切換選單顯示對應基金
+    function switchFund(fundType) {
+        // 先隱藏所有區塊
+        document.getElementById('sector-yuanta').classList.remove('active');
+        document.getElementById('sector-eastspring').classList.remove('active');
+        
+        // 顯示被選中的區塊
+        if(fundType === 'yuanta') {
+            document.getElementById('sector-yuanta').classList.add('active');
+        } else if(fundType === 'eastspring') {
+            document.getElementById('sector-eastspring').classList.add('active');
         }
     }
 </script>
-
 </body>
 </html>
-
-
-
-
-
-
-
-<!-- Force Update ID: 1779109108 -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

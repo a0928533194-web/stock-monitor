@@ -12,10 +12,11 @@
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th, td { padding: 8px; text-align: right; border-bottom: 1px solid #eee; }
     .up { color: var(--up); font-weight: bold; } .down { color: var(--down); font-weight: bold; }
+    .weight { color: #666; }
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; margin-bottom:10px;">🕒 更新：2026-05-24 19:09:00</div>
+    <div style="text-align:center; margin-bottom:10px;">🕒 最後更新：2026-05-24 19:11:48</div>
     <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')">
         <option value="yuanta">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option>
     </select>

@@ -5,12 +5,13 @@ import re
 import pytz
 import time
 
-# 17檔基金名稱對照表 (確保與下拉選單及首頁排序完全契合)
+# 16檔基金名稱對照表 (移除野村台灣高股息，新增野村高科技基金)
 FUND_NAMES = {
     "yuanta": "元大店頭基金", "eastspring": "瀚亞科技基金", "shinkin_three": "新光大三通基金", "upmc_allweather": "統一全天候基金",
     "allianz_taiwan": "安聯台灣大壩基金", "allianz_tech": "安聯台灣科技基金", "allianz_intel": "安聯台灣智聯基金", "allianz_twgrowth": "安聯台灣大盤基金",
     "fubon_premium": "富邦首選基金", "fubon_dividend": "富邦高股息基金", "fubon_core": "富邦台灣核心二號基金",
-    "nomura_etech": "野村e科技基金", "nomura_premium": "野村優質基金", "nomura_growth": "野村成長基金", "nomura_fortune": "野村鴻運基金", "nomura_dividend": "野村台灣高股息基金", "nomura_twdpremium": "野村優質基金-台幣"
+    "nomura_etech": "野村e科技基金", "nomura_premium": "野村優質基金", "nomura_growth": "野村成長基金", "nomura_fortune": "野村鴻運基金", 
+    "nomura_tech": "野村高科技基金", "nomura_twdpremium": "野村優質基金-台幣"
 }
 
 funds_data_config = {
@@ -59,8 +60,8 @@ funds_data_config = {
     "nomura_fortune": {
         "欣興": ("3037.TW", 7.56), "奇鋐": ("3017.TW", 6.38), "健策": ("3653.TW", 5.97), "台達電": ("2308.TW", 5.90), "台光電": ("2383.TW", 5.78), "台積電": ("2330.TW", 5.57), "旺矽": ("6223.TWO", 4.60), "穎崴": ("6515.TWO", 4.34), "貿聯-KY": ("3665.TW", 3.70), "金像電": ("2368.TW", 3.69)
     },
-    "nomura_dividend": {
-        "健策": ("3653.TW", 8.44), "台光電": ("2383.TW", 8.12), "台積電": ("2330.TW", 7.94), "台達電": ("2308.TW", 7.82), "川湖": ("2059.TW", 6.94), "穎崴": ("6515.TWO", 6.44), "金像電": ("2368.TW", 5.48), "欣興": ("3037.TW", 5.08), "致茂": ("2360.TW", 4.14), "力旺": ("3529.TWO", 3.90)
+    "nomura_tech": {
+        "南電": ("8046.TW", 9.18), "欣興": ("3037.TW", 8.94), "聯亞": ("3081.TWO", 7.45), "台積電": ("2330.TW", 6.36), "奇鋐": ("3017.TW", 6.05), "華星光": ("4979.TWO", 5.10), "聯發科": ("2454.TW", 3.96), "景碩": ("3189.TW", 3.79), "臻鼎-KY": ("4958.TW", 3.65), "致茂": ("2360.TW", 3.59)
     },
     "nomura_twdpremium": {
         "健策": ("3653.TW", 8.42), "台光電": ("2383.TW", 8.24), "台達電": ("2308.TW", 8.15), "台積電": ("2330.TW", 7.84), "川湖": ("2059.TW", 6.90), "穎崴": ("6515.TWO", 6.55), "鴻勁": ("7741.TW", 6.22), "金像電": ("2368.TW", 5.50), "欣興": ("3037.TW", 5.12), "力旺": ("3529.TWO", 4.23)
@@ -139,7 +140,6 @@ def run_monitor():
 
         # 寫入時間戳防止頁面緩存
         force_id = int(time.time())
-        content = re.sub(r'', '', content)
         content += f"\n"
 
         with open("index.html", "w", encoding="utf-8") as f:

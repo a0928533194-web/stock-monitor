@@ -3,22 +3,22 @@ from datetime import datetime
 import pytz
 import time
 
-# 數據設定
+# 數據設定：代號改為純數字字串
 FUNDS_CONFIG = {
     "yuanta": {
         "name": "元大店頭基金",
         "stocks": {
-            "旺矽": ("6223.TWO", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TWO", 6.12), 
-            "精測": ("6510.TWO", 5.68), "信驊": ("5274.TWO", 5.63), "聯亞": ("3081.TWO", 4.56), 
-            "群聯": ("8299.TWO", 3.95), "光聖": ("6442.TW", 3.75), "華星光": ("4979.TWO", 3.15), "台燿": ("6274.TWO", 3.00)
+            "旺矽": ("6223", 9.70), "台積電": ("2330", 7.88), "穎崴": ("6515", 6.12), 
+            "精測": ("6510", 5.68), "信驊": ("5274", 5.63), "聯亞": ("3081", 4.56), 
+            "群聯": ("8299", 3.95), "光聖": ("6442", 3.75), "華星光": ("4979", 3.15), "台燿": ("6274", 3.00)
         }
     },
     "shinkin_three": {
         "name": "新光大三通基金",
         "stocks": {
-            "欣興": ("3037.TW", 9.47), "景碩": ("3189.TW", 7.10), "世芯-KY": ("3661.TW", 6.93), 
-            "台積電": ("2330.TW", 6.59), "旺矽": ("6223.TWO", 6.27), "大量": ("3167.TW", 6.06), 
-            "台達電": ("2308.TW", 5.37), "弘塑": ("3131.TW", 4.95), "旺宏": ("2337.TW", 3.94), "力旺": ("3529.TWO", 3.92)
+            "欣興": ("3037", 9.47), "景碩": ("3189", 7.10), "世芯-KY": ("3661", 6.93), 
+            "台積電": ("2330", 6.59), "旺矽": ("6223", 6.27), "大量": ("3167", 6.06), 
+            "台達電": ("2308", 5.37), "弘塑": ("3131", 4.95), "旺宏": ("2337", 3.94), "力旺": ("3529", 3.92)
         }
     }
 }
@@ -26,35 +26,37 @@ FUNDS_CONFIG = {
 def get_fund_data(stocks_dict):
     total_contribution, total_pct = 0, 0
     table_rows = ""
-    for name, (ticker_str, weight) in stocks_dict.items():
-        time.sleep(0.3) # 平穩請求，避免被封鎖
-        p_yesterday, p_current, diff = 0.0, 0.0, 0.0
+    for name, (ticker_base, weight) in stocks_dict.items():
+        time.sleep(0.4)
+        # 自動嘗試組合：純代號、TW、TWO
         success = False
+        p_yesterday, p_current, diff = 0.0, 0.0, 0.0
         
-        try:
-            stock = yf.Ticker(ticker_str)
-            hist = stock.history(period="5d")
-            
-            if not hist.empty and len(hist) >= 2:
-                p_yesterday = round(hist['Close'].iloc[-2], 2)
-                p_current = round(stock.fast_info.get('lastPrice', hist['Close'].iloc[-1]), 2)
-                diff = round(p_current - p_yesterday, 2)
-                success = True
-            else:
-                print(f"警告: {name} ({ticker_str}) 資料量不足")
-        except Exception as e:
-            print(f"錯誤: 無法抓取 {name}: {e}")
-
+        for suffix in ["", ".TW", ".TWO"]:
+            ticker_str = f"{ticker_base}{suffix}"
+            try:
+                stock = yf.Ticker(ticker_str)
+                hist = stock.history(period="5d")
+                if not hist.empty and len(hist) >= 2:
+                    p_yesterday = round(hist['Close'].iloc[-2], 2)
+                    # 嘗試抓 lastPrice，若無則用最新收盤價補位，確保不顯示 N/A
+                    p_current = round(stock.fast_info.get('lastPrice', hist['Close'].iloc[-1]), 2)
+                    diff = round(p_current - p_yesterday, 2)
+                    success = True
+                    break
+            except:
+                continue
+        
         contrib_pct = (diff / p_yesterday * 100) if p_yesterday != 0 else 0
         contribution = round(diff * (weight / 100), 4)
         
-        # 即使失敗，也顯示在表格上，方便除錯
+        # UI 渲染
         color = "up" if diff > 0 else "down" if diff < 0 else ""
         table_rows += f"""<tr>
             <td>{name}</td>
             <td class='weight'>{weight}%</td>
-            <td>{p_yesterday if success else 'N/A'}</td>
-            <td class='{color}'>{p_current if success else 'N/A'}</td>
+            <td>{p_yesterday if success else '未取得'}</td>
+            <td class='{color}'>{p_current if success else '查無數據'}</td>
             <td class='{color}'>{contrib_pct:+.2f}%</td>
             <td class='{color}'>{contribution:+.4f}</td>
         </tr>"""
@@ -92,13 +94,13 @@ def run_monitor():
     .container {{ max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
     .fund-section {{ display: none; }} .fund-section.active {{ display: block; }}
     table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
-    th, td {{ padding: 6px; text-align: right; border-bottom: 1px solid #eee; }}
-    .up {{ color: var(--up); }} .down {{ color: var(--down); }}
+    th, td {{ padding: 8px; text-align: right; border-bottom: 1px solid #eee; }}
+    .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center;">🕒 最後更新：{now_tw}</div>
-    <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')">
+    <div style="text-align:center; margin-bottom:15px;">🕒 最後更新：{now_tw}</div>
+    <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')" style="width:100%; padding:10px;">
         {options_html}
     </select>
     {sections_html}

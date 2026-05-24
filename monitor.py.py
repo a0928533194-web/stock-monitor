@@ -18,7 +18,7 @@ funds_data_config = {
         "旺矽": ("6223.TWO", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TWO", 6.12), "精測": ("6510.TWO", 5.68), "信驊": ("5274.TWO", 5.63), "聯亞": ("3081.TWO", 4.56), "群聯": ("8299.TWO", 3.95), "光聖": ("6442.TW", 3.75), "華星光": ("4979.TWO", 3.15), "台燿": ("6274.TWO", 3.00)
     },
     "eastspring": {
-        "奇鋐": ("3017.TW", 8.25), "欣興": ("3037.TW", 8.07), "台積電": ("2330.TW", 7.90), "台光電": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00), "台燿": ("6274.TWO", 5.55), "光寶科": ("2301.TW", 5.20), "光聖": ("6442.TW", 5.17), "聯亞": ("3081.TWO", 5.03)
+        "奇鋐": ("3017.TW", 8.25), "欣興": ("3037.TW", 8.07), "台積電": ("2330.TW", 7.90), "台光电": ("2383.TW", 6.74), "台達電": ("2308.TW", 6.47), "智邦": ("2345.TW", 6.00), "台燿": ("6274.TWO", 5.55), "光寶科": ("2301.TW", 5.20), "光聖": ("6442.TW", 5.17), "聯亞": ("3081.TWO", 5.03)
     },
     "shinkin_three": {
         "欣興": ("3037.TW", 9.47), "景碩": ("3189.TW", 7.10), "世芯-KY": ("3661.TW", 6.93), "台積電": ("2330.TW", 6.59), "旺矽": ("6223.TWO", 6.27), "大量": ("3167.TW", 6.06), "台達電": ("2308.TW", 5.37), "弘塑": ("3131.TW", 4.95), "旺宏": ("2337.TW", 3.94), "力旺": ("3529.TWO", 3.92)
@@ -30,7 +30,7 @@ funds_data_config = {
         "旺矽": ("6223.TWO", 11.30), "穎崴": ("6515.TWO", 10.49), "台積電": ("2330.TW", 6.87), "台光電": ("2383.TW", 6.44), "欣興": ("3037.TW", 5.65), "信驊": ("5274.TWO", 5.45), "台達電": ("2308.TW", 5.05), "台燿": ("6274.TWO", 4.97), "奇鋐": ("3017.TW", 3.76), "智邦": ("2345.TW", 3.34)
     },
     "allianz_tech": {
-        "旺矽": ("6223.TWO", 8.54), "穎崴": ("6515.TWO", 8.38), "台積電": ("2330.TW", 6.59), "台光電": ("2383.TW", 6.58), "創意": ("3443.TW", 5.34), "台燿": ("6274.TWO", 4.73), "台達電": ("2308.TW", 4.49), "信驊": ("5274.TWO", 4.09), "金像電": ("2368.TW", 4.07), "威剛": ("3260.TWO", 3.78)
+        "旺矽": ("6223.TWO", 8.54), "穎崴": ("6515.TWO", 8.38), "台積電": ("2330.TW", 6.59), "台光電": ("2383.TW", 6.58), "創意": ("3443.TW", 5.34), "台燿": ("6274.TWO", 4.73), "台達電": ("2308.TW", 4.49), "信驊": ("4090.TWO", 4.09), "金像電": ("2368.TW", 4.07), "威剛": ("3260.TWO", 3.78)
     },
     "allianz_intel": {
         "旺矽": ("6223.TWO", 9.77), "創意": ("3443.TW", 8.23), "信驊": ("5274.TWO", 7.62), "台燿": ("6274.TWO", 7.15), "穎崴": ("6515.TWO", 6.84), "新唐": ("4919.TW", 5.92), "台光電": ("2383.TW", 5.38), "台積電": ("2330.TW", 4.88), "金像電": ("2368.TW", 4.58), "譜瑞-KY": ("4966.TWO", 4.14)
@@ -59,8 +59,9 @@ funds_data_config = {
     "nomura_fortune": {
         "欣興": ("3037.TW", 7.56), "奇鋐": ("3017.TW", 6.38), "健策": ("3653.TW", 5.97), "台達電": ("2308.TW", 5.90), "台光電": ("2383.TW", 5.78), "台積電": ("2330.TW", 5.57), "旺矽": ("6223.TWO", 4.60), "穎崴": ("6515.TWO", 4.34), "貿聯-KY": ("3665.TW", 3.70), "金像電": ("2368.TW", 3.69)
     },
+    # 🚀 這裡已換成大哥提供的最新 10 檔精準成分股名單與權重
     "nomura_dividend": {
-        "健策": ("3653.TW", 8.44), "台光電": ("2383.TW", 8.12), "台積電": ("2330.TW", 7.94), "台達電": ("2308.TW", 7.82), "川湖": ("2059.TW", 6.94), "穎崴": ("6515.TWO", 6.44), "金像電": ("2368.TW", 5.48), "欣興": ("3037.TW", 5.08), "致茂": ("2360.TW", 4.14), "力旺": ("3529.TWO", 3.90)
+        "聯發科": ("2454.TW", 9.61), "長榮": ("2603.TW", 9.17), "欣興": ("3037.TW", 8.48), "瑞昱": ("2379.TW", 7.11), "可成": ("2474.TW", 6.45), "健策": ("3653.TW", 5.86), "聯詠": ("3034.TW", 5.52), "台光電": ("2383.TW", 4.72), "日月光投控": ("3711.TW", 4.37), "矽格": ("6257.TW", 3.91)
     },
     "nomura_twdpremium": {
         "健策": ("3653.TW", 8.42), "台光電": ("2383.TW", 8.24), "台達電": ("2308.TW", 8.15), "台積電": ("2330.TW", 7.84), "川湖": ("2059.TW", 6.90), "穎崴": ("6515.TWO", 6.55), "鴻勁": ("7741.TW", 6.22), "金像電": ("2368.TW", 5.50), "欣興": ("3037.TW", 5.12), "力旺": ("3529.TWO", 4.23)
@@ -110,7 +111,6 @@ def run_monitor():
         content = re.sub(r'id="update-time">.*?</span>', f'id="update-time">{now_tw}</span>', content)
         home_cards_html = ""
         
-        # 依照設定檔的排序順序依序運算 (這樣首頁卡片跟下拉式選單的排序就100%契合)
         for fund_key in funds_data_config.keys():
             stocks_dict = funds_data_config[fund_key]
             fixed_key = fund_key if fund_key != "eastspring" else "east"
@@ -120,7 +120,6 @@ def run_monitor():
             color_class = "up" if total_sum > 0 else "down" if total_sum < 0 else ""
             fund_zh_name = FUND_NAMES.get(fund_key, fund_key)
             
-            # 建立首頁網格小卡片
             home_cards_html += f"""
             <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='{fund_key}'; switchFund('{fund_key}');">
                 <div class="card-title">{fund_zh_name}</div>
@@ -129,22 +128,19 @@ def run_monitor():
             </div>
             """
             
-            # 覆蓋各別子分頁表格數據
             content = re.sub(rf'id="{fixed_key}-sum".*?>.*?</div>', f'id="{fixed_key}-sum" class="total-sum">{total_sum:+.4f}</div>', content)
             content = re.sub(rf'id="{fixed_key}-pct".*?>.*?</div>', f'id="{fixed_key}-pct" class="total-percent">{total_pct:+.2f}%</div>', content)
             content = re.sub(rf'<tbody id="{fixed_key}-details">.*?</tbody>', f'<tbody id="{fixed_key}-details">{table_rows}</tbody>', content, flags=re.DOTALL)
 
-        # 全面塞入首頁
         content = re.sub(r'<div class="home-grid" id="home-cards-container">.*?</div>', f'<div class="home-grid" id="home-cards-container">{home_cards_html}</div>', content, flags=re.DOTALL)
 
-        # 寫入時間戳防止頁面緩存
         force_id = int(time.time())
         content = re.sub(r'', '', content)
         content += f"\n"
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
-        print("【大功告成】17檔分類基金牆與數據全數建置並更新完畢！")
+        print("【成功】野村高股息名單已完美替換！")
 
 if __name__ == "__main__":
     run_monitor()

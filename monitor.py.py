@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 import time
 
-# 數據設定：代號改為純數字字串
+# 數據設定：代號為純數字字串
 FUNDS_CONFIG = {
     "yuanta": {
         "name": "元大店頭基金",
@@ -28,41 +28,42 @@ def get_fund_data(stocks_dict):
     table_rows = ""
     for name, (ticker_base, weight) in stocks_dict.items():
         time.sleep(0.4)
-        # 自動嘗試組合：純代號、TW、TWO
         success = False
         p_yesterday, p_current, diff = 0.0, 0.0, 0.0
         
+        # 嘗試抓取
         for suffix in ["", ".TW", ".TWO"]:
-            ticker_str = f"{ticker_base}{suffix}"
             try:
-                stock = yf.Ticker(ticker_str)
+                stock = yf.Ticker(f"{ticker_base}{suffix}")
                 hist = stock.history(period="5d")
-                if not hist.empty and len(hist) >= 2:
+                if len(hist) >= 2:
                     p_yesterday = round(hist['Close'].iloc[-2], 2)
-                    # 嘗試抓 lastPrice，若無則用最新收盤價補位，確保不顯示 N/A
                     p_current = round(stock.fast_info.get('lastPrice', hist['Close'].iloc[-1]), 2)
                     diff = round(p_current - p_yesterday, 2)
                     success = True
                     break
-            except:
-                continue
+            except: continue
         
-        contrib_pct = (diff / p_yesterday * 100) if p_yesterday != 0 else 0
-        contribution = round(diff * (weight / 100), 4)
+        # --- 修正後的科學計算公式 ---
+        # 個股單日漲跌幅 %
+        stock_change_pct = (diff / p_yesterday * 100) if p_yesterday != 0 else 0
+        # 加權貢獻 % = 個股漲跌幅 * 權重比例
+        contrib_pct = stock_change_pct * (weight / 100)
+        # 貢獻度點數 = 價格差 * 權重比例
+        contribution = diff * (weight / 100)
         
-        # UI 渲染
+        total_pct += contrib_pct
+        total_contribution += contribution
+        
         color = "up" if diff > 0 else "down" if diff < 0 else ""
         table_rows += f"""<tr>
             <td>{name}</td>
             <td class='weight'>{weight}%</td>
-            <td>{p_yesterday if success else '未取得'}</td>
-            <td class='{color}'>{p_current if success else '查無數據'}</td>
+            <td>{p_yesterday if success else 'N/A'}</td>
+            <td class='{color}'>{p_current if success else 'N/A'}</td>
             <td class='{color}'>{contrib_pct:+.2f}%</td>
             <td class='{color}'>{contribution:+.4f}</td>
         </tr>"""
-        
-        total_pct += (contrib_pct * (weight/100))
-        total_contribution += contribution
 
     return round(total_contribution, 4), round(total_pct, 2), table_rows
 
@@ -99,7 +100,7 @@ def run_monitor():
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; margin-bottom:15px;">🕒 最後更新：{now_tw}</div>
+    <div style="text-align:center; margin-bottom:15px;">🕒 更新：{now_tw}</div>
     <select class="fund-select" onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')" style="width:100%; padding:10px;">
         {options_html}
     </select>

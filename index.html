@@ -40,7 +40,7 @@
 <body>
 
 <div class="container">
-    <div class="header">🕒 最後更新：<span id="update-time">2026-05-24 14:19:16</span></div>
+    <div class="header">🕒 最後更新：<span id="update-time">2026-05-24 14:33:35</span></div>
     <a href="https://github.com/a0928533194-web/github.io/actions/workflows/dynamic.yml/trigger" class="btn-update" target="_blank">🚀 手動更新數據</a>
 
     <div class="select-container">
@@ -54,7 +54,22 @@
 
     <div id="sector-home" class="fund-section active">
         <div class="home-grid" id="home-cards-container">
-            </div>
+        <table class="overview-table" style="width:100%; border-collapse:collapse; margin-top:20px;">
+            <thead>
+                <tr style="background:#f8f9fa;">
+                    <th style="padding:10px; border:1px solid #ddd;">基金名稱</th>
+                    <th style="padding:10px; border:1px solid #ddd;">今日貢獻數值</th>
+                    <th style="padding:10px; border:1px solid #ddd;">今日貢獻 %</th>
+                </tr>
+            </thead>
+            <tbody>
+        
+            <tr onclick="document.getElementById('fundSelector').value='nomura_etech'; switchFund('nomura_etech');" style="cursor:pointer; border-bottom:1px solid #eee;">
+                <td style="padding:10px;">野村e科技基金</td>
+                <td style="padding:10px;" class="up">+32.1753</td>
+                <td style="padding:10px;" class="up">+2.57%</td>
+            </tr>
+            </tbody></table></div>
     </div>
 
     <div id="sector-yuanta" class="fund-section">

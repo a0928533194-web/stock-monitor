@@ -5,9 +5,14 @@ import re
 import pytz
 import time
 
-# ==============================================================================
-# 13 檔黃金基金最新成分股固定名單
-# ==============================================================================
+# 中文名稱對照表（首頁呈現用）
+FUND_NAMES = {
+    "yuanta": "元大店頭基金", "eastspring": "瀚亞科技基金", "allianz_taiwan": "安聯台灣大壩基金",
+    "allianz_tech": "安聯台灣科技基金", "fubon_premium": "富邦首選基金", "nomura_etech": "野村e科技基金",
+    "nomura_premium": "野村優質基金", "nomura_growth": "野村成長基金", "nomura_fortune": "野村鴻運基金",
+    "shinkin_three": "新光大三通基金", "upmc_allweather": "統一全天候基金"
+}
+
 funds_data_config = {
     "yuanta": {
         "旺矽": ("6223.TWO", 9.70), "台積電": ("2330.TW", 7.88), "穎崴": ("6515.TWO", 6.12),
@@ -77,9 +82,6 @@ funds_data_config = {
     }
 }
 
-# ==============================================================================
-# 核心計算引擎 (同步加總貢獻%數)
-# ==============================================================================
 def get_fund_data(stocks_dict):
     total_contribution = 0
     total_pct = 0
@@ -97,11 +99,9 @@ def get_fund_data(stocks_dict):
             p_current = round(stock.fast_info['lastPrice'], 2)
             diff = round(p_current - p_yesterday, 2)
             
-            # 各股貢獻百分比
             contrib_percent = (diff / p_yesterday) * weight
-            total_pct += contrib_percent  # 🚀 在這裡將各股貢獻%數加總
+            total_pct += contrib_percent
             
-            # 各股預估貢獻度（金額）
             contribution = round(diff * (weight / 100), 4)
             total_contribution += contribution
             
@@ -120,9 +120,6 @@ def get_fund_data(stocks_dict):
             
     return round(total_contribution, 4), round(total_pct, 2), table_rows
 
-# ==============================================================================
-# 主排程流程
-# ==============================================================================
 def run_monitor():
     tw_tz = pytz.timezone('Asia/Taipei')
     now_tw = datetime.now(tw_tz).strftime('%Y-%m-%d %H:%M:%S')
@@ -133,35 +130,39 @@ def run_monitor():
         
         content = re.sub(r'id="update-time">.*?</span>', f'id="update-time">{now_tw}</span>', content)
         
+        home_cards_html = "" # 用來存首頁卡片
+        
         for fund_key, stocks_dict in funds_data_config.items():
             fixed_key = fund_key if fund_key != "eastspring" else "east"
-            
-            # 取得 計算總額、計算總%數、表格列HTML
             total_sum, total_pct, table_rows = get_fund_data(stocks_dict)
             
-            # 1. 替換今日預估總貢獻（金額）
-            sum_pattern = rf'id="{fixed_key}-sum".*?>.*?</div>'
-            sum_replace = f'id="{fixed_key}-sum" class="total-sum">{total_sum:+.4f}</div>'
-            content = re.sub(sum_pattern, sum_replace, content)
+            # 製作首頁小卡片 (第一排:名稱 / 第二排:總貢獻 / 第三排:總貢獻%)
+            color_class = "up" if total_sum > 0 else "down" if total_sum < 0 else ""
+            fund_zh_name = FUND_NAMES.get(fund_key, fund_key)
+            home_cards_html += f"""
+            <div class="overview-card" style="cursor:pointer;" onclick="document.getElementById('fundSelector').value='{fund_key}'; switchFund('{fund_key}');">
+                <div class="card-title">{fund_zh_name}</div>
+                <div class="card-sum {color_class}">{total_sum:+.4f}</div>
+                <div class="card-pct {color_class}">{total_pct:+.2f}%</div>
+            </div>
+            """
             
-            # 2. 🚀 替換今日預估總貢獻 %
-            pct_pattern = rf'id="{fixed_key}-pct".*?>.*?</div>'
-            pct_replace = f'id="{fixed_key}-pct" class="total-percent">{total_pct:+.2f}%</div>'
-            content = re.sub(pct_pattern, pct_replace, content)
-            
-            # 3. 替換表格明細
-            detail_pattern = rf'<tbody id="{fixed_key}-details">.*?</tbody>'
-            detail_replace = f'<tbody id="{fixed_key}-details">{table_rows}</tbody>'
-            content = re.sub(detail_pattern, detail_replace, content, flags=re.DOTALL)
+            # 替換個別詳細頁面欄位
+            content = re.sub(rf'id="{fixed_key}-sum".*?>.*?</div>', f'id="{fixed_key}-sum" class="total-sum">{total_sum:+.4f}</div>', content)
+            content = re.sub(rf'id="{fixed_key}-pct".*?>.*?</div>', f'id="{fixed_key}-pct" class="total-percent">{total_pct:+.2f}%</div>', content)
+            content = re.sub(rf'<tbody id="{fixed_key}-details">.*?</tbody>', f'<tbody id="{fixed_key}-details">{table_rows}</tbody>', content, flags=re.DOTALL)
 
-        # 寫入防止快取尾碼
+        # 把動態卡片塞進首頁區塊中
+        content = re.sub(r'<div class="home-grid" id="home-cards-container">.*?</div>', f'<div class="home-grid" id="home-cards-container">{home_cards_html}</div>', content, flags=re.DOTALL)
+
+        # 根除快取尾碼
         force_id = int(time.time())
         content = re.sub(r'', '', content)
         content += f"\n"
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(content)
-        print("【成功】所有基金皆已成功補上「總貢獻%數」欄位！")
+        print("【大功告成】首頁電視牆與細節數據已全數注入完成！")
 
 if __name__ == "__main__":
     run_monitor()

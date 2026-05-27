@@ -14,7 +14,7 @@
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; margin-bottom:15px;">🕒 更新：2026-05-27 21:04:44</div>
+    <div style="text-align:center; margin-bottom:15px;">🕒 更新：2026-05-27 21:28:22</div>
     <select onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')" style="width:100%; padding:10px;"><option value="yuanta_otc">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option><option value="allianz_taiwan">安聯台灣大壩</option><option value="allianz_tech">安聯台灣科技</option><option value="allianz_smart">安聯台灣智慧</option><option value="fubon_choice">富邦首選</option><option value="fubon_select">富邦上選</option><option value="fubon_taiwan">富邦新台商</option><option value="nomura_prime">野村優質</option><option value="hanya_tech">瀚亞科技</option><option value="uni_allweather">統一全天候</option><option value="uni_prosper">統一奔騰</option><option value="uni_darkhorse">統一黑馬基金</option><option value="nomura_fortune">野村鴻運基金</option><option value="nomura_growth">野村成長基金</option><option value="nomura_hightech">野村高科技基金</option><option value="nomura_etech">野村 e 科技基金</option></select>
     
         <div id="sector-yuanta_otc" class="fund-section active">
@@ -205,49 +205,4 @@
             </div>
         </div>
 </div>
-        <div style="text-align:center; margin: 20px 0; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-        <button id="updateBtn" onclick="triggerUpdate()" style="background-color: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">
-            更新基金數據
-        </button>
-        <p id="status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
-    </div>
-
-    <script>
-    async function triggerUpdate() {
-        const GITHUB_OWNER = "a0928533194-web"; 
-        const REPO_NAME = "stock-monitor";
-        const WORKFLOW_FILE = "run.yml"; 
-
-        const userToken = prompt("請輸入您的 GitHub Personal Access Token:");
-        if (!userToken) return;
-
-        const btn = document.getElementById('updateBtn');
-        const status = document.getElementById('status');
-        
-        btn.disabled = true;
-        status.innerText = "正在向 GitHub 發送請求...";
-        
-        try {
-            const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`, {
-                method: "POST",
-                headers: {
-                    "Authorization": "token " + userToken,
-                    "Accept": "application/vnd.github.v3+json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ "ref": "main" })
-            });
-
-            if (response.ok) {
-                status.innerText = "✅ 更新請求已成功送出！約 1 分鐘後請檢查 GitHub Actions。";
-            } else {
-                status.innerText = "❌ 請求失敗，請檢查 Token 是否正確或權限不足。";
-            }
-        } catch (e) {
-            status.innerText = "❌ 無法連接 GitHub，可能是 CORS 限制。";
-        } finally {
-            btn.disabled = false;
-        }
-    }
-    </script>   
 </body></html>

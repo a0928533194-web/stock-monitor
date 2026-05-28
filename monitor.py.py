@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 import time
 
-# 數據設定：2026/04/30 完整基金權重配置
+# 數據設定
 FUNDS_CONFIG = {
     "yuanta_otc": {"name": "元大店頭基金", "stocks": {"旺矽": ("6223", 8.71), "信驊": ("5274", 6.66), "台積電": ("2330", 6.47), "穎崴": ("6515", 5.77), "精測": ("6510", 5.74), "聯亞": ("3081", 4.80), "華星光": ("4979", 4.31), "台燿": ("6274", 4.08), "群聯": ("8299", 3.84), "力旺": ("3529", 3.35)}},
     "shinkin_three": {"name": "新光大三通基金", "stocks": {"欣興": ("3037", 9.47), "景碩": ("3189", 7.10), "世芯-KY": ("3661", 6.93), "台積電": ("2330", 6.59), "旺矽": ("6223", 6.27), "大量": ("3167", 6.06), "台達電": ("2308", 5.37), "弘塑": ("3131", 4.95), "旺宏": ("2337", 3.94), "力旺": ("3529", 3.92)}},
@@ -67,31 +67,52 @@ def run_monitor():
                 <div class="dashboard-title">今日預估總貢獻 %</div>
                 <div class="total-percent">{total_pct:+.2f}%</div>
             </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody>{table_rows}</tbody></table>
-            </div>
+            <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody>{table_rows}</tbody></table>
         </div>'''
 
     html_content = f"""<!DOCTYPE html>
-<html lang="zh-TW"><head><meta charset="UTF-8"><title>基金監測系統</title>
+<html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>基金監測系統</title>
 <style>
     :root {{ --up: #ff4d4f; --down: #52c41a; }}
-    body {{ font-family: sans-serif; background: #f8f9fa; padding: 10px; margin: 0; }}
-    .container {{ width: 100%; max-width: 500px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
+    body {{ font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }}
+    .container {{ max-width: 500px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
     .fund-section {{ display: none; }} .fund-section.active {{ display: block; }}
-    .table-responsive {{ width: 100%; overflow-x: auto; margin-top: 10px; }}
-    table {{ width: 100%; min-width: 400px; border-collapse: collapse; font-size: 12px; }}
-    th, td {{ padding: 8px 4px; text-align: right; border-bottom: 1px solid #eee; white-space: nowrap; }}
-    .dashboard {{ text-align: center; margin-bottom: 15px; }}
-    .total-sum {{ font-size: 22px; font-weight: bold; margin-bottom: 5px; }}
+    .dashboard {{ text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }}
+    .total-sum {{ font-size: 24px; font-weight: bold; color: #333; }}
+    table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
+    th {{ color: #888; font-weight: normal; padding: 8px 4px; border-bottom: 1px solid #eee; }}
+    td {{ padding: 10px 4px; text-align: right; border-bottom: 1px solid #f9f9f9; }}
     .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
+    select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
+    .update-box {{ text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }}
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; margin-bottom:15px;">🕒 更新：{now_tw}</div>
-    <select onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')" style="width:100%; padding:10px;">{options_html}</select>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 10px;">🕒 更新：{now_tw}</div>
+    <select onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')">{options_html}</select>
     {sections_html}
+    <div class="update-box">
+        <button id="updateBtn" onclick="triggerUpdate()" style="background-color: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">更新基金數據</button>
+        <p id="status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
+    </div>
 </div>
+<script>
+async function triggerUpdate() {{
+    const GITHUB_OWNER = "a0928533194-web"; 
+    const REPO_NAME = "stock-monitor";
+    const WORKFLOW_FILE = "run.yml"; 
+    const userToken = prompt("請輸入您的 GitHub Token:");
+    if (!userToken) return;
+    document.getElementById('status').innerText = "正在發送請求...";
+    const response = await fetch(`https://api.github.com/repos/${{GITHUB_OWNER}}/${{REPO_NAME}}/actions/workflows/${{WORKFLOW_FILE}}/dispatches`, {{
+        method: "POST",
+        headers: {{"Authorization": "token " + userToken, "Accept": "application/vnd.github.v3+json"}},
+        body: JSON.stringify({{"ref": "main"}})
+    }});
+    if (response.ok) {{ document.getElementById('status').innerText = "✅ 請求已送出！"; }}
+    else {{ document.getElementById('status').innerText = "❌ 請求失敗"; }}
+}}
+</script>
 </body></html>"""
 
     with open("index.html", "w", encoding="utf-8") as f: f.write(html_content)

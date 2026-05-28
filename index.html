@@ -1,208 +1,49 @@
 <!DOCTYPE html>
-<html lang="zh-TW"><head><meta charset="UTF-8"><title>基金監測系統</title>
-<style>
-    :root { --up: #ff4d4f; --down: #52c41a; }
-    body { font-family: sans-serif; background: #f8f9fa; padding: 10px; margin: 0; }
-    .container { width: 100%; max-width: 500px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .fund-section { display: none; } .fund-section.active { display: block; }
-    .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; }
-    table { width: 100%; min-width: 400px; border-collapse: collapse; font-size: 12px; }
-    th, td { padding: 8px 4px; text-align: right; border-bottom: 1px solid #eee; white-space: nowrap; }
-    .dashboard { text-align: center; margin-bottom: 15px; }
-    .total-sum { font-size: 22px; font-weight: bold; margin-bottom: 5px; }
-    .up { color: var(--up); font-weight: bold; } .down { color: var(--down); font-weight: bold; }
-</style></head>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基金監測系統</title>
+    <style>
+        :root { --up: #ff4d4f; --down: #52c41a; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .fund-section { display: none; } 
+        .fund-section.active { display: block; }
+        .dashboard { text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }
+        .total-sum { font-size: 24px; font-weight: bold; color: #333; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { color: #888; font-weight: normal; padding: 8px 4px; border-bottom: 1px solid #eee; }
+        td { padding: 10px 4px; text-align: right; border-bottom: 1px solid #f9f9f9; }
+        .up { color: var(--up); font-weight: bold; } 
+        .down { color: var(--down); font-weight: bold; }
+        select { width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }
+    </style>
+</head>
 <body>
 <div class="container">
-    <div style="text-align:center; margin-bottom:15px;">🕒 更新：2026-05-27 21:36:08</div>
-    <select onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')" style="width:100%; padding:10px;"><option value="yuanta_otc">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option><option value="allianz_taiwan">安聯台灣大壩</option><option value="allianz_tech">安聯台灣科技</option><option value="allianz_smart">安聯台灣智慧</option><option value="fubon_choice">富邦首選</option><option value="fubon_select">富邦上選</option><option value="fubon_taiwan">富邦新台商</option><option value="nomura_prime">野村優質</option><option value="hanya_tech">瀚亞科技</option><option value="uni_allweather">統一全天候</option><option value="uni_prosper">統一奔騰</option><option value="uni_darkhorse">統一黑馬基金</option><option value="nomura_fortune">野村鴻運基金</option><option value="nomura_growth">野村成長基金</option><option value="nomura_hightech">野村高科技基金</option><option value="nomura_etech">野村 e 科技基金</option></select>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 10px;">🕒 更新：2026-05-27 21:36:08</div>
     
-        <div id="sector-yuanta_otc" class="fund-section active">
-            <div class="dashboard">
-                <div class="dashboard-title">元大店頭基金 - 今日預估總貢獻</div>
-                <div class="total-sum">+98.9388</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+0.05%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>旺矽</td><td class='weight'>8.71%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.21%</td><td class='up'>+13.0650</td></tr><tr><td>信驊</td><td class='weight'>6.66%</td><td>17240.0</td><td class='up'>18230.0</td><td class='up'>+0.38%</td><td class='up'>+65.9340</td></tr><tr><td>台積電</td><td class='weight'>6.47%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.09%</td><td class='up'>+1.9410</td></tr><tr><td>穎崴</td><td class='weight'>5.77%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+0.58%</td><td class='up'>+51.3530</td></tr><tr><td>精測</td><td class='weight'>5.74%</td><td>3415.0</td><td class='down'>3195.0</td><td class='down'>-0.37%</td><td class='down'>-12.6280</td></tr><tr><td>聯亞</td><td class='weight'>4.8%</td><td>3160.0</td><td class='down'>2885.0</td><td class='down'>-0.42%</td><td class='down'>-13.2000</td></tr><tr><td>華星光</td><td class='weight'>4.31%</td><td>680.0</td><td class='down'>628.0</td><td class='down'>-0.33%</td><td class='down'>-2.2412</td></tr><tr><td>台燿</td><td class='weight'>4.08%</td><td>1580.0</td><td class='up'>1630.0</td><td class='up'>+0.13%</td><td class='up'>+2.0400</td></tr><tr><td>群聯</td><td class='weight'>3.84%</td><td>2505.0</td><td class='down'>2480.0</td><td class='down'>-0.04%</td><td class='down'>-0.9600</td></tr><tr><td>力旺</td><td class='weight'>3.35%</td><td>3485.0</td><td class='down'>3295.0</td><td class='down'>-0.18%</td><td class='down'>-6.3650</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-shinkin_three" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">新光大三通基金 - 今日預估總貢獻</div>
-                <div class="total-sum">+17.7949</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+0.51%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>欣興</td><td class='weight'>9.47%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.04%</td><td class='down'>-0.4735</td></tr><tr><td>景碩</td><td class='weight'>7.1%</td><td>696.0</td><td class='up'>702.0</td><td class='up'>+0.06%</td><td class='up'>+0.4260</td></tr><tr><td>世芯-KY</td><td class='weight'>6.93%</td><td>4640.0</td><td class='down'>4500.0</td><td class='down'>-0.21%</td><td class='down'>-9.7020</td></tr><tr><td>台積電</td><td class='weight'>6.59%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.09%</td><td class='up'>+1.9770</td></tr><tr><td>旺矽</td><td class='weight'>6.27%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.15%</td><td class='up'>+9.4050</td></tr><tr><td>大量</td><td class='weight'>6.06%</td><td>831.0</td><td class='down'>820.0</td><td class='down'>-0.08%</td><td class='down'>-0.6666</td></tr><tr><td>台達電</td><td class='weight'>5.37%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.39%</td><td class='up'>+9.1290</td></tr><tr><td>弘塑</td><td class='weight'>4.95%</td><td>3115.0</td><td class='up'>3425.0</td><td class='up'>+0.49%</td><td class='up'>+15.3450</td></tr><tr><td>旺宏</td><td class='weight'>3.94%</td><td>160.5</td><td class='down'>155.5</td><td class='down'>-0.12%</td><td class='down'>-0.1970</td></tr><tr><td>力旺</td><td class='weight'>3.92%</td><td>3485.0</td><td class='down'>3295.0</td><td class='down'>-0.21%</td><td class='down'>-7.4480</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-allianz_taiwan" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">安聯台灣大壩 - 今日預估總貢獻</div>
-                <div class="total-sum">+177.1405</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+2.20%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>旺矽</td><td class='weight'>11.3%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.27%</td><td class='up'>+16.9500</td></tr><tr><td>穎崴</td><td class='weight'>10.49%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+1.05%</td><td class='up'>+93.3610</td></tr><tr><td>台積電</td><td class='weight'>6.87%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.09%</td><td class='up'>+2.0610</td></tr><tr><td>台光電</td><td class='weight'>6.44%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.02%</td><td class='up'>+0.9660</td></tr><tr><td>欣興</td><td class='weight'>5.65%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.03%</td><td class='down'>-0.2825</td></tr><tr><td>信驊</td><td class='weight'>5.45%</td><td>17240.0</td><td class='up'>18230.0</td><td class='up'>+0.31%</td><td class='up'>+53.9550</td></tr><tr><td>台達電</td><td class='weight'>5.05%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.37%</td><td class='up'>+8.5850</td></tr><tr><td>台燿</td><td class='weight'>4.97%</td><td>1580.0</td><td class='up'>1630.0</td><td class='up'>+0.16%</td><td class='up'>+2.4850</td></tr><tr><td>奇鋐</td><td class='weight'>3.76%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.03%</td><td class='down'>-0.9400</td></tr><tr><td>智邦</td><td class='weight'>3.34%</td><td>2620.0</td><td class=''>2620.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-allianz_tech" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">安聯台灣科技 - 今日預估總貢獻</div>
-                <div class="total-sum">+128.2115</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+1.50%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>旺矽</td><td class='weight'>8.54%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.21%</td><td class='up'>+12.8100</td></tr><tr><td>穎崴</td><td class='weight'>8.38%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+0.84%</td><td class='up'>+74.5820</td></tr><tr><td>台積電</td><td class='weight'>6.59%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.09%</td><td class='up'>+1.9770</td></tr><tr><td>台光電</td><td class='weight'>6.58%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.02%</td><td class='up'>+0.9870</td></tr><tr><td>創意</td><td class='weight'>5.34%</td><td>5285.0</td><td class='down'>5100.0</td><td class='down'>-0.19%</td><td class='down'>-9.8790</td></tr><tr><td>台燿</td><td class='weight'>4.73%</td><td>1580.0</td><td class='up'>1630.0</td><td class='up'>+0.15%</td><td class='up'>+2.3650</td></tr><tr><td>台達電</td><td class='weight'>4.49%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.32%</td><td class='up'>+7.6330</td></tr><tr><td>信驊</td><td class='weight'>4.09%</td><td>17240.0</td><td class='up'>18230.0</td><td class='up'>+0.23%</td><td class='up'>+40.4910</td></tr><tr><td>金像電</td><td class='weight'>4.07%</td><td>1445.0</td><td class='down'>1375.0</td><td class='down'>-0.20%</td><td class='down'>-2.8490</td></tr><tr><td>威剛</td><td class='weight'>3.78%</td><td>410.0</td><td class='up'>412.5</td><td class='up'>+0.02%</td><td class='up'>+0.0945</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-allianz_smart" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">安聯台灣智慧 - 今日預估總貢獻</div>
-                <div class="total-sum">+162.2025</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+1.95%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>信驊</td><td class='weight'>7.77%</td><td>17240.0</td><td class='up'>18230.0</td><td class='up'>+0.45%</td><td class='up'>+76.9230</td></tr><tr><td>穎崴</td><td class='weight'>7.57%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+0.76%</td><td class='up'>+67.3730</td></tr><tr><td>旺矽</td><td class='weight'>7.25%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.17%</td><td class='up'>+10.8750</td></tr><tr><td>台光電</td><td class='weight'>6.35%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.02%</td><td class='up'>+0.9525</td></tr><tr><td>創意</td><td class='weight'>6.11%</td><td>5285.0</td><td class='down'>5100.0</td><td class='down'>-0.21%</td><td class='down'>-11.3035</td></tr><tr><td>台積電</td><td class='weight'>5.56%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.07%</td><td class='up'>+1.6680</td></tr><tr><td>致茂</td><td class='weight'>4.99%</td><td>2500.0</td><td class='up'>2625.0</td><td class='up'>+0.25%</td><td class='up'>+6.2375</td></tr><tr><td>智邦</td><td class='weight'>4.39%</td><td>2620.0</td><td class=''>2620.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>台達電</td><td class='weight'>4.36%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.32%</td><td class='up'>+7.4120</td></tr><tr><td>台燿</td><td class='weight'>4.13%</td><td>1580.0</td><td class='up'>1630.0</td><td class='up'>+0.13%</td><td class='up'>+2.0650</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-fubon_choice" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">富邦首選 - 今日預估總貢獻</div>
-                <div class="total-sum">-5.7693</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">-1.07%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>欣興</td><td class='weight'>9.89%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.05%</td><td class='down'>-0.4945</td></tr><tr><td>旺矽</td><td class='weight'>8.34%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.20%</td><td class='up'>+12.5100</td></tr><tr><td>金像電</td><td class='weight'>7.24%</td><td>1445.0</td><td class='down'>1375.0</td><td class='down'>-0.35%</td><td class='down'>-5.0680</td></tr><tr><td>台達電</td><td class='weight'>6.49%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.47%</td><td class='up'>+11.0330</td></tr><tr><td>群聯</td><td class='weight'>5.94%</td><td>2505.0</td><td class='down'>2480.0</td><td class='down'>-0.06%</td><td class='down'>-1.4850</td></tr><tr><td>光聖</td><td class='weight'>5.5%</td><td>2265.0</td><td class='down'>2040.0</td><td class='down'>-0.55%</td><td class='down'>-12.3750</td></tr><tr><td>貿聯-KY</td><td class='weight'>5.48%</td><td>2265.0</td><td class='down'>2115.0</td><td class='down'>-0.36%</td><td class='down'>-8.2200</td></tr><tr><td>台積電</td><td class='weight'>5.28%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.07%</td><td class='up'>+1.5840</td></tr><tr><td>華星光</td><td class='weight'>4.76%</td><td>680.0</td><td class='down'>628.0</td><td class='down'>-0.36%</td><td class='down'>-2.4752</td></tr><tr><td>南電</td><td class='weight'>4.58%</td><td>922.0</td><td class='down'>905.0</td><td class='down'>-0.08%</td><td class='down'>-0.7786</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-fubon_select" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">富邦上選 - 今日預估總貢獻</div>
-                <div class="total-sum">+24.8383</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">-0.87%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>欣興</td><td class='weight'>7.48%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.03%</td><td class='down'>-0.3740</td></tr><tr><td>穎崴</td><td class='weight'>6.46%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+0.65%</td><td class='up'>+57.4940</td></tr><tr><td>南電</td><td class='weight'>6.11%</td><td>922.0</td><td class='down'>905.0</td><td class='down'>-0.11%</td><td class='down'>-1.0387</td></tr><tr><td>聯亞</td><td class='weight'>5.55%</td><td>3160.0</td><td class='down'>2885.0</td><td class='down'>-0.48%</td><td class='down'>-15.2625</td></tr><tr><td>台光電</td><td class='weight'>5.48%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.02%</td><td class='up'>+0.8220</td></tr><tr><td>金像電</td><td class='weight'>5.39%</td><td>1445.0</td><td class='down'>1375.0</td><td class='down'>-0.26%</td><td class='down'>-3.7730</td></tr><tr><td>奇鋐</td><td class='weight'>4.9%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.04%</td><td class='down'>-1.2250</td></tr><tr><td>光聖</td><td class='weight'>4.83%</td><td>2265.0</td><td class='down'>2040.0</td><td class='down'>-0.48%</td><td class='down'>-10.8675</td></tr><tr><td>台積電</td><td class='weight'>4.72%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.06%</td><td class='up'>+1.4160</td></tr><tr><td>竹陞科技</td><td class='weight'>3.62%</td><td>1360.0</td><td class='down'>1295.0</td><td class='down'>-0.17%</td><td class='down'>-2.3530</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-fubon_taiwan" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">富邦新台商 - 今日預估總貢獻</div>
-                <div class="total-sum">+6.8970</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+0.16%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>聯亞</td><td class='weight'>5.55%</td><td>3160.0</td><td class='down'>2885.0</td><td class='down'>-0.48%</td><td class='down'>-15.2625</td></tr><tr><td>台達電</td><td class='weight'>5.2%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.38%</td><td class='up'>+8.8400</td></tr><tr><td>台光電</td><td class='weight'>5.07%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.01%</td><td class='up'>+0.7605</td></tr><tr><td>旺矽</td><td class='weight'>4.97%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.12%</td><td class='up'>+7.4550</td></tr><tr><td>台積電</td><td class='weight'>4.74%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.06%</td><td class='up'>+1.4220</td></tr><tr><td>致茂</td><td class='weight'>4.71%</td><td>2500.0</td><td class='up'>2625.0</td><td class='up'>+0.24%</td><td class='up'>+5.8875</td></tr><tr><td>健策</td><td class='weight'>4.34%</td><td>3670.0</td><td class=''>3670.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>奇鋐</td><td class='weight'>4.25%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.04%</td><td class='down'>-1.0625</td></tr><tr><td>南電</td><td class='weight'>4.09%</td><td>922.0</td><td class='down'>905.0</td><td class='down'>-0.08%</td><td class='down'>-0.6953</td></tr><tr><td>大量</td><td class='weight'>4.07%</td><td>831.0</td><td class='down'>820.0</td><td class='down'>-0.05%</td><td class='down'>-0.4477</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-nomura_prime" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">野村優質 - 今日預估總貢獻</div>
-                <div class="total-sum">+63.1515</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+0.92%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>健策</td><td class='weight'>8.72%</td><td>3670.0</td><td class=''>3670.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>台光電</td><td class='weight'>8.62%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.02%</td><td class='up'>+1.2930</td></tr><tr><td>台達電</td><td class='weight'>8.44%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.61%</td><td class='up'>+14.3480</td></tr><tr><td>台積電</td><td class='weight'>8.03%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.11%</td><td class='up'>+2.4090</td></tr><tr><td>穎崴</td><td class='weight'>7.42%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+0.74%</td><td class='up'>+66.0380</td></tr><tr><td>川湖</td><td class='weight'>7.1%</td><td>5035.0</td><td class='down'>4920.0</td><td class='down'>-0.16%</td><td class='down'>-8.1650</td></tr><tr><td>鴻勤</td><td class='weight'>6.7%</td><td>260.5</td><td class='up'>267.0</td><td class='up'>+0.17%</td><td class='up'>+0.4355</td></tr><tr><td>金像電</td><td class='weight'>5.9%</td><td>1445.0</td><td class='down'>1375.0</td><td class='down'>-0.29%</td><td class='down'>-4.1300</td></tr><tr><td>欣興</td><td class='weight'>5.22%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.02%</td><td class='down'>-0.2610</td></tr><tr><td>力旺</td><td class='weight'>4.64%</td><td>3485.0</td><td class='down'>3295.0</td><td class='down'>-0.25%</td><td class='down'>-8.8160</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-hanya_tech" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">瀚亞科技 - 今日預估總貢獻</div>
-                <div class="total-sum">+18.9259</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+0.77%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>欣興</td><td class='weight'>8.95%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.04%</td><td class='down'>-0.4475</td></tr><tr><td>台光電</td><td class='weight'>8.18%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.02%</td><td class='up'>+1.2270</td></tr><tr><td>奇鋐</td><td class='weight'>8.16%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.07%</td><td class='down'>-2.0400</td></tr><tr><td>台積電</td><td class='weight'>7.64%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.10%</td><td class='up'>+2.2920</td></tr><tr><td>台達電</td><td class='weight'>7.05%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.51%</td><td class='up'>+11.9850</td></tr><tr><td>台燿</td><td class='weight'>6.84%</td><td>1580.0</td><td class='up'>1630.0</td><td class='up'>+0.22%</td><td class='up'>+3.4200</td></tr><tr><td>智邦</td><td class='weight'>6.29%</td><td>2620.0</td><td class=''>2620.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>聯亞</td><td class='weight'>5.85%</td><td>3160.0</td><td class='down'>2885.0</td><td class='down'>-0.51%</td><td class='down'>-16.0875</td></tr><tr><td>聯發科</td><td class='weight'>4.88%</td><td>4265.0</td><td class='up'>4640.0</td><td class='up'>+0.43%</td><td class='up'>+18.3000</td></tr><tr><td>光寶科</td><td class='weight'>4.26%</td><td>239.5</td><td class='up'>246.0</td><td class='up'>+0.12%</td><td class='up'>+0.2769</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-uni_allweather" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">統一全天候 - 今日預估總貢獻</div>
-                <div class="total-sum">+59.0710</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+0.89%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>台光電</td><td class='weight'>9.85%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.03%</td><td class='up'>+1.4775</td></tr><tr><td>台達電</td><td class='weight'>8.68%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.63%</td><td class='up'>+14.7560</td></tr><tr><td>欣興</td><td class='weight'>8.5%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.04%</td><td class='down'>-0.4250</td></tr><tr><td>奇鋐</td><td class='weight'>7.88%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.07%</td><td class='down'>-1.9700</td></tr><tr><td>台積電</td><td class='weight'>7.08%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.09%</td><td class='up'>+2.1240</td></tr><tr><td>貿聯-KY</td><td class='weight'>6.23%</td><td>2265.0</td><td class='down'>2115.0</td><td class='down'>-0.41%</td><td class='down'>-9.3450</td></tr><tr><td>穎崴</td><td class='weight'>5.44%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+0.54%</td><td class='up'>+48.4160</td></tr><tr><td>健策</td><td class='weight'>4.51%</td><td>3670.0</td><td class=''>3670.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>南電</td><td class='weight'>3.75%</td><td>922.0</td><td class='down'>905.0</td><td class='down'>-0.07%</td><td class='down'>-0.6375</td></tr><tr><td>致茂</td><td class='weight'>3.74%</td><td>2500.0</td><td class='up'>2625.0</td><td class='up'>+0.19%</td><td class='up'>+4.6750</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-uni_prosper" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">統一奔騰 - 今日預估總貢獻</div>
-                <div class="total-sum">+8.4202</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">-0.17%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>台光電</td><td class='weight'>10.16%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.03%</td><td class='up'>+1.5240</td></tr><tr><td>奇鋐</td><td class='weight'>9.21%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.08%</td><td class='down'>-2.3025</td></tr><tr><td>健策</td><td class='weight'>7.79%</td><td>3670.0</td><td class=''>3670.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>旺矽</td><td class='weight'>7.55%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.18%</td><td class='up'>+11.3250</td></tr><tr><td>貿聯-KY</td><td class='weight'>7.31%</td><td>2265.0</td><td class='down'>2115.0</td><td class='down'>-0.48%</td><td class='down'>-10.9650</td></tr><tr><td>台達電</td><td class='weight'>7.28%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.53%</td><td class='up'>+12.3760</td></tr><tr><td>南電</td><td class='weight'>7.19%</td><td>922.0</td><td class='down'>905.0</td><td class='down'>-0.13%</td><td class='down'>-1.2223</td></tr><tr><td>智邦</td><td class='weight'>7.07%</td><td>2620.0</td><td class=''>2620.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>台積電</td><td class='weight'>6.4%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.08%</td><td class='up'>+1.9200</td></tr><tr><td>金像電</td><td class='weight'>6.05%</td><td>1445.0</td><td class='down'>1375.0</td><td class='down'>-0.29%</td><td class='down'>-4.2350</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-uni_darkhorse" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">統一黑馬基金 - 今日預估總貢獻</div>
-                <div class="total-sum">+30.2202</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+0.14%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>台光電</td><td class='weight'>7.34%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.02%</td><td class='up'>+1.1010</td></tr><tr><td>台積電</td><td class='weight'>6.94%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.09%</td><td class='up'>+2.0820</td></tr><tr><td>欣興</td><td class='weight'>6.78%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.03%</td><td class='down'>-0.3390</td></tr><tr><td>奇鋐</td><td class='weight'>6.65%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.06%</td><td class='down'>-1.6625</td></tr><tr><td>南電</td><td class='weight'>6.39%</td><td>922.0</td><td class='down'>905.0</td><td class='down'>-0.12%</td><td class='down'>-1.0863</td></tr><tr><td>台達電</td><td class='weight'>5.9%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.43%</td><td class='up'>+10.0300</td></tr><tr><td>金像電</td><td class='weight'>5.27%</td><td>1445.0</td><td class='down'>1375.0</td><td class='down'>-0.26%</td><td class='down'>-3.6890</td></tr><tr><td>健策</td><td class='weight'>4.64%</td><td>3670.0</td><td class=''>3670.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>貿聯-KY</td><td class='weight'>4.08%</td><td>2265.0</td><td class='down'>2115.0</td><td class='down'>-0.27%</td><td class='down'>-6.1200</td></tr><tr><td>穎崴</td><td class='weight'>3.36%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+0.34%</td><td class='up'>+29.9040</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-nomura_fortune" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">野村鴻運基金 - 今日預估總貢獻</div>
-                <div class="total-sum">+47.9880</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+0.54%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>欣興</td><td class='weight'>7.56%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.03%</td><td class='down'>-0.3780</td></tr><tr><td>奇鋐</td><td class='weight'>6.38%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.06%</td><td class='down'>-1.5950</td></tr><tr><td>健策</td><td class='weight'>5.97%</td><td>3670.0</td><td class=''>3670.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>台達電</td><td class='weight'>5.9%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.43%</td><td class='up'>+10.0300</td></tr><tr><td>台光電</td><td class='weight'>5.78%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.02%</td><td class='up'>+0.8670</td></tr><tr><td>台積電</td><td class='weight'>5.57%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.07%</td><td class='up'>+1.6710</td></tr><tr><td>旺矽</td><td class='weight'>4.6%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.11%</td><td class='up'>+6.9000</td></tr><tr><td>穎崴</td><td class='weight'>4.34%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+0.43%</td><td class='up'>+38.6260</td></tr><tr><td>貿聯-KY</td><td class='weight'>3.7%</td><td>2265.0</td><td class='down'>2115.0</td><td class='down'>-0.25%</td><td class='down'>-5.5500</td></tr><tr><td>金像電</td><td class='weight'>3.69%</td><td>1445.0</td><td class='down'>1375.0</td><td class='down'>-0.18%</td><td class='down'>-2.5830</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-nomura_growth" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">野村成長基金 - 今日預估總貢獻</div>
-                <div class="total-sum">+69.4025</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">+0.80%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>台光電</td><td class='weight'>7.24%</td><td>5290.0</td><td class='up'>5305.0</td><td class='up'>+0.02%</td><td class='up'>+1.0860</td></tr><tr><td>欣興</td><td class='weight'>7.22%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.03%</td><td class='down'>-0.3610</td></tr><tr><td>穎崴</td><td class='weight'>6.34%</td><td>8905.0</td><td class='up'>9795.0</td><td class='up'>+0.63%</td><td class='up'>+56.4260</td></tr><tr><td>台達電</td><td class='weight'>5.68%</td><td>2350.0</td><td class='up'>2520.0</td><td class='up'>+0.41%</td><td class='up'>+9.6560</td></tr><tr><td>金像電</td><td class='weight'>5.53%</td><td>1445.0</td><td class='down'>1375.0</td><td class='down'>-0.27%</td><td class='down'>-3.8710</td></tr><tr><td>台積電</td><td class='weight'>5.4%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.07%</td><td class='up'>+1.6200</td></tr><tr><td>南電</td><td class='weight'>5.3%</td><td>922.0</td><td class='down'>905.0</td><td class='down'>-0.10%</td><td class='down'>-0.9010</td></tr><tr><td>奇鋐</td><td class='weight'>5.21%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.05%</td><td class='down'>-1.3025</td></tr><tr><td>健策</td><td class='weight'>5.08%</td><td>3670.0</td><td class=''>3670.0</td><td class=''>+0.00%</td><td class=''>+0.0000</td></tr><tr><td>旺矽</td><td class='weight'>4.7%</td><td>6240.0</td><td class='up'>6390.0</td><td class='up'>+0.11%</td><td class='up'>+7.0500</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-nomura_hightech" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">野村高科技基金 - 今日預估總貢獻</div>
-                <div class="total-sum">-5.4787</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">-0.71%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>南電</td><td class='weight'>9.18%</td><td>922.0</td><td class='down'>905.0</td><td class='down'>-0.17%</td><td class='down'>-1.5606</td></tr><tr><td>欣興</td><td class='weight'>8.94%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.04%</td><td class='down'>-0.4470</td></tr><tr><td>聯亞</td><td class='weight'>7.45%</td><td>3160.0</td><td class='down'>2885.0</td><td class='down'>-0.65%</td><td class='down'>-20.4875</td></tr><tr><td>台積電</td><td class='weight'>6.36%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.08%</td><td class='up'>+1.9080</td></tr><tr><td>奇鋐</td><td class='weight'>6.05%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.06%</td><td class='down'>-1.5125</td></tr><tr><td>華星光</td><td class='weight'>5.1%</td><td>680.0</td><td class='down'>628.0</td><td class='down'>-0.39%</td><td class='down'>-2.6520</td></tr><tr><td>聯發科</td><td class='weight'>3.96%</td><td>4265.0</td><td class='up'>4640.0</td><td class='up'>+0.35%</td><td class='up'>+14.8500</td></tr><tr><td>景碩</td><td class='weight'>3.79%</td><td>696.0</td><td class='up'>702.0</td><td class='up'>+0.03%</td><td class='up'>+0.2274</td></tr><tr><td>臻鼎-KY</td><td class='weight'>3.65%</td><td>540.0</td><td class='down'>532.0</td><td class='down'>-0.05%</td><td class='down'>-0.2920</td></tr><tr><td>致茂</td><td class='weight'>3.59%</td><td>2500.0</td><td class='up'>2625.0</td><td class='up'>+0.18%</td><td class='up'>+4.4875</td></tr></tbody></table>
-            </div>
-        </div>
-        <div id="sector-nomura_etech" class="fund-section ">
-            <div class="dashboard">
-                <div class="dashboard-title">野村 e 科技基金 - 今日預估總貢獻</div>
-                <div class="total-sum">-15.5955</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent">-1.16%</div>
-            </div>
-            <div class="table-responsive">
-                <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody><tr><td>南電</td><td class='weight'>8.85%</td><td>922.0</td><td class='down'>905.0</td><td class='down'>-0.16%</td><td class='down'>-1.5045</td></tr><tr><td>欣興</td><td class='weight'>8.79%</td><td>1085.0</td><td class='down'>1080.0</td><td class='down'>-0.04%</td><td class='down'>-0.4395</td></tr><tr><td>聯亞</td><td class='weight'>6.67%</td><td>3160.0</td><td class='down'>2885.0</td><td class='down'>-0.58%</td><td class='down'>-18.3425</td></tr><tr><td>台積電</td><td class='weight'>6.57%</td><td>2270.0</td><td class='up'>2300.0</td><td class='up'>+0.09%</td><td class='up'>+1.9710</td></tr><tr><td>奇鋐</td><td class='weight'>5.97%</td><td>2725.0</td><td class='down'>2700.0</td><td class='down'>-0.05%</td><td class='down'>-1.4925</td></tr><tr><td>華星光</td><td class='weight'>4.84%</td><td>680.0</td><td class='down'>628.0</td><td class='down'>-0.37%</td><td class='down'>-2.5168</td></tr><tr><td>景碩</td><td class='weight'>4.0%</td><td>696.0</td><td class='up'>702.0</td><td class='up'>+0.03%</td><td class='up'>+0.2400</td></tr><tr><td>聯發科</td><td class='weight'>3.91%</td><td>4265.0</td><td class='up'>4640.0</td><td class='up'>+0.34%</td><td class='up'>+14.6625</td></tr><tr><td>竑騰</td><td class='weight'>3.82%</td><td>10.45</td><td class='down'>10.3</td><td class='down'>-0.05%</td><td class='down'>-0.0057</td></tr><tr><td>光聖</td><td class='weight'>3.63%</td><td>2265.0</td><td class='down'>2040.0</td><td class='down'>-0.36%</td><td class='down'>-8.1675</td></tr></tbody></table>
-            </div>
-        </div>
-</div>
-</body></html>
+    <select onchange="document.querySelectorAll('.fund-section').forEach(s=>s.classList.remove('active')); document.getElementById('sector-'+this.value).classList.add('active')">
+        <option value="yuanta_otc">元大店頭基金</option>
+        <option value="shinkin_three">新光大三通基金</option>
+        <option value="allianz_taiwan">安聯台灣大壩</option>
+        <option value="allianz_tech">安聯台灣科技</option>
+        <option value="allianz_smart">安聯台灣智慧</option>
+        <option value="fubon_choice">富邦首選</option>
+        <option value="fubon_select">富邦上選</option>
+        <option value="fubon_taiwan">富邦新台商</option>
+        <option value="nomura_prime">野村優質</option>
+        <option value="hanya_tech">瀚亞科技</option>
+        <option value="uni_allweather">統一全天候</option>
+        <option value="uni_prosper">統一奔騰</option>
+        <option value="uni_darkhorse">統一黑馬基金</option>
+        <option value="nomura_fortune">野村鴻運基金</option>
+        <option value="nomura_growth">野村成長基金</option>
+        <option value="nomura_hightech">野村高科技基金</option>
+        <option value="nomura_etech">野村 e 科技基金</option>
+    </select>
+
+    </div>
+</body>
+</html>

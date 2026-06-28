@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 import time
 
-# 數據已根據您提供的 10 張圖片最新持股資訊完整更新
+# 完整基金數據設定
 FUNDS_CONFIG = {
     "yuanta_otc": {"name": "元大店頭基金", "stocks": {"旺矽": ("6223", 8.00), "中美晶": ("5483", 6.83), "信驊": ("5274", 6.78), "台積電": ("2330", 6.32), "台燿": ("6274", 6.05), "聯電": ("2303", 5.74), "精測": ("6510", 4.64), "環球晶": ("6488", 4.45), "聯亞": ("3081", 4.21), "沛亨": ("6291", 3.95)}},
     "shinkin_three": {"name": "新光大三通基金", "stocks": {"景碩": ("3189", 8.79), "欣興": ("3037", 8.56), "旺矽": ("6223", 6.81), "世芯-KY": ("3661", 6.63), "台積電": ("2330", 6.51), "台達電": ("2308", 5.44), "力積電": ("6770", 5.33), "大量": ("3167", 5.02), "台表科": ("6278", 4.65), "晶豪科": ("3006", 4.44)}},
@@ -43,13 +43,23 @@ def get_fund_data(stocks_dict):
                     break
             except: continue
         
-        stock_change_pct = (diff / p_yesterday * 100) if p_yesterday != 0 else 0
-        contrib_pct = stock_change_pct * (weight / 100)
+        # 計算漲跌幅 %
+        pct_change = (diff / p_yesterday * 100) if p_yesterday != 0 else 0
+        contrib_pct = pct_change * (weight / 100)
         contribution = diff * (weight / 100)
         total_pct += contrib_pct
         total_contribution += contribution
         color = "up" if diff > 0 else "down" if diff < 0 else ""
-        table_rows += f"<tr><td>{name}</td><td class='weight'>{weight}%</td><td>{p_yesterday if success else 'N/A'}</td><td class='{color}'>{p_current if success else 'N/A'}</td><td class='{color}'>{contrib_pct:+.2f}%</td><td class='{color}'>{contribution:+.4f}</td></tr>"
+        
+        table_rows += f"""<tr>
+            <td>{name}</td>
+            <td class='weight'>{weight}%</td>
+            <td>{p_yesterday if success else 'N/A'}</td>
+            <td class='{color}'>{p_current if success else 'N/A'}</td>
+            <td class='{color}'>{pct_change:+.2f}%</td>
+            <td class='{color}'>{contrib_pct:+.2f}%</td>
+            <td class='{color}'>{contribution:+.4f}</td>
+        </tr>"""
     return round(total_contribution, 4), round(total_pct, 2), table_rows
 
 def run_monitor():
@@ -67,7 +77,7 @@ def run_monitor():
                 <div class="dashboard-title">今日預估總貢獻 %</div>
                 <div class="total-percent">{total_pct:+.2f}%</div>
             </div>
-            <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody>{table_rows}</tbody></table>
+            <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>漲跌幅%</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody>{table_rows}</tbody></table>
         </div>'''
 
     html_content = f"""<!DOCTYPE html>
@@ -75,13 +85,13 @@ def run_monitor():
 <style>
     :root {{ --up: #ff4d4f; --down: #52c41a; }}
     body {{ font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }}
-    .container {{ max-width: 500px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
+    .container {{ max-width: 650px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
     .fund-section {{ display: none; }} .fund-section.active {{ display: block; }}
     .dashboard {{ text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }}
     .total-sum {{ font-size: 24px; font-weight: bold; color: #333; }}
-    table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
-    th {{ color: #888; font-weight: normal; padding: 8px 4px; border-bottom: 1px solid #eee; }}
-    td {{ padding: 10px 4px; text-align: right; border-bottom: 1px solid #f9f9f9; }}
+    table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
+    th {{ color: #888; font-weight: normal; padding: 8px 2px; border-bottom: 1px solid #eee; }}
+    td {{ padding: 8px 2px; text-align: right; border-bottom: 1px solid #f9f9f9; }}
     .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
     select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
     .update-box {{ text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }}

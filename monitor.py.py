@@ -43,7 +43,6 @@ def get_fund_data(stocks_dict):
                     break
             except: continue
         
-        # 計算漲跌幅 %
         pct_change = (diff / p_yesterday * 100) if p_yesterday != 0 else 0
         contrib_pct = pct_change * (weight / 100)
         contribution = diff * (weight / 100)
@@ -53,10 +52,10 @@ def get_fund_data(stocks_dict):
         
         table_rows += f"""<tr>
             <td>{name}</td>
-            <td class='weight'>{weight}%</td>
+            <td>{weight}%</td>
             <td>{p_yesterday if success else 'N/A'}</td>
             <td class='{color}'>{p_current if success else 'N/A'}</td>
-            <td class='{color}'>{pct_change:+.2f}%</td>
+            <td class='{color}'><strong>{pct_change:+.2f}%</strong></td>
             <td class='{color}'>{contrib_pct:+.2f}%</td>
             <td class='{color}'>{contribution:+.4f}</td>
         </tr>"""
@@ -77,7 +76,20 @@ def run_monitor():
                 <div class="dashboard-title">今日預估總貢獻 %</div>
                 <div class="total-percent">{total_pct:+.2f}%</div>
             </div>
-            <table><thead><tr><th>成分股</th><th>權重</th><th>昨收</th><th>現價</th><th>漲跌幅%</th><th>貢獻%</th><th>貢獻度</th></tr></thead><tbody>{table_rows}</tbody></table>
+            <table style="width:100%; table-layout:fixed;">
+                <thead>
+                    <tr>
+                        <th style="width:15%">成分股</th>
+                        <th style="width:10%">權重</th>
+                        <th style="width:12%">昨收</th>
+                        <th style="width:12%">現價</th>
+                        <th style="width:17%">漲跌幅%</th>
+                        <th style="width:17%">貢獻%</th>
+                        <th style="width:17%">貢獻度</th>
+                    </tr>
+                </thead>
+                <tbody>{table_rows}</tbody>
+            </table>
         </div>'''
 
     html_content = f"""<!DOCTYPE html>
@@ -85,13 +97,13 @@ def run_monitor():
 <style>
     :root {{ --up: #ff4d4f; --down: #52c41a; }}
     body {{ font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }}
-    .container {{ max-width: 650px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
+    .container {{ max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
     .fund-section {{ display: none; }} .fund-section.active {{ display: block; }}
     .dashboard {{ text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }}
     .total-sum {{ font-size: 24px; font-weight: bold; color: #333; }}
-    table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
-    th {{ color: #888; font-weight: normal; padding: 8px 2px; border-bottom: 1px solid #eee; }}
-    td {{ padding: 8px 2px; text-align: right; border-bottom: 1px solid #f9f9f9; }}
+    table {{ width: 100%; border-collapse: collapse; font-size: 11px; }}
+    th {{ color: #888; padding: 8px 2px; border-bottom: 2px solid #ddd; text-align: center; }}
+    td {{ padding: 8px 2px; text-align: center; border-bottom: 1px solid #f9f9f9; }}
     .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
     select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
     .update-box {{ text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }}

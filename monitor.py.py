@@ -149,7 +149,6 @@ const stockMapping = {mapping_json};
 let savedFundsData = localStorage.getItem('myCustomFundsDataNameOnly');
 let fundsData = savedFundsData ? JSON.parse(savedFundsData) : {funds_json};
 
-// 讀取快取資料 (最後一次執行的成功數據)
 let cacheResults = JSON.parse(localStorage.getItem('myLastRunCache') || '{{}}');
 
 function toggleEditor(key) {{
@@ -201,7 +200,6 @@ function switchFund(key) {{
     document.querySelectorAll('.fund-section').forEach(s => s.classList.remove('active'));
     document.getElementById('sector-' + key).classList.add('active');
     
-    // 如果有先前的快取資料，立即顯示，保持畫面有內容
     if (cacheResults[key]) {{
         renderCachedData(key, cacheResults[key]);
     }}
@@ -220,12 +218,10 @@ async function fetchFundData(key) {{
     const stockNames = Object.keys(stocks);
     const totalStocks = stockNames.length;
     
-    // 若該基金完全沒有快取，才顯示載入提示
     if (!cacheResults[key]) {{
         document.getElementById('tbody-' + key).innerHTML = `<tr><td colspan="7" style="color: #1890ff;">正在對應代號並抓取股價數據...</td></tr>`;
     }}
 
-    // 顯示進度條
     const pContainer = document.getElementById('progress-container');
     const pBar = document.getElementById('progress-bar');
     pContainer.style.display = 'block';
@@ -271,7 +267,6 @@ async function fetchFundData(key) {{
             }}
         }} catch (e) {{}}
         
-        // 如果抓取失敗但快取裡有舊的單檔數值，也可以選擇保留，此處維持標準計算
         let pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
         let contribPct = pctChange * (weight / 100);
         let contribution = diff * (weight / 100);
@@ -298,12 +293,10 @@ async function fetchFundData(key) {{
     let sumStr = (totalContribution >= 0 ? '+' : '') + totalContribution.toFixed(4);
     let pctStr = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
 
-    // 即時更新畫面
     document.getElementById('tbody-' + key).innerHTML = tableRows;
     document.getElementById('sum-' + key).innerText = sumStr;
     document.getElementById('pct-' + key).innerText = pctStr;
 
-    // 儲存至最後一次執行快取 (LocalStorage)
     cacheResults[key] = {{
         tableRows: tableRows,
         totalContributionStr: sumStr,
@@ -351,7 +344,7 @@ window.onload = function() {{
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("【更新成功】index.html 已生成（具備進度條與快取保留機制）")
+    print("【更新成功】index.html 已生成")
 
 if __name__ == "__main__":
     run_monitor()

@@ -91,81 +91,14 @@ def fetch_stock_data():
 
 def run_monitor():
     stock_prices = fetch_stock_data()
-    options_html, sections_html = "", ""
+    options_html = ""
     
     for i, (key, info) in enumerate(FUNDS_CONFIG.items()):
-        active = "active" if i == 0 else ""
         options_html += f'<option value="{key}">{info["name"]}</option>'
-        
-        table_rows = ""
-        total_contribution = 0
-        total_pct = 0
-        
-        for name, weight in info["stocks"].items():
-            pYester, pCurr, diff, pctChange, contribPct, contribution = 0, 0, 0, 0, 0, 0
-            if name in stock_prices and stock_prices[name]["success"]:
-                pYester = stock_prices[name]["yesterday"]
-                pCurr = stock_prices[name]["current"]
-                diff = pCurr - pYester
-                pctChange = (diff / pYester) * 100 if pYester != 0 else 0
-                contribPct = pctChange * (weight / 100)
-                contribution = diff * (weight / 100)
-                
-                total_pct += contribPct
-                total_contribution += contribution
-            
-            color_class = "up" if diff > 0 else ("down" if diff < 0 else "")
-            sign_pct = '+' if pctChange >= 0 else ''
-            sign_contrib_pct = '+' if contribPct >= 0 else ''
-            sign_contrib = '+' if contribution >= 0 else ''
-            
-            table_rows += f'''<tr data-name="{name}">
-                <td><input type="text" class="edit-name" value="{name}" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px; background:transparent;" oninput="recalc('{key}')"></td>
-                <td><input type="number" step="0.01" class="edit-weight" value="{weight}" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="recalc('{key}')">%</td>
-                <td class="col-yesterday">{pYester:.2f}</td>
-                <td class="col-current {color_class}">{pCurr:.2f}</td>
-                <td class="col-pct {color_class}"><strong>{sign_pct}{pctChange:.2f}%</strong></td>
-                <td class="col-contrib-pct {color_class}">{sign_contrib_pct}{contribPct:.2f}%</td>
-                <td class="col-contrib {color_class}">{sign_contrib}{contribution:.4f}</td>
-                <td><button type="button" onclick="this.closest('tr').remove(); recalc('{key}');" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 6px;">X</button></td>
-            </tr>'''
 
-        sum_str = ('+' if total_contribution >= 0 else '') + f"{total_contribution:.4f}"
-        pct_str = ('+' if total_pct >= 0 else '') + f"{total_pct:.2f}%"
-
-        prices_json = json.dumps({n: stock_prices[n] for n in info["stocks"] if n in stock_prices})
-
-        sections_html += f'''
-        <div id="sector-{key}" class="fund-section {active}" data-name="{info["name"]}" data-prices='{prices_json}'>
-            <div class="dashboard">
-                <div class="dashboard-title">{info["name"]} - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-{key}">{sum_str}</div>
-                <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-{key}" style="font-size: 18px; font-weight: bold; color: #333;">{pct_str}</div>
-            </div>
-            
-            <div style="margin-bottom: 8px; display:flex; justify-content: space-between;">
-                <button type="button" onclick="addStockRow('{key}')" style="background: #52c41a; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">＋ 新增一檔股票</button>
-            </div>
-
-            <table style="width:100%; table-layout:fixed;">
-                <thead>
-                    <tr>
-                        <th style="width:18%">成分股</th>
-                        <th style="width:14%">權重</th>
-                        <th style="width:12%">昨收</th>
-                        <th style="width:12%">現價</th>
-                        <th style="width:14%">漲跌幅%</th>
-                        <th style="width:15%">貢獻%</th>
-                        <th style="width:15%">貢獻度</th>
-                        <th style="width:8%"></th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-{key}">
-                    {table_rows}
-                </tbody>
-            </table>
-        </div>'''
+    # 把完整預設股價快取與預設配置打包給前端
+    all_prices_json = json.dumps(stock_prices)
+    default_config_json = json.dumps(FUNDS_CONFIG)
 
     html_template = f'''<!DOCTYPE html>
 <html lang="zh-TW">
@@ -192,145 +125,228 @@ def run_monitor():
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (支援即時計算與一鍵匯出設定)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已啟用自動記憶功能)</div>
     
     <select id="fundSelect" onchange="switchFund(this.value)">{options_html}</select>
-    {sections_html}
+    
+    <div id="sections-container"></div>
     
     <div class="update-box">
-        <button type="button" onclick="exportConfig()" style="background-color: #52c41a; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">📋 產生更新後的 FUNDS_CONFIG 程式碼</button>
-        <br>
-        <textarea id="exportOutput" rows="6" style="width: 100%; font-size: 11px; padding: 5px; display:none; margin-bottom: 10px;" placeholder="程式碼將顯示在這裡，可直接複製..."></textarea>
+        <button type="button" onclick="resetConfig()" style="background-color: #ff4d4f; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; font-size: 12px;">🔄 恢復預設值</button>
         <br>
         <button id="updateBtn" onclick="triggerUpdate()" style="background-color: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">更新 GitHub 動作</button>
-        <button type="button" onclick="location.reload()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置畫面</button>
+        <button type="button" onclick="location.reload()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重新整理</button>
         <p id="status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
     </div>
 </div>
 
 <script>
-const globalPrices = {{}};
-document.querySelectorAll('.fund-section').forEach(section => {{
-    const prices = JSON.parse(section.getAttribute('data-prices') || '{{}}');
-    Object.assign(globalPrices, prices);
-}});
+const globalPrices = {all_prices_json};
+const defaultConfig = {default_config_json};
+
+// 從 localStorage 讀取使用者自訂設定，若無則使用預設值
+function getConfig() {{
+    const saved = localStorage.getItem('user_funds_config');
+    if (saved) {{
+        try {{ return JSON.parse(saved); }} catch(e) {{}}
+    }}
+    return defaultConfig;
+}}
+
+function saveConfig(config) {{
+    localStorage.setItem('user_funds_config', JSON.stringify(config));
+}}
+
+function renderApp() {{
+    const config = getConfig();
+    const container = document.getElementById('sections-container');
+    container.innerHTML = '';
+    
+    const activeKey = document.getElementById('fundSelect').value || Object.keys(config)[0];
+    
+    let index = 0;
+    for (const [key, info] of Object.entries(config)) {{
+        const active = (key === activeKey) ? "active" : "";
+        
+        let table_rows = "";
+        let total_contribution = 0;
+        let total_pct = 0;
+        
+        for (const [name, weight] of Object.entries(info.stocks)) {{
+            let pYester = 0, pCurr = 0, diff = 0, pctChange = 0, contribPct = 0, contribution = 0;
+            if (globalPrices[name] && globalPrices[name].success) {{
+                pYester = globalPrices[name].yesterday;
+                pCurr = globalPrices[name].current;
+                diff = pCurr - pYester;
+                pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
+                contribPct = pctChange * (weight / 100);
+                contribution = diff * (weight / 100);
+                
+                total_pct += contribPct;
+                total_contribution += contribution;
+            }}
+            
+            const color_class = diff > 0 ? "up" : (diff < 0 ? "down" : "");
+            const sign_pct = pctChange >= 0 ? '+' : '';
+            const sign_contrib_pct = contribPct >= 0 ? '+' : '';
+            const sign_contrib = contribution >= 0 ? '+' : '';
+            
+            table_rows += `<tr>
+                <td><input type="text" class="edit-name" value="${{name}}" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px; background:transparent;" oninput="updateData()"></td>
+                <td><input type="number" step="0.01" class="edit-weight" value="${{weight}}" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="updateData()">%</td>
+                <td class="col-yesterday">${{pYester.toFixed(2)}}</td>
+                <td class="col-current ${{color_class}}">${{pCurr.toFixed(2)}}</td>
+                <td class="col-pct ${{color_class}}"><strong>${{sign_pct}}${{pctChange.toFixed(2)}}%</strong></td>
+                <td class="col-contrib-pct ${{color_class}}">${{sign_contrib_pct}}${{contribPct.toFixed(2)}}%</td>
+                <td class="col-contrib ${{color_class}}">${{sign_contrib}}${{contribution.toFixed(4)}}</td>
+                <td><button type="button" onclick="this.closest('tr').remove(); updateData();" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 6px;">X</button></td>
+            </tr>`;
+        }}
+
+        const sum_str = (total_contribution >= 0 ? '+' : '') + total_contribution.toFixed(4);
+        const pct_str = (total_pct >= 0 ? '+' : '') + total_pct.toFixed(2) + '%';
+
+        const sectionHtml = `
+        <div id="sector-${{key}}" class="fund-section ${{active}}" data-key="${{key}}">
+            <div class="dashboard">
+                <div class="dashboard-title">${{info.name}} - 今日預估總貢獻</div>
+                <div class="total-sum" id="sum-${{key}}">${{sum_str}}</div>
+                <div class="dashboard-title">今日預估總貢獻 %</div>
+                <div class="total-percent" id="pct-${{key}}" style="font-size: 18px; font-weight: bold; color: #333;">${{pct_str}}</div>
+            </div>
+            
+            <div style="margin-bottom: 8px;">
+                <button type="button" onclick="addStockRow('${{key}}')" style="background: #52c41a; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">＋ 新增一檔股票</button>
+            </div>
+
+            <table style="width:100%; table-layout:fixed;">
+                <thead>
+                    <tr>
+                        <th style="width:18%">成分股</th>
+                        <th style="width:14%">權重</th>
+                        <th style="width:12%">昨收</th>
+                        <th style="width:12%">現價</th>
+                        <th style="width:14%">漲跌幅%</th>
+                        <th style="width:15%">貢獻%</th>
+                        <th style="width:15%">貢獻度</th>
+                        <th style="width:8%"></th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-${{key}}">
+                    ${{table_rows}}
+                </tbody>
+            </table>
+        </div>`;
+        container.insertAdjacentHTML('beforeend', sectionHtml);
+        index++;
+    }
+}
 
 function switchFund(key) {{
     document.querySelectorAll('.fund-section').forEach(s => s.classList.remove('active'));
-    document.getElementById('sector-' + key).classList.add('active');
+    const target = document.getElementById('sector-' + key);
+    if (target) target.classList.add('active');
 }}
 
 function addStockRow(key) {{
     const tbody = document.getElementById('tbody-' + key);
     const tr = document.createElement('tr');
     tr.innerHTML = `
-        <td><input type="text" class="edit-name" value="" placeholder="股票名稱" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="recalc('${{key}}')"></td>
-        <td><input type="number" step="0.01" class="edit-weight" value="0" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="recalc('${{key}}')">%</td>
+        <td><input type="text" class="edit-name" value="" placeholder="股票名稱" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="updateData()"></td>
+        <td><input type="number" step="0.01" class="edit-weight" value="0" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="updateData()">%</td>
         <td class="col-yesterday">0.00</td>
         <td class="col-current">0.00</td>
         <td class="col-pct"><strong>0.00%</strong></td>
         <td class="col-contrib-pct">0.00%</td>
         <td class="col-contrib">0.0000</td>
-        <td><button type="button" onclick="this.closest('tr').remove(); recalc('${{key}}');" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 6px;">X</button></td>
+        <td><button type="button" onclick="this.closest('tr').remove(); updateData();" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 6px;">X</button></td>
     `;
     tbody.appendChild(tr);
+    updateData();
 }}
 
-function recalc(key) {{
-    const section = document.getElementById('sector-' + key);
-    const rows = section.querySelectorAll('#tbody-' + key + ' tr');
+// 每次輸入變動時，即時重算並自動存入 localStorage
+function updateData() {{
+    const config = getConfig();
     
-    let totalSum = 0;
-    let totalPct = 0;
-    
-    rows.forEach(row => {{
-        const nameInput = row.querySelector('.edit-name');
-        const weightInput = row.querySelector('.edit-weight');
-        const name = nameInput ? nameInput.value.trim() : '';
-        const weight = parseFloat(weightInput ? weightInput.value : 0) || 0;
+    document.querySelectorAll('.fund-section').forEach(section => {{
+        const key = section.getAttribute('data-key');
+        const rows = section.querySelectorAll('tbody tr');
         
-        const yCell = row.querySelector('.col-yesterday');
-        const cCell = row.querySelector('.col-current');
-        const pctCell = row.querySelector('.col-pct');
-        const cpctCell = row.querySelector('.col-contrib-pct');
-        const contribCell = row.querySelector('.col-contrib');
+        let newStocks = {{}};
+        let totalSum = 0;
+        let totalPct = 0;
         
-        let pYester = 0, pCurr = 0;
-        if (name && globalPrices[name] && globalPrices[name].success) {{
-            pYester = globalPrices[name].yesterday;
-            pCurr = globalPrices[name].current;
-            yCell.innerText = pYester.toFixed(2);
-            cCell.innerText = pCurr.toFixed(2);
-        }} else {{
-            yCell.innerText = "0.00";
-            cCell.innerText = "0.00";
-        }}
-        
-        const diff = pCurr - pYester;
-        const pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
-        const contribPct = pctChange * (weight / 100);
-        const contribution = diff * (weight / 100);
-        
-        if (pYester !== 0) {{
-            totalSum += contribution;
-            totalPct += contribPct;
-        }}
-        
-        const colorClass = diff > 0 ? "up" : (diff < 0 ? "down" : "");
-        const signPct = pctChange >= 0 ? '+' : '';
-        const signCPct = contribPct >= 0 ? '+' : '';
-        const signContrib = contribution >= 0 ? '+' : '';
-        
-        cCell.className = "col-current " + colorClass;
-        pctCell.className = "col-pct " + colorClass;
-        cpctCell.className = "col-contrib-pct " + colorClass;
-        contribCell.className = "col-contrib " + colorClass;
-        
-        pctCell.innerHTML = `<strong>${{signPct}}${{pctChange.toFixed(2)}}%</strong>`;
-        cpctCell.innerText = `${{signCPct}}${{contribPct.toFixed(2)}}%`;
-        contribCell.innerText = `${{signContrib}}${{contribution.toFixed(4)}}`;
-    }});
-    
-    document.getElementById('sum-' + key).innerText = (totalSum >= 0 ? '+' : '') + totalSum.toFixed(4);
-    document.getElementById('pct-' + key).innerText = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
-}}
-
-function exportConfig() {{
-    let output = "FUNDS_CONFIG = {{\\n";
-    const sections = document.querySelectorAll('.fund-section');
-    
-    sections.forEach((sec, idx) => {{
-        const key = sec.id.replace('sector-', '');
-        const name = sec.getAttribute('data-name');
-        const rows = sec.querySelectorAll('tbody tr');
-        
-        let stocksObj = {{}};
         rows.forEach(row => {{
             const nameInput = row.querySelector('.edit-name');
             const weightInput = row.querySelector('.edit-weight');
-            if (nameInput && weightInput && nameInput.value.trim() !== '') {{
-                stocksObj[nameInput.value.trim()] = parseFloat(weightInput.value) || 0;
+            const name = nameInput ? nameInput.value.trim() : '';
+            const weight = parseFloat(weightInput ? weightInput.value : 0) || 0;
+            
+            if (name) {{
+                newStocks[name] = weight;
             }}
+            
+            const yCell = row.querySelector('.col-yesterday');
+            const cCell = row.querySelector('.col-current');
+            const pctCell = row.querySelector('.col-pct');
+            const cpctCell = row.querySelector('.col-contrib-pct');
+            const contribCell = row.querySelector('.col-contrib');
+            
+            let pYester = 0, pCurr = 0;
+            if (name && globalPrices[name] && globalPrices[name].success) {{
+                pYester = globalPrices[name].yesterday;
+                pCurr = globalPrices[name].current;
+                yCell.innerText = pYester.toFixed(2);
+                cCell.innerText = pCurr.toFixed(2);
+            }} else {{
+                yCell.innerText = "0.00";
+                cCell.innerText = "0.00";
+            }}
+            
+            const diff = pCurr - pYester;
+            const pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
+            const contribPct = pctChange * (weight / 100);
+            const contribution = diff * (weight / 100);
+            
+            if (pYester !== 0) {{
+                totalSum += contribution;
+                totalPct += contribPct;
+            }}
+            
+            const colorClass = diff > 0 ? "up" : (diff < 0 ? "down" : "");
+            const signPct = pctChange >= 0 ? '+' : '';
+            const signCPct = contribPct >= 0 ? '+' : '';
+            const signContrib = contribution >= 0 ? '+' : '';
+            
+            cCell.className = "col-current " + colorClass;
+            pctCell.className = "col-pct " + colorClass;
+            cpctCell.className = "col-contrib-pct " + colorClass;
+            contribCell.className = "col-contrib " + colorClass;
+            
+            pctCell.innerHTML = `<strong>${{signPct}}${{pctChange.toFixed(2)}}%</strong>`;
+            cpctCell.innerText = `${{signCPct}}${{contribPct.toFixed(2)}}%`;
+            contribCell.innerText = `${{signContrib}}${{contribution.toFixed(4)}}`;
         }});
         
-        // 轉成 Python 字典格式字串
-        let stockPairs = [];
-        for (let [sName, sWeight] of Object.entries(stocksObj)) {{
-            stockPairs.push(`"${{sName}}": ${{sWeight}}`);
+        if (config[key]) {{
+            config[key].stocks = newStocks;
         }}
         
-        output += `    "${{key}}": {{"name": "${{name}}", "stocks": {{{{\\n        `;
-        output += stockPairs.join(',\\n        ');
-        output += `\\n    }}}}}},\\n`;
+        const sumEl = document.getElementById('sum-' + key);
+        const pctEl = document.getElementById('pct-' + key);
+        if (sumEl) sumEl.innerText = (totalSum >= 0 ? '+' : '') + totalSum.toFixed(4);
+        if (pctEl) pctEl.innerText = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
     }});
     
-    output += "}}";
-    
-    const textarea = document.getElementById('exportOutput');
-    textarea.style.display = 'block';
-    textarea.value = output;
-    textarea.select();
-    alert("已成功產生最新設定！請在下方文字框中整段複製，並覆蓋取代你 Python 程式碼裡的 FUNDS_CONFIG 變數。");
+    saveConfig(config);
+}}
+
+function resetConfig() {{
+    if (confirm("確定要恢復為預設的基金與權重嗎？")) {{
+        localStorage.removeItem('user_funds_config');
+        location.reload();
+    }}
 }}
 
 async function triggerUpdate() {{
@@ -348,13 +364,16 @@ async function triggerUpdate() {{
     if (response.ok) {{ document.getElementById('status').innerText = "✅ 請求已送出！"; }}
     else {{ document.getElementById('status').innerText = "❌ 請求失敗"; }}
 }}
+
+// 初始化載入
+renderApp();
 </script>
 </body>
 </html>'''
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_template)
-    print("【更新成功】index.html 已重新生成")
+    print("【更新成功】index.html 已重新生成，具備自動記憶功能！")
 
 if __name__ == "__main__":
     run_monitor()

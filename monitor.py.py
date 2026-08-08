@@ -96,7 +96,6 @@ def run_monitor():
     for i, (key, info) in enumerate(FUNDS_CONFIG.items()):
         options_html += f'<option value="{key}">{info["name"]}</option>'
 
-    # 把完整預設股價快取與預設配置打包給前端
     all_prices_json = json.dumps(stock_prices)
     default_config_json = json.dumps(FUNDS_CONFIG)
 
@@ -144,7 +143,6 @@ def run_monitor():
 const globalPrices = {all_prices_json};
 const defaultConfig = {default_config_json};
 
-// 從 localStorage 讀取使用者自訂設定，若無則使用預設值
 function getConfig() {{
     const saved = localStorage.getItem('user_funds_config');
     if (saved) {{
@@ -164,7 +162,6 @@ function renderApp() {{
     
     const activeKey = document.getElementById('fundSelect').value || Object.keys(config)[0];
     
-    let index = 0;
     for (const [key, info] of Object.entries(config)) {{
         const active = (key === activeKey) ? "active" : "";
         
@@ -172,44 +169,47 @@ function renderApp() {{
         let total_contribution = 0;
         let total_pct = 0;
         
-        for (const [name, weight] of Object.entries(info.stocks)) {{
-            let pYester = 0, pCurr = 0, diff = 0, pctChange = 0, contribPct = 0, contribution = 0;
-            if (globalPrices[name] && globalPrices[name].success) {{
-                pYester = globalPrices[name].yesterday;
-                pCurr = globalPrices[name].current;
-                diff = pCurr - pYester;
-                pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
-                contribPct = pctChange * (weight / 100);
-                contribution = diff * (weight / 100);
+        if (info && info.stocks) {{
+            for (const [name, weight] of Object.entries(info.stocks)) {{
+                let pYester = 0, pCurr = 0, diff = 0, pctChange = 0, contribPct = 0, contribution = 0;
+                if (globalPrices[name] && globalPrices[name].success) {{
+                    pYester = globalPrices[name].yesterday;
+                    pCurr = globalPrices[name].current;
+                    diff = pCurr - pYester;
+                    pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
+                    contribPct = pctChange * (weight / 100);
+                    contribution = diff * (weight / 100);
+                    
+                    total_pct += contribPct;
+                    total_contribution += contribution;
+                }}
                 
-                total_pct += contribPct;
-                total_contribution += contribution;
+                const color_class = diff > 0 ? "up" : (diff < 0 ? "down" : "");
+                const sign_pct = pctChange >= 0 ? '+' : '';
+                const sign_contrib_pct = contribPct >= 0 ? '+' : '';
+                const sign_contrib = contribution >= 0 ? '+' : '';
+                
+                table_rows += `<tr>
+                    <td><input type="text" class="edit-name" value="${{name}}" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px; background:transparent;" oninput="updateData()"></td>
+                    <td><input type="number" step="0.01" class="edit-weight" value="${{weight}}" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="updateData()">%</td>
+                    <td class="col-yesterday">${{pYester.toFixed(2)}}</td>
+                    <td class="col-current ${{color_class}}">${{pCurr.toFixed(2)}}</td>
+                    <td class="col-pct ${{color_class}}"><strong>${{sign_pct}}${{pctChange.toFixed(2)}}%</strong></td>
+                    <td class="col-contrib-pct ${{color_class}}">${{sign_contrib_pct}}${{contribPct.toFixed(2)}}%</td>
+                    <td class="col-contrib ${{color_class}}">${{sign_contrib}}${{contribution.toFixed(4)}}</td>
+                    <td><button type="button" onclick="this.closest('tr').remove(); updateData();" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 6px;">X</button></td>
+                </tr>`;
             }}
-            
-            const color_class = diff > 0 ? "up" : (diff < 0 ? "down" : "");
-            const sign_pct = pctChange >= 0 ? '+' : '';
-            const sign_contrib_pct = contribPct >= 0 ? '+' : '';
-            const sign_contrib = contribution >= 0 ? '+' : '';
-            
-            table_rows += `<tr>
-                <td><input type="text" class="edit-name" value="${{name}}" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px; background:transparent;" oninput="updateData()"></td>
-                <td><input type="number" step="0.01" class="edit-weight" value="${{weight}}" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="updateData()">%</td>
-                <td class="col-yesterday">${{pYester.toFixed(2)}}</td>
-                <td class="col-current ${{color_class}}">${{pCurr.toFixed(2)}}</td>
-                <td class="col-pct ${{color_class}}"><strong>${{sign_pct}}${{pctChange.toFixed(2)}}%</strong></td>
-                <td class="col-contrib-pct ${{color_class}}">${{sign_contrib_pct}}${{contribPct.toFixed(2)}}%</td>
-                <td class="col-contrib ${{color_class}}">${{sign_contrib}}${{contribution.toFixed(4)}}</td>
-                <td><button type="button" onclick="this.closest('tr').remove(); updateData();" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 6px;">X</button></td>
-            </tr>`;
         }}
 
         const sum_str = (total_contribution >= 0 ? '+' : '') + total_contribution.toFixed(4);
         const pct_str = (total_pct >= 0 ? '+' : '') + total_pct.toFixed(2) + '%';
+        const fundName = info ? info.name : key;
 
         const sectionHtml = `
         <div id="sector-${{key}}" class="fund-section ${{active}}" data-key="${{key}}">
             <div class="dashboard">
-                <div class="dashboard-title">${{info.name}} - 今日預估總貢獻</div>
+                <div class="dashboard-title">${{fundName}} - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-${{key}}">${{sum_str}}</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
                 <div class="total-percent" id="pct-${{key}}" style="font-size: 18px; font-weight: bold; color: #333;">${{pct_str}}</div>
@@ -238,8 +238,7 @@ function renderApp() {{
             </table>
         </div>`;
         container.insertAdjacentHTML('beforeend', sectionHtml);
-        index++;
-    }
+    }}
 }
 
 function switchFund(key) {{
@@ -265,7 +264,6 @@ function addStockRow(key) {{
     updateData();
 }}
 
-// 每次輸入變動時，即時重算並自動存入 localStorage
 function updateData() {{
     const config = getConfig();
     
@@ -365,7 +363,6 @@ async function triggerUpdate() {{
     else {{ document.getElementById('status').innerText = "❌ 請求失敗"; }}
 }}
 
-// 初始化載入
 renderApp();
 </script>
 </body>
@@ -373,7 +370,7 @@ renderApp();
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_template)
-    print("【更新成功】index.html 已重新生成，具備自動記憶功能！")
+    print("【更新成功】index.html 已重新生成！")
 
 if __name__ == "__main__":
     run_monitor()

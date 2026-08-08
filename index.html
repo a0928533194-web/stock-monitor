@@ -1631,9 +1631,9 @@ async function fetchFundData(key) {
             <td>${weight}%</td>
             <td>${success ? pYester.toFixed(2) : 'N/A'}</td>
             <td class="${colorClass}">${success ? pCurr.toFixed(2) : 'N/A'}</td>
-            <td class="${colorClass}"><strong>${pctChange >= 0 ? '+' : ''}{pctChange.toFixed(2)}%</strong></td>
-            <td class="${colorClass}">${contribPct >= 0 ? '+' : ''}{contribPct.toFixed(2)}%</td>
-            <td class="${colorClass}">${contribution >= 0 ? '+' : ''}{contribution.toFixed(4)}</td>
+            <td class="${colorClass}"><strong>${pctChange >= 0 ? '+' : ''}${pctChange.toFixed(2)}%</strong></td>
+            <td class="${colorClass}">${contribPct >= 0 ? '+' : ''}${contribPct.toFixed(2)}%</td>
+            <td class="${colorClass}">${contribution >= 0 ? '+' : ''}${contribution.toFixed(4)}</td>
         </tr>`;
     }
     

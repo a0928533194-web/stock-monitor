@@ -1,4 +1,6 @@
 import json
+import requests
+import time
 
 STOCK_MAPPING = {
     # 權值與半導體
@@ -6,7 +8,7 @@ STOCK_MAPPING = {
     "聯電": "2303.TW", "日月光投控": "3711.TW", "聯詠": "3034.TW", "瑞昱": "2379.TW",
     "力積電": "6770.TW", "世界": "5347.TWO", "中美晶": "5483.TWO", "環球晶": "6488.TW",
     "精測": "6510.TWO", "晶豪科": "3006.TW", "強茂": "2481.TW", "華邦電": "2344.TW",
-    "沛亨": "6291.TW", "聯亞": "3081.TWO", "創意": "3443.TW", "世芯-KY": "3661.TW",
+    "沛亨": "6291.TW", "聯亞": "3081.TW", "創意": "3443.TW", "世芯-KY": "3661.TW",
     
     # AI 伺服器、散熱、PCB、網通
     "欣興": "3037.TW", "旺矽": "6223.TWO", "台光電": "2383.TW", "台燿": "6274.TW",
@@ -49,9 +51,36 @@ FUNDS_CONFIG = {
     "nomura_etech": {"name": "野村 e 科技基金", "stocks": {"聯發科": 8.09, "南電": 7.58, "聯亞": 6.70, "欣興": 6.15, "景碩": 5.61, "臻鼎-KY": 5.48, "文曄": 5.09, "創意": 5.05, "華星光": 5.04, "台積電": 3.83}}
 }
 
+def fetch_stock_data():
+    price_cache = {}
+    unique_tickers = set(STOCK_MAPPING.values())
+    print(f"開始透過 Python 雲端抓取 {len(unique_tickers)} 檔股票的最新股價...")
+    
+    for name, ticker in STOCK_MAPPING.items():
+        try:
+            url = f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}?range=5d&interval=1d"
+            headers = {'User-Agent': 'Mozilla/5.0'}
+            res = requests.get(url, headers=headers, timeout=5)
+            data = res.json()
+            quotes = data['chart']['result'][0]['indicators']['quote'][0]['close']
+            valid_quotes = [q for q in quotes if q is not None]
+            if len(valid_quotes) >= 2:
+                price_cache[name] = {
+                    "yesterday": valid_quotes[-2],
+                    "current": valid_quotes[-1],
+                    "success": True
+                }
+            else:
+                price_cache[name] = {"yesterday": 0, "current": 0, "success": False}
+        except Exception as e:
+            price_cache[name] = {"yesterday": 0, "current": 0, "success": False}
+        time.sleep(0.1)
+    print("股價抓取完畢！")
+    return price_cache
+
 def run_monitor():
-    funds_json = json.dumps(FUNDS_CONFIG, ensure_ascii=False)
-    mapping_json = json.dumps(STOCK_MAPPING, ensure_ascii=False)
+    stock_prices = fetch_stock_data()
+    
     options_html, sections_html = "", ""
     
     for i, (key, info) in enumerate(FUNDS_CONFIG.items()):
@@ -67,13 +96,50 @@ def run_monitor():
                 <button type="button" onclick="this.parentElement.remove()" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; width:10%;">X</button>
             </div>'''.format(name, weight)
             
+        table_rows = ""
+        total_contribution = 0
+        total_pct = 0
+        
+        for name, weight in info["stocks"].items():
+            if name not in stock_prices or not stock_prices[name]["success"]:
+                table_rows += f'<tr><td>{name}</td><td>{weight}%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr>'
+                continue
+                
+            pYester = stock_prices[name]["yesterday"]
+            pCurr = stock_prices[name]["current"]
+            diff = pCurr - pYester
+            pctChange = (diff / pYester) * 100 if pYester != 0 else 0
+            contribPct = pctChange * (weight / 100)
+            contribution = diff * (weight / 100)
+            
+            total_pct += contribPct
+            total_contribution += contribution
+            
+            color_class = "up" if diff > 0 else ("down" if diff < 0 else "")
+            sign_pct = '+' if pctChange >= 0 else ''
+            sign_contrib_pct = '+' if contribPct >= 0 else ''
+            sign_contrib = '+' if contribution >= 0 else ''
+            
+            table_rows += f'''<tr>
+                <td>{name}</td>
+                <td>{weight}%</td>
+                <td>{pYester:.2f}</td>
+                <td class="{color_class}">{pCurr:.2f}</td>
+                <td class="{color_class}"><strong>{sign_pct}{pctChange:.2f}%</strong></td>
+                <td class="{color_class}">{sign_contrib_pct}{contribPct:.2f}%</td>
+                <td class="{color_class}">{sign_contrib}{contribution:.4f}</td>
+            </tr>'''
+
+        sum_str = ('+' if total_contribution >= 0 else '') + f"{total_contribution:.4f}"
+        pct_str = ('+' if total_pct >= 0 else '') + f"{total_pct:.2f}%"
+
         sections_html += '''
         <div id="sector-{key}" class="fund-section {active}">
             <div class="dashboard">
                 <div class="dashboard-title">{name} - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-{key}">0.0000</div>
+                <div class="total-sum" id="sum-{key}">{sum_str}</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-{key}" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-{key}" style="font-size: 18px; font-weight: bold; color: #333;">{pct_str}</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -102,12 +168,12 @@ def run_monitor():
                     </tr>
                 </thead>
                 <tbody id="tbody-{key}">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    {table_rows}
                 </tbody>
             </table>
-        </div>'''.format(key=key, active=active, name=info["name"], editor_rows=editor_rows)
+        </div>'''.format(key=key, active=active, name=info["name"], editor_rows=editor_rows, table_rows=table_rows, sum_str=sum_str, pct_str=pct_str)
 
-    html_template = """<!DOCTYPE html>
+    html_template = '''<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -128,18 +194,12 @@ def run_monitor():
         .down {{ color: var(--down); font-weight: bold; }}
         select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
         .update-box {{ text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }}
-        #progress-container {{ width: 100%; background-color: #f3f3f3; border-radius: 4px; overflow: hidden; margin-bottom: 10px; height: 18px; border: 1px solid #ddd; }}
-        #progress-bar {{ width: 0%; height: 100%; background-color: #1890ff; text-align: center; color: white; font-size: 11px; font-weight: bold; line-height: 18px; transition: width 0.1s ease; }}
     </style>
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已改用穩定直連模式與緩衝請求)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (Python 雲端渲染版，秒開無阻擋)</div>
     
-    <div id="progress-container">
-        <div id="progress-bar">準備中 0%</div>
-    </div>
-
     <select onchange="switchFund(this.value)">{options_html}</select>
     {sections_html}
     <div class="update-box">
@@ -149,12 +209,6 @@ def run_monitor():
     </div>
 </div>
 <script>
-const stockMapping = {mapping_json};
-let savedFundsData = localStorage.getItem('myCustomFundsDataNameOnly');
-let fundsData = savedFundsData ? JSON.parse(savedFundsData) : {funds_json};
-
-let cacheResults = JSON.parse(localStorage.getItem('myLastRunCache') || '{{}}');
-
 function toggleEditor(key) {{
     const editor = document.getElementById('editor-' + key);
     editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
@@ -173,152 +227,14 @@ function addStockRow(key) {{
     container.appendChild(div);
 }}
 
-function saveAndCalculate(key) {{
-    const container = document.getElementById('container-' + key);
-    const rows = container.getElementsByClassName('stock-input-row');
-    let newStocks = {{}};
-    
-    for (let r of rows) {{
-        let name = r.querySelector('.edit-name').value.trim();
-        let weight = parseFloat(r.querySelector('.edit-weight').value) || 0;
-        if (name) {{
-            newStocks[name] = weight;
-        }}
-    }}
-    
-    fundsData[key].stocks = newStocks;
-    localStorage.setItem('myCustomFundsDataNameOnly', JSON.stringify(fundsData));
-    toggleEditor(key);
-    fetchFundData(key);
-}}
-
-function resetSettings() {{
-    if (confirm("確定要清除自訂資料並重置回原始預設設定與快取嗎？")) {{
-        localStorage.removeItem('myCustomFundsDataNameOnly');
-        localStorage.removeItem('myLastRunCache');
-        location.reload();
-    }}
-}}
-
 function switchFund(key) {{
     document.querySelectorAll('.fund-section').forEach(s => s.classList.remove('active'));
     document.getElementById('sector-' + key).classList.add('active');
-    
-    if (cacheResults[key]) {{
-        renderCachedData(key, cacheResults[key]);
-    }}
-    
-    fetchFundData(key);
 }}
 
-function renderCachedData(key, cachedObj) {{
-    document.getElementById('tbody-' + key).innerHTML = cachedObj.tableRows;
-    document.getElementById('sum-' + key).innerText = cachedObj.totalContributionStr;
-    document.getElementById('pct-' + key).innerText = cachedObj.totalPctStr;
-}}
-
-async function fetchFundData(key) {{
-    const stocks = fundsData[key].stocks;
-    const stockNames = Object.keys(stocks);
-    const totalStocks = stockNames.length;
-    
-    const pContainer = document.getElementById('progress-container');
-    const pBar = document.getElementById('progress-bar');
-    pContainer.style.display = 'block';
-    pBar.style.width = '0%';
-    pBar.innerText = '讀取中 0%';
-
-    let totalContribution = 0;
-    let totalPct = 0;
-    let tableRows = "";
-    let completedCount = 0;
-    
-    for (let name in stocks) {{
-        let weight = stocks[name];
-        let tickerBase = stockMapping[name];
-        
-        if (!tickerBase) {{
-            tableRows += `<tr>
-                <td>${{name}} (未知)</td>
-                <td>${{weight}}%</td>
-                <td colspan="5" style="color: #ff4d4f;">找不到對應的股票代號</td>
-            </tr>`;
-            completedCount++;
-            updateProgress(completedCount, totalStocks, pBar, pContainer);
-            continue;
-        }}
-        
-        let success = false;
-        let pYester = 0, pCurr = 0, diff = 0;
-        
-        try {{
-            // 改用 query2.finance.yahoo.com 直連抓取，並加入延遲避免被封鎖
-            let url = `https://query2.finance.yahoo.com/v8/finance/chart/${{tickerBase}}?range=5d&interval=1d`;
-            let res = await fetch(url);
-            let data = await res.json();
-            let quotes = data.chart.result[0].indicators.quote[0].close;
-            let validQuotes = quotes.filter(q => q !== null);
-            
-            if (validQuotes.length >= 2) {{
-                pYester = validQuotes[validQuotes.length - 2];
-                pCurr = validQuotes[validQuotes.length - 1];
-                diff = pCurr - pYester;
-                success = true;
-            }}
-        }} catch (e) {{}}
-        
-        // 每次請求後暫停 200 毫秒，保護 API 不被連續轟炸
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        let pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
-        let contribPct = pctChange * (weight / 100);
-        let contribution = diff * (weight / 100);
-        
-        totalPct += contribPct;
-        totalContribution += contribution;
-        
-        let colorClass = diff > 0 ? "up" : (diff < 0 ? "down" : "");
-        
-        tableRows += `<tr>
-            <td>${{name}}</td>
-            <td>${{weight}}%</td>
-            <td>${{success ? pYester.toFixed(2) : 'N/A'}}</td>
-            <td class="${{colorClass}}">${{success ? pCurr.toFixed(2) : 'N/A'}}</td>
-            <td class="${{colorClass}}"><strong>${{pctChange >= 0 ? '+' : ''}}${{pctChange.toFixed(2)}}%</strong></td>
-            <td class="${{colorClass}}">${{contribPct >= 0 ? '+' : ''}}${{contribPct.toFixed(2)}}%</td>
-            <td class="${{colorClass}}">${{contribution >= 0 ? '+' : ''}}${{contribution.toFixed(4)}}</td>
-        </tr>`;
-
-        completedCount++;
-        updateProgress(completedCount, totalStocks, pBar, pContainer);
-    }}
-    
-    let sumStr = (totalContribution >= 0 ? '+' : '') + totalContribution.toFixed(4);
-    let pctStr = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
-
-    document.getElementById('tbody-' + key).innerHTML = tableRows;
-    document.getElementById('sum-' + key).innerText = sumStr;
-    document.getElementById('pct-' + key).innerText = pctStr;
-
-    cacheResults[key] = {{
-        tableRows: tableRows,
-        totalContributionStr: sumStr,
-        totalPctStr: pctStr
-    }};
-    localStorage.setItem('myLastRunCache', JSON.stringify(cacheResults));
-}}
-
-function updateProgress(current, total, pBar, pContainer) {{
-    let percent = Math.round((current / total) * 100);
-    pBar.style.width = percent + '%';
-    pBar.innerText = `讀取進度 ${{percent}}% (${{current}}/${{total}})`;
-    if (percent >= 100) {{
-        setTimeout(() => {{
-            pBar.innerText = "讀取完成！";
-            setTimeout(() => {{
-                pContainer.style.display = 'none';
-            }}, 600);
-        }}, 300);
+function resetSettings() {{
+    if (confirm("確定要重置嗎？")) {{
+        location.reload();
     }}
 }}
 
@@ -329,7 +245,7 @@ async function triggerUpdate() {{
     const userToken = prompt("請輸入您的 GitHub Token:");
     if (!userToken) return;
     document.getElementById('status').innerText = "正在發送請求...";
-    const response = await fetch(`https://api.github.com/repos/${{GITHUB_OWNER}}/${{REPO_NAME}}/actions/workflows/${{WORKFLOW_FILE}}/dispatches`, {{
+    const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`, {{
         method: "POST",
         headers: {{"Authorization": "token " + userToken, "Accept": "application/vnd.github.v3+json"}},
         body: JSON.stringify({{"ref": "main"}})
@@ -337,28 +253,18 @@ async function triggerUpdate() {{
     if (response.ok) {{ document.getElementById('status').innerText = "✅ 請求已送出！"; }}
     else {{ document.getElementById('status').innerText = "❌ 請求失敗"; }}
 }}
-
-window.onload = function() {{
-    let firstKey = Object.keys(fundsData)[0];
-    if (cacheResults[firstKey]) {{
-        renderCachedData(firstKey, cacheResults[firstKey]);
-    }}
-    fetchFundData(firstKey);
-}};
 </script>
 </body>
-</html>"""
+</html>'''
 
     html_content = html_template.format(
         options_html=options_html,
-        sections_html=sections_html,
-        mapping_json=mapping_json,
-        funds_json=funds_json
+        sections_html=sections_html
     )
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("【更新成功】index.html 已生成")
+    print("【更新成功】index.html 已生成（Python 渲染版）")
 
 if __name__ == "__main__":
     run_monitor()

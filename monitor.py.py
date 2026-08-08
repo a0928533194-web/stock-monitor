@@ -97,16 +97,19 @@ def run_monitor():
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 10px;">🕒 系統就緒 (支援前端自訂持股)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 10px;">🕒 系統就緒 (支援前端自訂持股記憶)</div>
     <select onchange="switchFund(this.value)">{options_html}</select>
     {sections_html}
     <div class="update-box">
         <button id="updateBtn" onclick="triggerUpdate()" style="background-color: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">更新 GitHub 動作</button>
+        <button type="button" onclick="resetSettings()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置為預設設定</button>
         <p id="status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
     </div>
 </div>
 <script>
-let fundsData = {funds_json};
+// 優先載入 localStorage 儲存過的資料，若無則使用初始預設資料
+let savedFundsData = localStorage.getItem('myCustomFundsData');
+let fundsData = savedFundsData ? JSON.parse(savedFundsData) : {funds_json};
 
 function toggleEditor(key) {{
     const editor = document.getElementById('editor-' + key);
@@ -142,8 +145,19 @@ function saveAndCalculate(key) {{
     }}
     
     fundsData[key].stocks = newStocks;
+    
+    // 將最新修改儲存至瀏覽器的 localStorage 中
+    localStorage.setItem('myCustomFundsData', JSON.stringify(fundsData));
+    
     toggleEditor(key);
     fetchFundData(key);
+}}
+
+function resetSettings() {{
+    if (confirm("確定要清除自訂資料並重置回原始預設設定嗎？")) {{
+        localStorage.removeItem('myCustomFundsData');
+        location.reload();
+    }}
 }}
 
 function switchFund(key) {{

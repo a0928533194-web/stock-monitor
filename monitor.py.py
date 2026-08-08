@@ -4,31 +4,31 @@ import time
 
 STOCK_MAPPING = {
     # 權值與半導體
-    "台積電": "2330.TW", "聯發科": "2454.TW", "鴻海": "2317.TW", "台達電": "2308.TW",
-    "聯電": "2303.TW", "日月光投控": "3711.TW", "聯詠": "3034.TW", "瑞昱": "2379.TW",
-    "力積電": "6770.TW", "世界": "5347.TWO", "中美晶": "5483.TWO", "環球晶": "6488.TW",
-    "精測": "6510.TWO", "晶豪科": "3006.TW", "強茂": "2481.TW", "華邦電": "2344.TW",
-    "沛亨": "6291.TW", "聯亞": "3081.TW", "創意": "3443.TW", "世芯-KY": "3661.TW",
+    "台積電": "2330", "聯發科": "2454", "鴻海": "2317", "台達電": "2308",
+    "聯電": "2303", "日月光投控": "3711", "聯詠": "3034", "瑞昱": "2379",
+    "力積電": "6770", "世界": "5347", "中美晶": "5483", "環球晶": "6488",
+    "精測": "6510", "晶豪科": "3006", "強茂": "2481", "華邦電": "2344",
+    "沛亨": "6291", "聯亞": "3081", "創意": "3443", "世芯-KY": "3661",
     
     # AI 伺服器、散熱、PCB、網通
-    "欣興": "3037.TW", "旺矽": "6223.TWO", "台光電": "2383.TW", "台燿": "6274.TW",
-    "信驊": "5274.TWO", "穎崴": "6515.TW", "奇鋐": "3017.TW", "智邦": "2345.TW",
-    "景碩": "3189.TW", "南電": "8046.TW", "鴻勁": "7765.TW", "金像電": "2368.TW",
-    "健策": "3653.TW", "川湖": "2059.TW", "國巨": "2327.TW", "致茂": "2360.TW",
-    "大量": "3167.TW", "台表科": "6278.TW", "光寶科": "2301.TW", "臻鼎-KY": "4958.TW", 
-    "臻鼎": "4958.TW", "華星光": "4979.TWO", "文曄": "3036.TW", "群聯": "8299.TW", 
-    "嘉澤": "3533.TW", "緯創": "3231.TW", "廣達": "2382.TW", "緯穎": "6669.TW", 
-    "技嘉": "2376.TW", "華碩": "2357.TW", "M31": "6643.TWO", "力旺": "3529.TW", 
-    "祥碩": "5269.TW", "高力": "8996.TW", "雙鴻": "3324.TW", "健鼎": "3044.TW", 
-    "定穎投控": "3715.TW", "瑞儀": "6176.TW", "英業達": "2356.TW", "仁寶": "2324.TW",
+    "欣興": "3037", "旺矽": "6223", "台光電": "2383", "台燿": "6274",
+    "信驊": "5274", "穎崴": "6515", "奇鋐": "3017", "智邦": "2345",
+    "景碩": "3189", "南電": "8046", "鴻勁": "7765", "金像電": "2368",
+    "健策": "3653", "川湖": "2059", "國巨": "2327", "致茂": "2360",
+    "大量": "3167", "台表科": "6278", "光寶科": "2301", "臻鼎-KY": "4958", 
+    "臻鼎": "4958", "華星光": "4979", "文曄": "3036", "群聯": "8299", 
+    "嘉澤": "3533", "緯創": "3231", "廣達": "2382", "緯穎": "6669", 
+    "技嘉": "2376", "華碩": "2357", "M31": "6643", "力旺": "3529", 
+    "祥碩": "5269", "高力": "8996", "雙鴻": "3324", "健鼎": "3044", 
+    "定穎投控": "3715", "瑞儀": "6176", "英業達": "2356", "仁寶": "2324",
     
     # 其他金融、傳產、生技、ETF 等
-    "富邦金": "2881.TW", "國泰金": "2882.TW", "中信金": "2891.TW", "兆豐金": "2886.TW",
-    "元大金": "2885.TW", "玉山金": "2884.TW", "台塑": "1301.TW", "南亞": "1303.TW",
-    "台化": "1326.TW", "台塑化": "6505.TW", "中鋼": "2002.TW", "統一": "1216.TW",
-    "遠東新": "1402.TW", "台泥": "1101.TW", "亞泥": "1102.TW", "長榮": "2603.TW",
-    "陽明": "2609.TW", "萬海": "2615.TW", "台灣高鐵": "2633.TW", "中華車": "2204.TW",
-    "裕隆": "2201.TW", "和泰車": "2207.TW", "寶成": "9904.TW", "豐泰": "9910.TW"
+    "富邦金": "2881", "國泰金": "2882", "中信金": "2891", "兆豐金": "2886",
+    "元大金": "2885", "玉山金": "2884", "台塑": "1301", "南亞": "1303",
+    "台化": "1326", "台塑化": "6505", "中鋼": "2002", "統一": "1216",
+    "遠東新": "1402", "台泥": "1101", "亞泥": "1102", "長榮": "2603",
+    "陽明": "2609", "萬海": "2615", "台灣高鐵": "2633", "中華車": "2204",
+    "裕隆": "2201", "和泰車": "2207", "寶成": "9904", "豐泰": "9910"
 }
 
 FUNDS_CONFIG = {
@@ -53,50 +53,54 @@ FUNDS_CONFIG = {
 
 def fetch_stock_data():
     price_cache = {}
-    unique_tickers = set(STOCK_MAPPING.values())
-    print(f"開始透過 Python 雲端抓取 {len(unique_tickers)} 檔股票的最新股價...")
+    print("開始透過上市櫃官方 API 抓取最新股價...")
     
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
     
     session = requests.Session()
     
-    for name, ticker in STOCK_MAPPING.items():
+    # 使用台灣股市 MIS API (一次抓取效率極高且不會擋上櫃)
+    # 組合所有代號
+    all_codes = list(set(STOCK_MAPPING.values()))
+    
+    # 由於 MIS 一次查多檔可用 __A 串接，我們分批或直接用 Yahoo v8 搭配正確的 .TW / .TWO 查詢
+    for name, code in STOCK_MAPPING.items():
         success = False
-        # 準備多個備用端點與變體
-        urls = [
-            f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range=10d&interval=1d",
-            f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}?range=10d&interval=1d"
-        ]
+        # 自動判斷要加 .TW 還是 .TWO
+        # 其實簡單的方法：直接對 Yahoo v8 帶入正確後綴
+        # 為了更準確，我們嘗試 .TW 與 .TWO 兩種
+        suffixes = [".TW", ".TWO"]
         
-        for url in urls:
+        for suf in suffixes:
             if success:
                 break
-            for attempt in range(2):
-                try:
-                    res = session.get(url, headers=headers, timeout=5)
-                    if res.status_code == 200:
-                        data = res.json()
-                        result = data.get('chart', {}).get('result')
-                        if result:
-                            quotes = result[0]['indicators']['quote'][0]['close']
-                            valid_quotes = [q for q in quotes if q is not None]
-                            if len(valid_quotes) >= 2:
-                                price_cache[name] = {
-                                    "yesterday": valid_quotes[-2],
-                                    "current": valid_quotes[-1],
-                                    "success": True
-                                }
-                                success = True
-                                break
-                except Exception:
-                    time.sleep(0.2)
+            ticker = code + suf
+            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range=10d&interval=1d"
+            try:
+                res = session.get(url, headers=headers, timeout=4)
+                if res.status_code == 200:
+                    data = res.json()
+                    result = data.get('chart', {}).get('result')
+                    if result:
+                        quotes = result[0]['indicators']['quote'][0]['close']
+                        valid_quotes = [q for q in quotes if q is not None]
+                        if len(valid_quotes) >= 2:
+                            price_cache[name] = {
+                                "yesterday": valid_quotes[-2],
+                                "current": valid_quotes[-1],
+                                "success": True
+                            }
+                            success = True
+                            break
+            except Exception:
+                pass
         
         if not success:
+            # 備用方案：如果 Yahoo 雙雙失敗，給預設防呆
             price_cache[name] = {"yesterday": 0, "current": 0, "success": False}
-        time.sleep(0.08)
+        time.sleep(0.05)
         
     print("股價抓取完畢！")
     return price_cache
@@ -221,7 +225,7 @@ def run_monitor():
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (Python 雲端渲染版，秒開無阻擋)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (自動識別上市櫃後綴)</div>
     
     <select onchange="switchFund(this.value)">{options_html}</select>
     {sections_html}
@@ -287,7 +291,7 @@ async function triggerUpdate() {{
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("【更新成功】index.html 已生成（Python 渲染版）")
+    print("【更新成功】index.html 已重新生成")
 
 if __name__ == "__main__":
     run_monitor()

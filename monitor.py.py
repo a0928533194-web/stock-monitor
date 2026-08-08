@@ -53,7 +53,7 @@ FUNDS_CONFIG = {
 
 def fetch_stock_data():
     price_cache = {}
-    print("開始透過上市櫃官方 API 抓取最新股價...")
+    print("開始抓取最新股價（自動判斷上市 .TW 或上櫃 .TWO）...")
     
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -61,17 +61,15 @@ def fetch_stock_data():
     
     session = requests.Session()
     
-    # 使用台灣股市 MIS API (一次抓取效率極高且不會擋上櫃)
-    # 組合所有代號
-    all_codes = list(set(STOCK_MAPPING.values()))
+    # 明確指定哪些是上櫃股票（強制加 .TWO），其餘預設或優先嘗試 .TW 
+    otc_list = {"台燿", "環球晶", "聯亞", "沛亨", "旺矽", "中美晶", "信驊", "精測", "世界", "華星光", "M31", "世芯-KY"}
     
-    # 由於 MIS 一次查多檔可用 __A 串接，我們分批或直接用 Yahoo v8 搭配正確的 .TW / .TWO 查詢
     for name, code in STOCK_MAPPING.items():
         success = False
-        # 自動判斷要加 .TW 還是 .TWO
-        # 其實簡單的方法：直接對 Yahoo v8 帶入正確後綴
-        # 為了更準確，我們嘗試 .TW 與 .TWO 兩種
-        suffixes = [".TW", ".TWO"]
+        if name in otc_list:
+            suffixes = [".TWO", ".TW"]
+        else:
+            suffixes = [".TW", ".TWO"]
         
         for suf in suffixes:
             if success:
@@ -98,7 +96,6 @@ def fetch_stock_data():
                 pass
         
         if not success:
-            # 備用方案：如果 Yahoo 雙雙失敗，給預設防呆
             price_cache[name] = {"yesterday": 0, "current": 0, "success": False}
         time.sleep(0.05)
         
@@ -179,7 +176,6 @@ def run_monitor():
                     {editor_rows}
                 </div>
                 <button type="button" onclick="addStockRow('{key}')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('{key}')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -225,13 +221,13 @@ def run_monitor():
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (自動識別上市櫃後綴)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已修復上櫃股抓取)</div>
     
     <select onchange="switchFund(this.value)">{options_html}</select>
     {sections_html}
     <div class="update-box">
         <button id="updateBtn" onclick="triggerUpdate()" style="background-color: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">更新 GitHub 動作</button>
-        <button type="button" onclick="resetSettings()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置為預設設定</button>
+        <button type="button" onclick="resetSettings()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置畫面</button>
         <p id="status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
     </div>
 </div>
@@ -260,9 +256,7 @@ function switchFund(key) {{
 }}
 
 function resetSettings() {{
-    if (confirm("確定要重置嗎？")) {{
-        location.reload();
-    }}
+    location.reload();
 }}
 
 async function triggerUpdate() {{

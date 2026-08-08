@@ -1,22 +1,36 @@
 <!DOCTYPE html>
-<html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>基金監測系統</title>
-<style>
-    :root { --up: #ff4d4f; --down: #52c41a; }
-    body { font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }
-    .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .fund-section { display: none; } .fund-section.active { display: block; }
-    .dashboard { text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }
-    .total-sum { font-size: 24px; font-weight: bold; color: #333; }
-    table { width: 100%; border-collapse: collapse; font-size: 11px; }
-    th { color: #888; padding: 8px 2px; border-bottom: 2px solid #ddd; text-align: center; }
-    td { padding: 8px 2px; text-align: center; border-bottom: 1px solid #f9f9f9; }
-    .up { color: var(--up); font-weight: bold; } .down { color: var(--down); font-weight: bold; }
-    select { width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }
-    .update-box { text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }
-</style></head>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基金監測系統</title>
+    <style>
+        :root { --up: #ff4d4f; --down: #52c41a; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .fund-section { display: none; } 
+        .fund-section.active { display: block; }
+        .dashboard { text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }
+        .total-sum { font-size: 24px; font-weight: bold; color: #333; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th { color: #888; padding: 8px 2px; border-bottom: 2px solid #ddd; text-align: center; }
+        td { padding: 8px 2px; text-align: center; border-bottom: 1px solid #f9f9f9; }
+        .up { color: var(--up); font-weight: bold; } 
+        .down { color: var(--down); font-weight: bold; }
+        select { width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }
+        .update-box { text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }
+        #progress-container { width: 100%; background-color: #f3f3f3; border-radius: 4px; overflow: hidden; margin-bottom: 10px; height: 18px; border: 1px solid #ddd; }
+        #progress-bar { width: 0%; height: 100%; background-color: #1890ff; text-align: center; color: white; font-size: 11px; font-weight: bold; line-height: 18px; transition: width 0.1s ease; }
+    </style>
+</head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 10px;">🕒 系統就緒 (已擴充完整主流成分股)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已啟用自動保留最後執行資料)</div>
+    
+    <div id="progress-container">
+        <div id="progress-bar">準備中 0%</div>
+    </div>
+
     <select onchange="switchFund(this.value)"><option value="yuanta_otc">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option><option value="allianz_taiwan">安聯台灣大壩基金</option><option value="allianz_tech">安聯台灣科技基金</option><option value="allianz_smart">安聯台灣智慧基金</option><option value="fubon_choice">富邦首選基金</option><option value="fubon_select">富邦上選基金</option><option value="fubon_taiwan">富邦新台商基金</option><option value="nomura_prime">野村優質基金</option><option value="hanya_tech">瀚亞高科技基金</option><option value="uni_allweather">統一全天候基金</option><option value="uni_prosper">統一奔騰基金</option><option value="uni_darkhorse">統一黑馬基金</option><option value="nomura_fortune">野村鴻運基金</option><option value="nomura_growth">野村成長基金</option><option value="nomura_hightech">野村高科技基金</option><option value="nomura_etech">野村 e 科技基金</option></select>
     
         <div id="sector-yuanta_otc" class="fund-section active">
@@ -103,7 +117,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-yuanta_otc">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -191,7 +205,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-shinkin_three">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -279,7 +293,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-allianz_taiwan">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -367,7 +381,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-allianz_tech">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -455,7 +469,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-allianz_smart">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -543,7 +557,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-fubon_choice">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -631,7 +645,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-fubon_select">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -719,7 +733,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-fubon_taiwan">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -807,7 +821,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_prime">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -895,7 +909,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-hanya_tech">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -983,7 +997,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-uni_allweather">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1071,7 +1085,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-uni_prosper">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1159,7 +1173,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-uni_darkhorse">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1247,7 +1261,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_fortune">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1335,7 +1349,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_growth">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1423,7 +1437,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_hightech">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1511,7 +1525,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_etech">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1525,6 +1539,8 @@
 const stockMapping = {"台積電": "2330.TW", "聯發科": "2454.TW", "鴻海": "2317.TW", "台達電": "2308.TW", "聯電": "2303.TW", "日月光投控": "3711.TW", "聯詠": "3034.TW", "瑞昱": "2379.TW", "力積電": "6770.TW", "世界": "5347.TWO", "中美晶": "5483.TWO", "環球晶": "6488.TW", "精測": "6510.TWO", "晶豪科": "3006.TW", "強茂": "2481.TW", "華邦電": "2344.TW", "沛亨": "6291.TW", "聯亞": "3081.TWO", "創意": "3443.TW", "世芯-KY": "3661.TW", "欣興": "3037.TW", "旺矽": "6223.TWO", "台光電": "2383.TW", "台燿": "6274.TW", "信驊": "5274.TWO", "穎崴": "6515.TW", "奇鋐": "3017.TW", "智邦": "2345.TW", "景碩": "3189.TW", "南電": "8046.TW", "鴻勁": "7765.TW", "金像電": "2368.TW", "健策": "3653.TW", "川湖": "2059.TW", "國巨": "2327.TW", "致茂": "2360.TW", "大量": "3167.TW", "台表科": "6278.TW", "光寶科": "2301.TW", "臻鼎-KY": "4958.TW", "臻鼎": "4958.TW", "華星光": "4979.TWO", "文曄": "3036.TW", "群聯": "8299.TW", "嘉澤": "3533.TW", "緯創": "3231.TW", "廣達": "2382.TW", "緯穎": "6669.TW", "技嘉": "2376.TW", "華碩": "2357.TW", "M31": "6643.TWO", "力旺": "3529.TW", "祥碩": "5269.TW", "高力": "8996.TW", "雙鴻": "3324.TW", "健鼎": "3044.TW", "定穎投控": "3715.TW", "瑞儀": "6176.TW", "英業達": "2356.TW", "仁寶": "2324.TW", "富邦金": "2881.TW", "國泰金": "2882.TW", "中信金": "2891.TW", "兆豐金": "2886.TW", "元大金": "2885.TW", "玉山金": "2884.TW", "台塑": "1301.TW", "南亞": "1303.TW", "台化": "1326.TW", "台塑化": "6505.TW", "中鋼": "2002.TW", "統一": "1216.TW", "遠東新": "1402.TW", "台泥": "1101.TW", "亞泥": "1102.TW", "長榮": "2603.TW", "陽明": "2609.TW", "萬海": "2615.TW", "台灣高鐵": "2633.TW", "中華車": "2204.TW", "裕隆": "2201.TW", "和泰車": "2207.TW", "寶成": "9904.TW", "豐泰": "9910.TW"};
 let savedFundsData = localStorage.getItem('myCustomFundsDataNameOnly');
 let fundsData = savedFundsData ? JSON.parse(savedFundsData) : {"yuanta_otc": {"name": "元大店頭基金", "stocks": {"旺矽": 8.0, "中美晶": 6.83, "信驊": 6.78, "台積電": 6.32, "台燿": 6.05, "聯電": 5.74, "精測": 4.64, "環球晶": 4.45, "聯亞": 4.21, "沛亨": 3.95}}, "shinkin_three": {"name": "新光大三通基金", "stocks": {"景碩": 8.79, "欣興": 8.56, "旺矽": 6.81, "世芯-KY": 6.63, "台積電": 6.51, "台達電": 5.44, "力積電": 5.33, "大量": 5.02, "台表科": 4.65, "晶豪科": 4.44}}, "allianz_taiwan": {"name": "安聯台灣大壩基金", "stocks": {"旺矽": 11.92, "穎崴": 7.63, "台燿": 7.25, "台光電": 6.33, "欣興": 5.88, "信驊": 5.46, "台積電": 5.08, "台達電": 4.98, "智邦": 3.1, "景碩": 3.1}}, "allianz_tech": {"name": "安聯台灣科技基金", "stocks": {"旺矽": 8.02, "台積電": 7.05, "華邦電": 6.33, "台燿": 6.13, "台光電": 5.75, "穎崴": 5.45, "創意": 4.58, "台達電": 3.93, "奇鋐": 3.69, "信驊": 3.65}}, "allianz_smart": {"name": "安聯台灣智慧基金", "stocks": {"旺矽": 7.73, "信驊": 7.48, "台光電": 5.99, "台燿": 5.78, "智邦": 4.74, "華邦電": 4.63, "台積電": 4.62, "致茂": 4.47, "台達電": 4.31, "穎崴": 4.1}}, "fubon_choice": {"name": "富邦首選基金", "stocks": {"欣興": 9.76, "旺矽": 7.88, "聯發科": 7.25, "台光電": 6.77, "台達電": 6.76, "南電": 6.01, "鴻勁": 5.95, "金像電": 4.76, "群聯": 4.64, "聯亞": 4.4}}, "fubon_select": {"name": "富邦上選基金", "stocks": {"欣興": 7.32, "台光電": 5.03, "穎崴": 4.36, "台積電": 4.26, "聯電": 4.23, "南電": 4.23, "金像電": 4.19, "鴻勁": 4.16, "聯亞": 3.7, "創意": 3.47}}, "fubon_taiwan": {"name": "富邦新台商基金", "stocks": {"旺矽": 5.71, "欣興": 5.63, "台達電": 5.57, "台光電": 5.42, "聯電": 5.02, "台積電": 4.96, "致茂": 4.16, "創意": 3.95, "嘉澤": 3.87, "聯亞": 3.74}}, "nomura_prime": {"name": "野村優質基金", "stocks": {"鴻勁": 10.32, "台光電": 8.96, "台達電": 8.79, "川湖": 8.49, "台積電": 8.17, "聯發科": 5.95, "欣興": 5.76, "穎崴": 5.71, "健策": 5.3, "金像電": 5.17}}, "hanya_tech": {"name": "瀚亞高科技基金", "stocks": {"欣興": 7.86, "台光電": 7.77, "台燿": 7.57, "台積電": 7.1, "聯發科": 6.8, "台達電": 6.71, "奇鋐": 6.47, "智邦": 5.66, "光寶科": 5.08, "強茂": 4.96}}, "uni_allweather": {"name": "統一全天候基金", "stocks": {"欣興": 9.19, "台光電": 9.04, "台達電": 8.87, "台積電": 7.06, "奇鋐": 6.7, "聯發科": 5.63, "穎崴": 4.11, "致茂": 3.78, "國巨": 3.64, "智邦": 3.56}}, "uni_prosper": {"name": "統一奔騰基金", "stocks": {"台光電": 9.92, "奇鋐": 7.54, "旺矽": 7.04, "智邦": 7.02, "欣興": 7.02, "台積電": 6.76, "台達電": 6.74, "健策": 4.78, "金像電": 4.67, "國巨": 4.38}}, "uni_darkhorse": {"name": "統一黑馬基金", "stocks": {"台光電": 7.71, "欣興": 7.56, "台達電": 6.69, "台積電": 6.03, "奇鋐": 5.83, "台燿": 4.93, "金像電": 4.67, "旺矽": 3.72, "智邦": 3.68, "聯發科": 3.38}}, "nomura_fortune": {"name": "野村鴻運基金", "stocks": {"欣興": 8.21, "台光電": 7.5, "川湖": 6.12, "台達電": 6.06, "台積電": 5.58, "聯發科": 5.54, "鴻勁": 5.29, "聯亞": 4.29, "旺矽": 3.96, "健策": 3.57}}, "nomura_growth": {"name": "野村成長基金", "stocks": {"台光電": 7.42, "欣興": 7.35, "聯發科": 7.17, "台達電": 5.84, "台積電": 5.43, "旺矽": 4.9, "金像電": 4.78, "鴻勁": 4.31, "奇鋐": 3.76, "穎崴": 3.69}}, "nomura_hightech": {"name": "野村高科技基金", "stocks": {"聯發科": 8.15, "南電": 7.57, "聯亞": 7.21, "臻鼎-KY": 6.51, "欣興": 5.9, "台積電": 5.7, "景碩": 5.12, "華星光": 5.11, "創意": 4.95, "文曄": 4.9}}, "nomura_etech": {"name": "野村 e 科技基金", "stocks": {"聯發科": 8.09, "南電": 7.58, "聯亞": 6.7, "欣興": 6.15, "景碩": 5.61, "臻鼎-KY": 5.48, "文曄": 5.09, "創意": 5.05, "華星光": 5.04, "台積電": 3.83}}};
+
+let cacheResults = JSON.parse(localStorage.getItem('myLastRunCache') || '{}');
 
 function toggleEditor(key) {
     const editor = document.getElementById('editor-' + key);
@@ -1564,8 +1580,9 @@ function saveAndCalculate(key) {
 }
 
 function resetSettings() {
-    if (confirm("確定要清除自訂資料並重置回原始預設設定嗎？")) {
+    if (confirm("確定要清除自訂資料並重置回原始預設設定與快取嗎？")) {
         localStorage.removeItem('myCustomFundsDataNameOnly');
+        localStorage.removeItem('myLastRunCache');
         location.reload();
     }
 }
@@ -1573,17 +1590,35 @@ function resetSettings() {
 function switchFund(key) {
     document.querySelectorAll('.fund-section').forEach(s => s.classList.remove('active'));
     document.getElementById('sector-' + key).classList.add('active');
+    
+    if (cacheResults[key]) {
+        renderCachedData(key, cacheResults[key]);
+    }
+    
     fetchFundData(key);
+}
+
+function renderCachedData(key, cachedObj) {
+    document.getElementById('tbody-' + key).innerHTML = cachedObj.tableRows;
+    document.getElementById('sum-' + key).innerText = cachedObj.totalContributionStr;
+    document.getElementById('pct-' + key).innerText = cachedObj.totalPctStr;
 }
 
 async function fetchFundData(key) {
     const stocks = fundsData[key].stocks;
-    const tbody = document.getElementById('tbody-' + key);
-    tbody.innerHTML = `<tr><td colspan="7" style="color: #1890ff;">正在對應代號並抓取股價數據...</td></tr>`;
+    const stockNames = Object.keys(stocks);
+    const totalStocks = stockNames.length;
     
+    const pContainer = document.getElementById('progress-container');
+    const pBar = document.getElementById('progress-bar');
+    pContainer.style.display = 'block';
+    pBar.style.width = '0%';
+    pBar.innerText = '讀取中 0%';
+
     let totalContribution = 0;
     let totalPct = 0;
     let tableRows = "";
+    let completedCount = 0;
     
     for (let name in stocks) {
         let weight = stocks[name];
@@ -1593,8 +1628,10 @@ async function fetchFundData(key) {
             tableRows += `<tr>
                 <td>${name} (未知)</td>
                 <td>${weight}%</td>
-                <td colspan="5" style="color: #ff4d4f;">找不到對應的股票代號，請至對照表補上</td>
+                <td colspan="5" style="color: #ff4d4f;">找不到對應的股票代號</td>
             </tr>`;
+            completedCount++;
+            updateProgress(completedCount, totalStocks, pBar, pContainer);
             continue;
         }
         
@@ -1635,11 +1672,38 @@ async function fetchFundData(key) {
             <td class="${colorClass}">${contribPct >= 0 ? '+' : ''}${contribPct.toFixed(2)}%</td>
             <td class="${colorClass}">${contribution >= 0 ? '+' : ''}${contribution.toFixed(4)}</td>
         </tr>`;
+
+        completedCount++;
+        updateProgress(completedCount, totalStocks, pBar, pContainer);
     }
     
-    tbody.innerHTML = tableRows;
-    document.getElementById('sum-' + key).innerText = (totalContribution >= 0 ? '+' : '') + totalContribution.toFixed(4);
-    document.getElementById('pct-' + key).innerText = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
+    let sumStr = (totalContribution >= 0 ? '+' : '') + totalContribution.toFixed(4);
+    let pctStr = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
+
+    document.getElementById('tbody-' + key).innerHTML = tableRows;
+    document.getElementById('sum-' + key).innerText = sumStr;
+    document.getElementById('pct-' + key).innerText = pctStr;
+
+    cacheResults[key] = {
+        tableRows: tableRows,
+        totalContributionStr: sumStr,
+        totalPctStr: pctStr
+    };
+    localStorage.setItem('myLastRunCache', JSON.stringify(cacheResults));
+}
+
+function updateProgress(current, total, pBar, pContainer) {
+    let percent = Math.round((current / total) * 100);
+    pBar.style.width = percent + '%';
+    pBar.innerText = `讀取進度 ${percent}% (${current}/${total})`;
+    if (percent >= 100) {
+        setTimeout(() => {
+            pBar.innerText = "讀取完成！";
+            setTimeout(() => {
+                pContainer.style.display = 'none';
+            }, 600);
+        }, 300);
+    }
 }
 
 async function triggerUpdate() {
@@ -1660,7 +1724,11 @@ async function triggerUpdate() {
 
 window.onload = function() {
     let firstKey = Object.keys(fundsData)[0];
+    if (cacheResults[firstKey]) {
+        renderCachedData(firstKey, cacheResults[firstKey]);
+    }
     fetchFundData(firstKey);
 };
 </script>
-</body></html>
+</body>
+</html>

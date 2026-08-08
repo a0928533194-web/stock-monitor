@@ -1,6 +1,5 @@
 import json
 
-# 已為你完整擴充包含各大主動型基金常見的所有上市櫃成分股代號（包含沛亨等）
 STOCK_MAPPING = {
     # 權值與半導體
     "台積電": "2330.TW", "聯發科": "2454.TW", "鴻海": "2317.TW", "台達電": "2308.TW",
@@ -103,7 +102,7 @@ def run_monitor():
                     </tr>
                 </thead>
                 <tbody id="tbody-{key}">
-                    <tr><td colspan="7" style="color: #888;">載入中...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">尚無快取資料，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>'''
@@ -123,10 +122,20 @@ def run_monitor():
     .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
     select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
     .update-box {{ text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }}
+    
+    /* 進度條樣式 */
+    #progress-container {{ width: 100%; background-color: #f3f3f3; border-radius: 4px; overflow: hidden; margin-bottom: 10px; height: 16px; display: none; }}
+    #progress-bar {{ width: 0%; height: 100%; background-color: #1890ff; text-align: center; color: white; font-size: 10px; line-height: 16px; transition: width 0.2s; }}
 </style></head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 10px;">🕒 系統就緒 (已擴充完整主流成分股)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已啟用自動保留最後執行資料)</div>
+    
+    <!-- 進度條元件 -->
+    <div id="progress-container">
+        <div id="progress-bar">0%</div>
+    </div>
+
     <select onchange="switchFund(this.value)">{options_html}</select>
     {sections_html}
     <div class="update-box">
@@ -139,6 +148,9 @@ def run_monitor():
 const stockMapping = {mapping_json};
 let savedFundsData = localStorage.getItem('myCustomFundsDataNameOnly');
 let fundsData = savedFundsData ? JSON.parse(savedFundsData) : {funds_json};
+
+// 讀取快取資料 (最後一次執行的成功數據)
+let cacheResults = JSON.parse(localStorage.getItem('myLastRunCache') || '{{}}');
 
 function toggleEditor(key) {{
     const editor = document.getElementById('editor-' + key);
@@ -178,8 +190,9 @@ function saveAndCalculate(key) {{
 }}
 
 function resetSettings() {{
-    if (confirm("確定要清除自訂資料並重置回原始預設設定嗎？")) {{
+    if (confirm("確定要清除自訂資料並重置回原始預設設定與快取嗎？")) {{
         localStorage.removeItem('myCustomFundsDataNameOnly');
+        localStorage.removeItem('myLastRunCache');
         location.reload();
     }}
 }}
@@ -187,17 +200,42 @@ function resetSettings() {{
 function switchFund(key) {{
     document.querySelectorAll('.fund-section').forEach(s => s.classList.remove('active'));
     document.getElementById('sector-' + key).classList.add('active');
+    
+    // 如果有先前的快取資料，立即顯示，保持畫面有內容
+    if (cacheResults[key]) {{
+        renderCachedData(key, cacheResults[key]);
+    }}
+    
     fetchFundData(key);
+}}
+
+function renderCachedData(key, cachedObj) {{
+    document.getElementById('tbody-' + key).innerHTML = cachedObj.tableRows;
+    document.getElementById('sum-' + key).innerText = cachedObj.totalContributionStr;
+    document.getElementById('pct-' + key).innerText = cachedObj.totalPctStr;
 }}
 
 async function fetchFundData(key) {{
     const stocks = fundsData[key].stocks;
-    const tbody = document.getElementById('tbody-' + key);
-    tbody.innerHTML = `<tr><td colspan="7" style="color: #1890ff;">正在對應代號並抓取股價數據...</td></tr>`;
+    const stockNames = Object.keys(stocks);
+    const totalStocks = stockNames.length;
     
+    // 若該基金完全沒有快取，才顯示載入提示
+    if (!cacheResults[key]) {{
+        document.getElementById('tbody-' + key).innerHTML = `<tr><td colspan="7" style="color: #1890ff;">正在對應代號並抓取股價數據...</td></tr>`;
+    }}
+
+    // 顯示進度條
+    const pContainer = document.getElementById('progress-container');
+    const pBar = document.getElementById('progress-bar');
+    pContainer.style.display = 'block';
+    pBar.style.width = '0%';
+    pBar.innerText = '0%';
+
     let totalContribution = 0;
     let totalPct = 0;
     let tableRows = "";
+    let completedCount = 0;
     
     for (let name in stocks) {{
         let weight = stocks[name];
@@ -207,8 +245,10 @@ async function fetchFundData(key) {{
             tableRows += `<tr>
                 <td>${{name}} (未知)</td>
                 <td>${{weight}}%</td>
-                <td colspan="5" style="color: #ff4d4f;">找不到對應的股票代號，請至對照表補上</td>
+                <td colspan="5" style="color: #ff4d4f;">找不到對應的股票代號</td>
             </tr>`;
+            completedCount++;
+            updateProgress(completedCount, totalStocks, pBar, pContainer);
             continue;
         }}
         
@@ -231,6 +271,7 @@ async function fetchFundData(key) {{
             }}
         }} catch (e) {{}}
         
+        // 如果抓取失敗但快取裡有舊的單檔數值，也可以選擇保留，此處維持標準計算
         let pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
         let contribPct = pctChange * (weight / 100);
         let contribution = diff * (weight / 100);
@@ -249,11 +290,37 @@ async function fetchFundData(key) {{
             <td class="${{colorClass}}">${{contribPct >= 0 ? '+' : ''}}${{contribPct.toFixed(2)}}%</td>
             <td class="${{colorClass}}">${{contribution >= 0 ? '+' : ''}}${{contribution.toFixed(4)}}</td>
         </tr>`;
+
+        completedCount++;
+        updateProgress(completedCount, totalStocks, pBar, pContainer);
     }}
     
-    tbody.innerHTML = tableRows;
-    document.getElementById('sum-' + key).innerText = (totalContribution >= 0 ? '+' : '') + totalContribution.toFixed(4);
-    document.getElementById('pct-' + key).innerText = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
+    let sumStr = (totalContribution >= 0 ? '+' : '') + totalContribution.toFixed(4);
+    let pctStr = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
+
+    // 即時更新畫面
+    document.getElementById('tbody-' + key).innerHTML = tableRows;
+    document.getElementById('sum-' + key).innerText = sumStr;
+    document.getElementById('pct-' + key).innerText = pctStr;
+
+    // 儲存至最後一次執行快取 (LocalStorage)
+    cacheResults[key] = {{
+        tableRows: tableRows,
+        totalContributionStr: sumStr,
+        totalPctStr: pctStr
+    }};
+    localStorage.setItem('myLastRunCache', JSON.stringify(cacheResults));
+}
+
+function updateProgress(current, total, pBar, pContainer) {{
+    let percent = Math.round((current / total) * 100);
+    pBar.style.width = percent + '%';
+    pBar.innerText = percent + '%';
+    if (percent >= 100) {{
+        setTimeout(() => {{
+            pContainer.style.display = 'none';
+        }}, 400);
+    }}
 }}
 
 async function triggerUpdate() {{
@@ -274,6 +341,9 @@ async function triggerUpdate() {{
 
 window.onload = function() {{
     let firstKey = Object.keys(fundsData)[0];
+    if (cacheResults[firstKey]) {{
+        renderCachedData(firstKey, cacheResults[firstKey]);
+    }}
     fetchFundData(firstKey);
 }};
 </script>
@@ -281,7 +351,7 @@ window.onload = function() {{
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("【更新成功】index.html 已生成")
+    print("【更新成功】index.html 已生成（具備進度條與快取保留機制）")
 
 if __name__ == "__main__":
     run_monitor()

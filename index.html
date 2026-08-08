@@ -23,11 +23,11 @@
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (支援即時權重計算)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (支援即時計算與一鍵匯出設定)</div>
     
-    <select onchange="switchFund(this.value)"><option value="yuanta_otc">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option><option value="allianz_taiwan">安聯台灣大壩基金</option><option value="allianz_tech">安聯台灣科技基金</option><option value="allianz_smart">安聯台灣智慧基金</option><option value="fubon_choice">富邦首選基金</option><option value="fubon_select">富邦上選基金</option><option value="fubon_taiwan">富邦新台商基金</option><option value="nomura_prime">野村優質基金</option><option value="hanya_tech">瀚亞高科技基金</option><option value="uni_allweather">統一全天候基金</option><option value="uni_prosper">統一奔騰基金</option><option value="uni_darkhorse">統一黑馬基金</option><option value="nomura_fortune">野村鴻運基金</option><option value="nomura_growth">野村成長基金</option><option value="nomura_hightech">野村高科技基金</option><option value="nomura_etech">野村 e 科技基金</option></select>
+    <select id="fundSelect" onchange="switchFund(this.value)"><option value="yuanta_otc">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option><option value="allianz_taiwan">安聯台灣大壩基金</option><option value="allianz_tech">安聯台灣科技基金</option><option value="allianz_smart">安聯台灣智慧基金</option><option value="fubon_choice">富邦首選基金</option><option value="fubon_select">富邦上選基金</option><option value="fubon_taiwan">富邦新台商基金</option><option value="nomura_prime">野村優質基金</option><option value="hanya_tech">瀚亞高科技基金</option><option value="uni_allweather">統一全天候基金</option><option value="uni_prosper">統一奔騰基金</option><option value="uni_darkhorse">統一黑馬基金</option><option value="nomura_fortune">野村鴻運基金</option><option value="nomura_growth">野村成長基金</option><option value="nomura_hightech">野村高科技基金</option><option value="nomura_etech">野村 e 科技基金</option></select>
     
-        <div id="sector-yuanta_otc" class="fund-section active" data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u4e2d\u7f8e\u6676": {"yesterday": 177.5, "current": 168.5, "success": true}, "\u4fe1\u9a4a": {"yesterday": 16750.0, "current": 16345.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u806f\u96fb": {"yesterday": 121.5, "current": 116.0, "success": true}, "\u7cbe\u6e2c": {"yesterday": 2835.0, "current": 2695.0, "success": true}, "\u74b0\u7403\u6676": {"yesterday": 872.0, "current": 872.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u6c9b\u4ea8": {"yesterday": 383.0, "current": 372.5, "success": true}}'>
+        <div id="sector-yuanta_otc" class="fund-section active" data-name="元大店頭基金" data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u4e2d\u7f8e\u6676": {"yesterday": 177.5, "current": 168.5, "success": true}, "\u4fe1\u9a4a": {"yesterday": 16750.0, "current": 16345.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u806f\u96fb": {"yesterday": 121.5, "current": 116.0, "success": true}, "\u7cbe\u6e2c": {"yesterday": 2835.0, "current": 2695.0, "success": true}, "\u74b0\u7403\u6676": {"yesterday": 872.0, "current": 872.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u6c9b\u4ea8": {"yesterday": 383.0, "current": 372.5, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">元大店頭基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-yuanta_otc">-59.3762</div>
@@ -147,7 +147,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-shinkin_three" class="fund-section " data-prices='{"\u666f\u78a9": {"yesterday": 853.0, "current": 823.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u4e16\u82af-KY": {"yesterday": 3660.0, "current": 3715.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u529b\u7a4d\u96fb": {"yesterday": 66.5999984741211, "current": 65.5, "success": true}, "\u5927\u91cf": {"yesterday": 705.0, "current": 691.0, "success": true}, "\u53f0\u8868\u79d1": {"yesterday": 162.5, "current": 156.0, "success": true}, "\u6676\u8c6a\u79d1": {"yesterday": 258.0, "current": 256.5, "success": true}}'>
+        <div id="sector-shinkin_three" class="fund-section " data-name="新光大三通基金" data-prices='{"\u666f\u78a9": {"yesterday": 853.0, "current": 823.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u4e16\u82af-KY": {"yesterday": 3660.0, "current": 3715.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u529b\u7a4d\u96fb": {"yesterday": 66.5999984741211, "current": 65.5, "success": true}, "\u5927\u91cf": {"yesterday": 705.0, "current": 691.0, "success": true}, "\u53f0\u8868\u79d1": {"yesterday": 162.5, "current": 156.0, "success": true}, "\u6676\u8c6a\u79d1": {"yesterday": 258.0, "current": 256.5, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">新光大三通基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-shinkin_three">-16.5881</div>
@@ -267,7 +267,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-allianz_taiwan" class="fund-section " data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u4fe1\u9a4a": {"yesterday": 16750.0, "current": 16345.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u666f\u78a9": {"yesterday": 853.0, "current": 823.0, "success": true}}'>
+        <div id="sector-allianz_taiwan" class="fund-section " data-name="安聯台灣大壩基金" data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u4fe1\u9a4a": {"yesterday": 16750.0, "current": 16345.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u666f\u78a9": {"yesterday": 853.0, "current": 823.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">安聯台灣大壩基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-allianz_taiwan">-67.0104</div>
@@ -387,7 +387,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-allianz_tech" class="fund-section " data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u83ef\u90a6\u96fb": {"yesterday": 171.0, "current": 163.5, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u4fe1\u9a4a": {"yesterday": 16750.0, "current": 16345.0, "success": true}}'>
+        <div id="sector-allianz_tech" class="fund-section " data-name="安聯台灣科技基金" data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u83ef\u90a6\u96fb": {"yesterday": 171.0, "current": 163.5, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u4fe1\u9a4a": {"yesterday": 16750.0, "current": 16345.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">安聯台灣科技基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-allianz_tech">-44.9382</div>
@@ -507,7 +507,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-allianz_smart" class="fund-section " data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u4fe1\u9a4a": {"yesterday": 16750.0, "current": 16345.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u83ef\u90a6\u96fb": {"yesterday": 171.0, "current": 163.5, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u81f4\u8302": {"yesterday": 1975.0, "current": 2030.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}}'>
+        <div id="sector-allianz_smart" class="fund-section " data-name="安聯台灣智慧基金" data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u4fe1\u9a4a": {"yesterday": 16750.0, "current": 16345.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u83ef\u90a6\u96fb": {"yesterday": 171.0, "current": 163.5, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u81f4\u8302": {"yesterday": 1975.0, "current": 2030.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">安聯台灣智慧基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-allianz_smart">-63.6583</div>
@@ -627,7 +627,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-fubon_choice" class="fund-section " data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5357\u96fb": {"yesterday": 1105.0, "current": 1080.0, "success": true}, "\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u7fa4\u806f": {"yesterday": 2025.0, "current": 2020.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}}'>
+        <div id="sector-fubon_choice" class="fund-section " data-name="富邦首選基金" data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5357\u96fb": {"yesterday": 1105.0, "current": 1080.0, "success": true}, "\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u7fa4\u806f": {"yesterday": 2025.0, "current": 2020.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">富邦首選基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-fubon_choice">-30.0849</div>
@@ -747,7 +747,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-fubon_select" class="fund-section " data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u806f\u96fb": {"yesterday": 121.5, "current": 116.0, "success": true}, "\u5357\u96fb": {"yesterday": 1105.0, "current": 1080.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}}'>
+        <div id="sector-fubon_select" class="fund-section " data-name="富邦上選基金" data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u806f\u96fb": {"yesterday": 121.5, "current": 116.0, "success": true}, "\u5357\u96fb": {"yesterday": 1105.0, "current": 1080.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">富邦上選基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-fubon_select">-6.5913</div>
@@ -867,7 +867,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-fubon_taiwan" class="fund-section " data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u806f\u96fb": {"yesterday": 121.5, "current": 116.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u81f4\u8302": {"yesterday": 1975.0, "current": 2030.0, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}, "\u5609\u6fa4": {"yesterday": 1970.0, "current": 1910.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}}'>
+        <div id="sector-fubon_taiwan" class="fund-section " data-name="富邦新台商基金" data-prices='{"\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u806f\u96fb": {"yesterday": 121.5, "current": 116.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u81f4\u8302": {"yesterday": 1975.0, "current": 2030.0, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}, "\u5609\u6fa4": {"yesterday": 1970.0, "current": 1910.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">富邦新台商基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-fubon_taiwan">-17.7400</div>
@@ -987,7 +987,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-nomura_prime" class="fund-section " data-prices='{"\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5ddd\u6e56": {"yesterday": 10100.0, "current": 11110.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u5065\u7b56": {"yesterday": 4450.0, "current": 4380.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}}'>
+        <div id="sector-nomura_prime" class="fund-section " data-name="野村優質基金" data-prices='{"\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5ddd\u6e56": {"yesterday": 10100.0, "current": 11110.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u5065\u7b56": {"yesterday": 4450.0, "current": 4380.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">野村優質基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-nomura_prime">+71.2125</div>
@@ -1107,7 +1107,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-hanya_tech" class="fund-section " data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u5149\u5bf6\u79d1": {"yesterday": 252.5, "current": 247.0, "success": true}, "\u5f37\u8302": {"yesterday": 139.0, "current": 133.0, "success": true}}'>
+        <div id="sector-hanya_tech" class="fund-section " data-name="瀚亞高科技基金" data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u5149\u5bf6\u79d1": {"yesterday": 252.5, "current": 247.0, "success": true}, "\u5f37\u8302": {"yesterday": 139.0, "current": 133.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">瀚亞高科技基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-hanya_tech">-37.9388</div>
@@ -1227,7 +1227,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-uni_allweather" class="fund-section " data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u81f4\u8302": {"yesterday": 1975.0, "current": 2030.0, "success": true}, "\u570b\u5de8": {"yesterday": 570.0, "current": 540.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}}'>
+        <div id="sector-uni_allweather" class="fund-section " data-name="統一全天候基金" data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}, "\u81f4\u8302": {"yesterday": 1975.0, "current": 2030.0, "success": true}, "\u570b\u5de8": {"yesterday": 570.0, "current": 540.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">統一全天候基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-uni_allweather">-27.9207</div>
@@ -1347,7 +1347,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-uni_prosper" class="fund-section " data-prices='{"\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5065\u7b56": {"yesterday": 4450.0, "current": 4380.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u570b\u5de8": {"yesterday": 570.0, "current": 540.0, "success": true}}'>
+        <div id="sector-uni_prosper" class="fund-section " data-name="統一奔騰基金" data-prices='{"\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u5065\u7b56": {"yesterday": 4450.0, "current": 4380.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u570b\u5de8": {"yesterday": 570.0, "current": 540.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">統一奔騰基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-uni_prosper">-53.6517</div>
@@ -1467,7 +1467,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-uni_darkhorse" class="fund-section " data-prices='{"\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}}'>
+        <div id="sector-uni_darkhorse" class="fund-section " data-name="統一黑馬基金" data-prices='{"\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u53f0\u71ff": {"yesterday": 1530.0, "current": 1440.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u667a\u90a6": {"yesterday": 2410.0, "current": 2215.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">統一黑馬基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-uni_darkhorse">-36.9834</div>
@@ -1587,7 +1587,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-nomura_fortune" class="fund-section " data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u5ddd\u6e56": {"yesterday": 10100.0, "current": 11110.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u5065\u7b56": {"yesterday": 4450.0, "current": 4380.0, "success": true}}'>
+        <div id="sector-nomura_fortune" class="fund-section " data-name="野村鴻運基金" data-prices='{"\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u5ddd\u6e56": {"yesterday": 10100.0, "current": 11110.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u5065\u7b56": {"yesterday": 4450.0, "current": 4380.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">野村鴻運基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-nomura_fortune">+39.6283</div>
@@ -1707,7 +1707,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-nomura_growth" class="fund-section " data-prices='{"\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}}'>
+        <div id="sector-nomura_growth" class="fund-section " data-name="野村成長基金" data-prices='{"\u53f0\u5149\u96fb": {"yesterday": 5305.0, "current": 5240.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u53f0\u9054\u96fb": {"yesterday": 1680.0, "current": 1650.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u65fa\u77fd": {"yesterday": 6300.0, "current": 6100.0, "success": true}, "\u91d1\u50cf\u96fb": {"yesterday": 985.0, "current": 982.0, "success": true}, "\u9d3b\u52c1": {"yesterday": 222.0, "current": 226.5, "success": true}, "\u5947\u92d0": {"yesterday": 2940.0, "current": 2785.0, "success": true}, "\u7a4e\u5d34": {"yesterday": 6775.0, "current": 6760.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">野村成長基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-nomura_growth">-25.1914</div>
@@ -1827,7 +1827,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-nomura_hightech" class="fund-section " data-prices='{"\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u5357\u96fb": {"yesterday": 1105.0, "current": 1080.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u81fb\u9f0e-KY": {"yesterday": 482.0, "current": 473.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u666f\u78a9": {"yesterday": 853.0, "current": 823.0, "success": true}, "\u83ef\u661f\u5149": {"yesterday": 488.0, "current": 488.0, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}, "\u6587\u66c4": {"yesterday": 233.5, "current": 211.5, "success": true}}'>
+        <div id="sector-nomura_hightech" class="fund-section " data-name="野村高科技基金" data-prices='{"\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u5357\u96fb": {"yesterday": 1105.0, "current": 1080.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u81fb\u9f0e-KY": {"yesterday": 482.0, "current": 473.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}, "\u666f\u78a9": {"yesterday": 853.0, "current": 823.0, "success": true}, "\u83ef\u661f\u5149": {"yesterday": 488.0, "current": 488.0, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}, "\u6587\u66c4": {"yesterday": 233.5, "current": 211.5, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">野村高科技基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-nomura_hightech">-9.3289</div>
@@ -1947,7 +1947,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="sector-nomura_etech" class="fund-section " data-prices='{"\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u5357\u96fb": {"yesterday": 1105.0, "current": 1080.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u666f\u78a9": {"yesterday": 853.0, "current": 823.0, "success": true}, "\u81fb\u9f0e-KY": {"yesterday": 482.0, "current": 473.0, "success": true}, "\u6587\u66c4": {"yesterday": 233.5, "current": 211.5, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}, "\u83ef\u661f\u5149": {"yesterday": 488.0, "current": 488.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}}'>
+        <div id="sector-nomura_etech" class="fund-section " data-name="野村 e 科技基金" data-prices='{"\u806f\u767c\u79d1": {"yesterday": 3920.0, "current": 3900.0, "success": true}, "\u5357\u96fb": {"yesterday": 1105.0, "current": 1080.0, "success": true}, "\u806f\u4e9e": {"yesterday": 2375.0, "current": 2305.0, "success": true}, "\u6b23\u8208": {"yesterday": 973.0, "current": 955.0, "success": true}, "\u666f\u78a9": {"yesterday": 853.0, "current": 823.0, "success": true}, "\u81fb\u9f0e-KY": {"yesterday": 482.0, "current": 473.0, "success": true}, "\u6587\u66c4": {"yesterday": 233.5, "current": 211.5, "success": true}, "\u5275\u610f": {"yesterday": 4480.0, "current": 4545.0, "success": true}, "\u83ef\u661f\u5149": {"yesterday": 488.0, "current": 488.0, "success": true}, "\u53f0\u7a4d\u96fb": {"yesterday": 2365.0, "current": 2370.0, "success": true}}'>
             <div class="dashboard">
                 <div class="dashboard-title">野村 e 科技基金 - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-nomura_etech">-9.1320</div>
@@ -2069,6 +2069,10 @@
         </div>
     
     <div class="update-box">
+        <button type="button" onclick="exportConfig()" style="background-color: #52c41a; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">📋 產生更新後的 FUNDS_CONFIG 程式碼</button>
+        <br>
+        <textarea id="exportOutput" rows="6" style="width: 100%; font-size: 11px; padding: 5px; display:none; margin-bottom: 10px;" placeholder="程式碼將顯示在這裡，可直接複製..."></textarea>
+        <br>
         <button id="updateBtn" onclick="triggerUpdate()" style="background-color: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">更新 GitHub 動作</button>
         <button type="button" onclick="location.reload()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置畫面</button>
         <p id="status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
@@ -2076,7 +2080,6 @@
 </div>
 
 <script>
-// 全域對照表，讓前端新增股票時也能抓到股價用（簡化版預設快取）
 const globalPrices = {};
 document.querySelectorAll('.fund-section').forEach(section => {
     const prices = JSON.parse(section.getAttribute('data-prices') || '{}');
@@ -2161,6 +2164,44 @@ function recalc(key) {
     
     document.getElementById('sum-' + key).innerText = (totalSum >= 0 ? '+' : '') + totalSum.toFixed(4);
     document.getElementById('pct-' + key).innerText = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
+}
+
+function exportConfig() {
+    let output = "FUNDS_CONFIG = {\n";
+    const sections = document.querySelectorAll('.fund-section');
+    
+    sections.forEach((sec, idx) => {
+        const key = sec.id.replace('sector-', '');
+        const name = sec.getAttribute('data-name');
+        const rows = sec.querySelectorAll('tbody tr');
+        
+        let stocksObj = {};
+        rows.forEach(row => {
+            const nameInput = row.querySelector('.edit-name');
+            const weightInput = row.querySelector('.edit-weight');
+            if (nameInput && weightInput && nameInput.value.trim() !== '') {
+                stocksObj[nameInput.value.trim()] = parseFloat(weightInput.value) || 0;
+            }
+        });
+        
+        // 轉成 Python 字典格式字串
+        let stockPairs = [];
+        for (let [sName, sWeight] of Object.entries(stocksObj)) {
+            stockPairs.push(`"${sName}": ${sWeight}`);
+        }
+        
+        output += `    "${key}": {"name": "${name}", "stocks": {{\n        `;
+        output += stockPairs.join(',\n        ');
+        output += `\n    }}},\n`;
+    });
+    
+    output += "}";
+    
+    const textarea = document.getElementById('exportOutput');
+    textarea.style.display = 'block';
+    textarea.value = output;
+    textarea.select();
+    alert("已成功產生最新設定！請在下方文字框中整段複製，並覆蓋取代你 Python 程式碼裡的 FUNDS_CONFIG 變數。");
 }
 
 async function triggerUpdate() {

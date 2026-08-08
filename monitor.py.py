@@ -133,11 +133,10 @@ def run_monitor():
         sum_str = ('+' if total_contribution >= 0 else '') + f"{total_contribution:.4f}"
         pct_str = ('+' if total_pct >= 0 else '') + f"{total_pct:.2f}%"
 
-        # 把原始股價資料透過 JSON 埋在 DOM 裡，供前端即時計算使用
         prices_json = json.dumps({n: stock_prices[n] for n in info["stocks"] if n in stock_prices})
 
         sections_html += f'''
-        <div id="sector-{key}" class="fund-section {active}" data-prices='{prices_json}'>
+        <div id="sector-{key}" class="fund-section {active}" data-name="{info["name"]}" data-prices='{prices_json}'>
             <div class="dashboard">
                 <div class="dashboard-title">{info["name"]} - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-{key}">{sum_str}</div>
@@ -193,12 +192,16 @@ def run_monitor():
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (支援即時權重計算)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (支援即時計算與一鍵匯出設定)</div>
     
-    <select onchange="switchFund(this.value)">{options_html}</select>
+    <select id="fundSelect" onchange="switchFund(this.value)">{options_html}</select>
     {sections_html}
     
     <div class="update-box">
+        <button type="button" onclick="exportConfig()" style="background-color: #52c41a; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">📋 產生更新後的 FUNDS_CONFIG 程式碼</button>
+        <br>
+        <textarea id="exportOutput" rows="6" style="width: 100%; font-size: 11px; padding: 5px; display:none; margin-bottom: 10px;" placeholder="程式碼將顯示在這裡，可直接複製..."></textarea>
+        <br>
         <button id="updateBtn" onclick="triggerUpdate()" style="background-color: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">更新 GitHub 動作</button>
         <button type="button" onclick="location.reload()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置畫面</button>
         <p id="status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
@@ -206,7 +209,6 @@ def run_monitor():
 </div>
 
 <script>
-// 全域對照表，讓前端新增股票時也能抓到股價用（簡化版預設快取）
 const globalPrices = {{}};
 document.querySelectorAll('.fund-section').forEach(section => {{
     const prices = JSON.parse(section.getAttribute('data-prices') || '{{}}');
@@ -291,6 +293,44 @@ function recalc(key) {{
     
     document.getElementById('sum-' + key).innerText = (totalSum >= 0 ? '+' : '') + totalSum.toFixed(4);
     document.getElementById('pct-' + key).innerText = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
+}}
+
+function exportConfig() {{
+    let output = "FUNDS_CONFIG = {{\\n";
+    const sections = document.querySelectorAll('.fund-section');
+    
+    sections.forEach((sec, idx) => {{
+        const key = sec.id.replace('sector-', '');
+        const name = sec.getAttribute('data-name');
+        const rows = sec.querySelectorAll('tbody tr');
+        
+        let stocksObj = {{}};
+        rows.forEach(row => {{
+            const nameInput = row.querySelector('.edit-name');
+            const weightInput = row.querySelector('.edit-weight');
+            if (nameInput && weightInput && nameInput.value.trim() !== '') {{
+                stocksObj[nameInput.value.trim()] = parseFloat(weightInput.value) || 0;
+            }}
+        }});
+        
+        // 轉成 Python 字典格式字串
+        let stockPairs = [];
+        for (let [sName, sWeight] of Object.entries(stocksObj)) {{
+            stockPairs.push(`"${{sName}}": ${{sWeight}}`);
+        }}
+        
+        output += `    "${{key}}": {{"name": "${{name}}", "stocks": {{{{\\n        `;
+        output += stockPairs.join(',\\n        ');
+        output += `\\n    }}}}}},\\n`;
+    }});
+    
+    output += "}}";
+    
+    const textarea = document.getElementById('exportOutput');
+    textarea.style.display = 'block';
+    textarea.value = output;
+    textarea.select();
+    alert("已成功產生最新設定！請在下方文字框中整段複製，並覆蓋取代你 Python 程式碼裡的 FUNDS_CONFIG 變數。");
 }}
 
 async function triggerUpdate() {{

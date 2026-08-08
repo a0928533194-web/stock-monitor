@@ -19,26 +19,20 @@
         .down { color: var(--down); font-weight: bold; }
         select { width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }
         .update-box { text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }
-        #progress-container { width: 100%; background-color: #f3f3f3; border-radius: 4px; overflow: hidden; margin-bottom: 10px; height: 18px; border: 1px solid #ddd; }
-        #progress-bar { width: 0%; height: 100%; background-color: #1890ff; text-align: center; color: white; font-size: 11px; font-weight: bold; line-height: 18px; transition: width 0.1s ease; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已改用穩定直連模式與緩衝請求)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (Python 雲端渲染版，秒開無阻擋)</div>
     
-    <div id="progress-container">
-        <div id="progress-bar">準備中 0%</div>
-    </div>
-
     <select onchange="switchFund(this.value)"><option value="yuanta_otc">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option><option value="allianz_taiwan">安聯台灣大壩基金</option><option value="allianz_tech">安聯台灣科技基金</option><option value="allianz_smart">安聯台灣智慧基金</option><option value="fubon_choice">富邦首選基金</option><option value="fubon_select">富邦上選基金</option><option value="fubon_taiwan">富邦新台商基金</option><option value="nomura_prime">野村優質基金</option><option value="hanya_tech">瀚亞高科技基金</option><option value="uni_allweather">統一全天候基金</option><option value="uni_prosper">統一奔騰基金</option><option value="uni_darkhorse">統一黑馬基金</option><option value="nomura_fortune">野村鴻運基金</option><option value="nomura_growth">野村成長基金</option><option value="nomura_hightech">野村高科技基金</option><option value="nomura_etech">野村 e 科技基金</option></select>
     
         <div id="sector-yuanta_otc" class="fund-section active">
             <div class="dashboard">
                 <div class="dashboard-title">元大店頭基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-yuanta_otc">0.0000</div>
+                <div class="total-sum" id="sum-yuanta_otc">-50.5694</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-yuanta_otc" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-yuanta_otc" style="font-size: 18px; font-weight: bold; color: #333;">-1.24%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -117,16 +111,64 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-yuanta_otc">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>旺矽</td>
+                <td>8.0%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.25%</td>
+                <td class="down">-16.0000</td>
+            </tr><tr>
+                <td>中美晶</td>
+                <td>6.83%</td>
+                <td>177.50</td>
+                <td class="down">168.50</td>
+                <td class="down"><strong>-5.07%</strong></td>
+                <td class="down">-0.35%</td>
+                <td class="down">-0.6147</td>
+            </tr><tr>
+                <td>信驊</td>
+                <td>6.78%</td>
+                <td>16750.00</td>
+                <td class="down">16345.00</td>
+                <td class="down"><strong>-2.42%</strong></td>
+                <td class="down">-0.16%</td>
+                <td class="down">-27.4590</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>6.32%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.3160</td>
+            </tr><tr><td>台燿</td><td>6.05%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>聯電</td>
+                <td>5.74%</td>
+                <td>121.50</td>
+                <td class="down">116.00</td>
+                <td class="down"><strong>-4.53%</strong></td>
+                <td class="down">-0.26%</td>
+                <td class="down">-0.3157</td>
+            </tr><tr>
+                <td>精測</td>
+                <td>4.64%</td>
+                <td>2835.00</td>
+                <td class="down">2695.00</td>
+                <td class="down"><strong>-4.94%</strong></td>
+                <td class="down">-0.23%</td>
+                <td class="down">-6.4960</td>
+            </tr><tr><td>環球晶</td><td>4.45%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr><td>聯亞</td><td>4.21%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr><td>沛亨</td><td>3.95%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-shinkin_three" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">新光大三通基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-shinkin_three">0.0000</div>
+                <div class="total-sum" id="sum-shinkin_three">-16.5881</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-shinkin_three" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-shinkin_three" style="font-size: 18px; font-weight: bold; color: #333;">-1.07%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -205,16 +247,96 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-shinkin_three">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>景碩</td>
+                <td>8.79%</td>
+                <td>853.00</td>
+                <td class="down">823.00</td>
+                <td class="down"><strong>-3.52%</strong></td>
+                <td class="down">-0.31%</td>
+                <td class="down">-2.6370</td>
+            </tr><tr>
+                <td>欣興</td>
+                <td>8.56%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.16%</td>
+                <td class="down">-1.5408</td>
+            </tr><tr>
+                <td>旺矽</td>
+                <td>6.81%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.22%</td>
+                <td class="down">-13.6200</td>
+            </tr><tr>
+                <td>世芯-KY</td>
+                <td>6.63%</td>
+                <td>3660.00</td>
+                <td class="up">3715.00</td>
+                <td class="up"><strong>+1.50%</strong></td>
+                <td class="up">+0.10%</td>
+                <td class="up">+3.6465</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>6.51%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.3255</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>5.44%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.10%</td>
+                <td class="down">-1.6320</td>
+            </tr><tr>
+                <td>力積電</td>
+                <td>5.33%</td>
+                <td>66.60</td>
+                <td class="down">65.50</td>
+                <td class="down"><strong>-1.65%</strong></td>
+                <td class="down">-0.09%</td>
+                <td class="down">-0.0586</td>
+            </tr><tr>
+                <td>大量</td>
+                <td>5.02%</td>
+                <td>705.00</td>
+                <td class="down">691.00</td>
+                <td class="down"><strong>-1.99%</strong></td>
+                <td class="down">-0.10%</td>
+                <td class="down">-0.7028</td>
+            </tr><tr>
+                <td>台表科</td>
+                <td>4.65%</td>
+                <td>162.50</td>
+                <td class="down">156.00</td>
+                <td class="down"><strong>-4.00%</strong></td>
+                <td class="down">-0.19%</td>
+                <td class="down">-0.3023</td>
+            </tr><tr>
+                <td>晶豪科</td>
+                <td>4.44%</td>
+                <td>258.00</td>
+                <td class="down">256.50</td>
+                <td class="down"><strong>-0.58%</strong></td>
+                <td class="down">-0.03%</td>
+                <td class="down">-0.0666</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-allianz_taiwan" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">安聯台灣大壩基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-allianz_taiwan">0.0000</div>
+                <div class="total-sum" id="sum-allianz_taiwan">-60.4854</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-allianz_taiwan" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-allianz_taiwan" style="font-size: 18px; font-weight: bold; color: #333;">-1.15%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -293,16 +415,88 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-allianz_taiwan">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>旺矽</td>
+                <td>11.92%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.38%</td>
+                <td class="down">-23.8400</td>
+            </tr><tr>
+                <td>穎崴</td>
+                <td>7.63%</td>
+                <td>6775.00</td>
+                <td class="down">6760.00</td>
+                <td class="down"><strong>-0.22%</strong></td>
+                <td class="down">-0.02%</td>
+                <td class="down">-1.1445</td>
+            </tr><tr><td>台燿</td><td>7.25%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>台光電</td>
+                <td>6.33%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.08%</td>
+                <td class="down">-4.1145</td>
+            </tr><tr>
+                <td>欣興</td>
+                <td>5.88%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.11%</td>
+                <td class="down">-1.0584</td>
+            </tr><tr>
+                <td>信驊</td>
+                <td>5.46%</td>
+                <td>16750.00</td>
+                <td class="down">16345.00</td>
+                <td class="down"><strong>-2.42%</strong></td>
+                <td class="down">-0.13%</td>
+                <td class="down">-22.1130</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>5.08%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.2540</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>4.98%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.09%</td>
+                <td class="down">-1.4940</td>
+            </tr><tr>
+                <td>智邦</td>
+                <td>3.1%</td>
+                <td>2410.00</td>
+                <td class="down">2215.00</td>
+                <td class="down"><strong>-8.09%</strong></td>
+                <td class="down">-0.25%</td>
+                <td class="down">-6.0450</td>
+            </tr><tr>
+                <td>景碩</td>
+                <td>3.1%</td>
+                <td>853.00</td>
+                <td class="down">823.00</td>
+                <td class="down"><strong>-3.52%</strong></td>
+                <td class="down">-0.11%</td>
+                <td class="down">-0.9300</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-allianz_tech" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">安聯台灣科技基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-allianz_tech">0.0000</div>
+                <div class="total-sum" id="sum-allianz_tech">-39.4213</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-allianz_tech" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-allianz_tech" style="font-size: 18px; font-weight: bold; color: #333;">-0.89%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -381,16 +575,88 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-allianz_tech">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>旺矽</td>
+                <td>8.02%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.25%</td>
+                <td class="down">-16.0400</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>7.05%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.3525</td>
+            </tr><tr>
+                <td>華邦電</td>
+                <td>6.33%</td>
+                <td>171.00</td>
+                <td class="down">163.50</td>
+                <td class="down"><strong>-4.39%</strong></td>
+                <td class="down">-0.28%</td>
+                <td class="down">-0.4747</td>
+            </tr><tr><td>台燿</td><td>6.13%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>台光電</td>
+                <td>5.75%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.07%</td>
+                <td class="down">-3.7375</td>
+            </tr><tr>
+                <td>穎崴</td>
+                <td>5.45%</td>
+                <td>6775.00</td>
+                <td class="down">6760.00</td>
+                <td class="down"><strong>-0.22%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.8175</td>
+            </tr><tr>
+                <td>創意</td>
+                <td>4.58%</td>
+                <td>4480.00</td>
+                <td class="up">4545.00</td>
+                <td class="up"><strong>+1.45%</strong></td>
+                <td class="up">+0.07%</td>
+                <td class="up">+2.9770</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>3.93%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.07%</td>
+                <td class="down">-1.1790</td>
+            </tr><tr>
+                <td>奇鋐</td>
+                <td>3.69%</td>
+                <td>2940.00</td>
+                <td class="down">2785.00</td>
+                <td class="down"><strong>-5.27%</strong></td>
+                <td class="down">-0.19%</td>
+                <td class="down">-5.7195</td>
+            </tr><tr>
+                <td>信驊</td>
+                <td>3.65%</td>
+                <td>16750.00</td>
+                <td class="down">16345.00</td>
+                <td class="down"><strong>-2.42%</strong></td>
+                <td class="down">-0.09%</td>
+                <td class="down">-14.7825</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-allianz_smart" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">安聯台灣智慧基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-allianz_smart">0.0000</div>
+                <div class="total-sum" id="sum-allianz_smart">-58.4563</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-allianz_smart" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-allianz_smart" style="font-size: 18px; font-weight: bold; color: #333;">-1.04%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -469,16 +735,88 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-allianz_smart">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>旺矽</td>
+                <td>7.73%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.25%</td>
+                <td class="down">-15.4600</td>
+            </tr><tr>
+                <td>信驊</td>
+                <td>7.48%</td>
+                <td>16750.00</td>
+                <td class="down">16345.00</td>
+                <td class="down"><strong>-2.42%</strong></td>
+                <td class="down">-0.18%</td>
+                <td class="down">-30.2940</td>
+            </tr><tr>
+                <td>台光電</td>
+                <td>5.99%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.07%</td>
+                <td class="down">-3.8935</td>
+            </tr><tr><td>台燿</td><td>5.78%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>智邦</td>
+                <td>4.74%</td>
+                <td>2410.00</td>
+                <td class="down">2215.00</td>
+                <td class="down"><strong>-8.09%</strong></td>
+                <td class="down">-0.38%</td>
+                <td class="down">-9.2430</td>
+            </tr><tr>
+                <td>華邦電</td>
+                <td>4.63%</td>
+                <td>171.00</td>
+                <td class="down">163.50</td>
+                <td class="down"><strong>-4.39%</strong></td>
+                <td class="down">-0.20%</td>
+                <td class="down">-0.3473</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>4.62%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.2310</td>
+            </tr><tr>
+                <td>致茂</td>
+                <td>4.47%</td>
+                <td>1975.00</td>
+                <td class="up">2030.00</td>
+                <td class="up"><strong>+2.78%</strong></td>
+                <td class="up">+0.12%</td>
+                <td class="up">+2.4585</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>4.31%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.08%</td>
+                <td class="down">-1.2930</td>
+            </tr><tr>
+                <td>穎崴</td>
+                <td>4.1%</td>
+                <td>6775.00</td>
+                <td class="down">6760.00</td>
+                <td class="down"><strong>-0.22%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.6150</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-fubon_choice" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">富邦首選基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-fubon_choice">0.0000</div>
+                <div class="total-sum" id="sum-fubon_choice">-26.7729</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-fubon_choice" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-fubon_choice" style="font-size: 18px; font-weight: bold; color: #333;">-0.70%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -557,16 +895,80 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-fubon_choice">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>欣興</td>
+                <td>9.76%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.18%</td>
+                <td class="down">-1.7568</td>
+            </tr><tr>
+                <td>旺矽</td>
+                <td>7.88%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.25%</td>
+                <td class="down">-15.7600</td>
+            </tr><tr>
+                <td>聯發科</td>
+                <td>7.25%</td>
+                <td>3920.00</td>
+                <td class="down">3900.00</td>
+                <td class="down"><strong>-0.51%</strong></td>
+                <td class="down">-0.04%</td>
+                <td class="down">-1.4500</td>
+            </tr><tr>
+                <td>台光電</td>
+                <td>6.77%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.08%</td>
+                <td class="down">-4.4005</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>6.76%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.12%</td>
+                <td class="down">-2.0280</td>
+            </tr><tr>
+                <td>南電</td>
+                <td>6.01%</td>
+                <td>1105.00</td>
+                <td class="down">1080.00</td>
+                <td class="down"><strong>-2.26%</strong></td>
+                <td class="down">-0.14%</td>
+                <td class="down">-1.5025</td>
+            </tr><tr>
+                <td>鴻勁</td>
+                <td>5.95%</td>
+                <td>222.00</td>
+                <td class="up">226.50</td>
+                <td class="up"><strong>+2.03%</strong></td>
+                <td class="up">+0.12%</td>
+                <td class="up">+0.2678</td>
+            </tr><tr>
+                <td>金像電</td>
+                <td>4.76%</td>
+                <td>985.00</td>
+                <td class="down">982.00</td>
+                <td class="down"><strong>-0.30%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.1428</td>
+            </tr><tr><td>群聯</td><td>4.64%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr><td>聯亞</td><td>4.4%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-fubon_select" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">富邦上選基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-fubon_select">0.0000</div>
+                <div class="total-sum" id="sum-fubon_select">-4.0013</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-fubon_select" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-fubon_select" style="font-size: 18px; font-weight: bold; color: #333;">-0.36%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -645,16 +1047,88 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-fubon_select">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>欣興</td>
+                <td>7.32%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.14%</td>
+                <td class="down">-1.3176</td>
+            </tr><tr>
+                <td>台光電</td>
+                <td>5.03%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.06%</td>
+                <td class="down">-3.2695</td>
+            </tr><tr>
+                <td>穎崴</td>
+                <td>4.36%</td>
+                <td>6775.00</td>
+                <td class="down">6760.00</td>
+                <td class="down"><strong>-0.22%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.6540</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>4.26%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.2130</td>
+            </tr><tr>
+                <td>聯電</td>
+                <td>4.23%</td>
+                <td>121.50</td>
+                <td class="down">116.00</td>
+                <td class="down"><strong>-4.53%</strong></td>
+                <td class="down">-0.19%</td>
+                <td class="down">-0.2327</td>
+            </tr><tr>
+                <td>南電</td>
+                <td>4.23%</td>
+                <td>1105.00</td>
+                <td class="down">1080.00</td>
+                <td class="down"><strong>-2.26%</strong></td>
+                <td class="down">-0.10%</td>
+                <td class="down">-1.0575</td>
+            </tr><tr>
+                <td>金像電</td>
+                <td>4.19%</td>
+                <td>985.00</td>
+                <td class="down">982.00</td>
+                <td class="down"><strong>-0.30%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.1257</td>
+            </tr><tr>
+                <td>鴻勁</td>
+                <td>4.16%</td>
+                <td>222.00</td>
+                <td class="up">226.50</td>
+                <td class="up"><strong>+2.03%</strong></td>
+                <td class="up">+0.08%</td>
+                <td class="up">+0.1872</td>
+            </tr><tr><td>聯亞</td><td>3.7%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>創意</td>
+                <td>3.47%</td>
+                <td>4480.00</td>
+                <td class="up">4545.00</td>
+                <td class="up"><strong>+1.45%</strong></td>
+                <td class="up">+0.05%</td>
+                <td class="up">+2.2555</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-fubon_taiwan" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">富邦新台商基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-fubon_taiwan">0.0000</div>
+                <div class="total-sum" id="sum-fubon_taiwan">-15.1220</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-fubon_taiwan" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-fubon_taiwan" style="font-size: 18px; font-weight: bold; color: #333;">-0.61%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -733,16 +1207,88 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-fubon_taiwan">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>旺矽</td>
+                <td>5.71%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.18%</td>
+                <td class="down">-11.4200</td>
+            </tr><tr>
+                <td>欣興</td>
+                <td>5.63%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.10%</td>
+                <td class="down">-1.0134</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>5.57%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.10%</td>
+                <td class="down">-1.6710</td>
+            </tr><tr>
+                <td>台光電</td>
+                <td>5.42%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.07%</td>
+                <td class="down">-3.5230</td>
+            </tr><tr>
+                <td>聯電</td>
+                <td>5.02%</td>
+                <td>121.50</td>
+                <td class="down">116.00</td>
+                <td class="down"><strong>-4.53%</strong></td>
+                <td class="down">-0.23%</td>
+                <td class="down">-0.2761</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>4.96%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.2480</td>
+            </tr><tr>
+                <td>致茂</td>
+                <td>4.16%</td>
+                <td>1975.00</td>
+                <td class="up">2030.00</td>
+                <td class="up"><strong>+2.78%</strong></td>
+                <td class="up">+0.12%</td>
+                <td class="up">+2.2880</td>
+            </tr><tr>
+                <td>創意</td>
+                <td>3.95%</td>
+                <td>4480.00</td>
+                <td class="up">4545.00</td>
+                <td class="up"><strong>+1.45%</strong></td>
+                <td class="up">+0.06%</td>
+                <td class="up">+2.5675</td>
+            </tr><tr>
+                <td>嘉澤</td>
+                <td>3.87%</td>
+                <td>1970.00</td>
+                <td class="down">1910.00</td>
+                <td class="down"><strong>-3.05%</strong></td>
+                <td class="down">-0.12%</td>
+                <td class="down">-2.3220</td>
+            </tr><tr><td>聯亞</td><td>3.74%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-nomura_prime" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">野村優質基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-nomura_prime">0.0000</div>
+                <div class="total-sum" id="sum-nomura_prime">+71.2125</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-nomura_prime" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-nomura_prime" style="font-size: 18px; font-weight: bold; color: #333;">+0.56%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -821,16 +1367,96 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_prime">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>鴻勁</td>
+                <td>10.32%</td>
+                <td>222.00</td>
+                <td class="up">226.50</td>
+                <td class="up"><strong>+2.03%</strong></td>
+                <td class="up">+0.21%</td>
+                <td class="up">+0.4644</td>
+            </tr><tr>
+                <td>台光電</td>
+                <td>8.96%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.11%</td>
+                <td class="down">-5.8240</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>8.79%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.16%</td>
+                <td class="down">-2.6370</td>
+            </tr><tr>
+                <td>川湖</td>
+                <td>8.49%</td>
+                <td>10100.00</td>
+                <td class="up">11110.00</td>
+                <td class="up"><strong>+10.00%</strong></td>
+                <td class="up">+0.85%</td>
+                <td class="up">+85.7490</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>8.17%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.02%</td>
+                <td class="up">+0.4085</td>
+            </tr><tr>
+                <td>聯發科</td>
+                <td>5.95%</td>
+                <td>3920.00</td>
+                <td class="down">3900.00</td>
+                <td class="down"><strong>-0.51%</strong></td>
+                <td class="down">-0.03%</td>
+                <td class="down">-1.1900</td>
+            </tr><tr>
+                <td>欣興</td>
+                <td>5.76%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.11%</td>
+                <td class="down">-1.0368</td>
+            </tr><tr>
+                <td>穎崴</td>
+                <td>5.71%</td>
+                <td>6775.00</td>
+                <td class="down">6760.00</td>
+                <td class="down"><strong>-0.22%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.8565</td>
+            </tr><tr>
+                <td>健策</td>
+                <td>5.3%</td>
+                <td>4450.00</td>
+                <td class="down">4380.00</td>
+                <td class="down"><strong>-1.57%</strong></td>
+                <td class="down">-0.08%</td>
+                <td class="down">-3.7100</td>
+            </tr><tr>
+                <td>金像電</td>
+                <td>5.17%</td>
+                <td>985.00</td>
+                <td class="down">982.00</td>
+                <td class="down"><strong>-0.30%</strong></td>
+                <td class="down">-0.02%</td>
+                <td class="down">-0.1551</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-hanya_tech" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">瀚亞高科技基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-hanya_tech">0.0000</div>
+                <div class="total-sum" id="sum-hanya_tech">-31.1258</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-hanya_tech" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-hanya_tech" style="font-size: 18px; font-weight: bold; color: #333;">-1.50%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -909,16 +1535,88 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-hanya_tech">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>欣興</td>
+                <td>7.86%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.15%</td>
+                <td class="down">-1.4148</td>
+            </tr><tr>
+                <td>台光電</td>
+                <td>7.77%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.10%</td>
+                <td class="down">-5.0505</td>
+            </tr><tr><td>台燿</td><td>7.57%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>台積電</td>
+                <td>7.1%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.02%</td>
+                <td class="up">+0.3550</td>
+            </tr><tr>
+                <td>聯發科</td>
+                <td>6.8%</td>
+                <td>3920.00</td>
+                <td class="down">3900.00</td>
+                <td class="down"><strong>-0.51%</strong></td>
+                <td class="down">-0.03%</td>
+                <td class="down">-1.3600</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>6.71%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.12%</td>
+                <td class="down">-2.0130</td>
+            </tr><tr>
+                <td>奇鋐</td>
+                <td>6.47%</td>
+                <td>2940.00</td>
+                <td class="down">2785.00</td>
+                <td class="down"><strong>-5.27%</strong></td>
+                <td class="down">-0.34%</td>
+                <td class="down">-10.0285</td>
+            </tr><tr>
+                <td>智邦</td>
+                <td>5.66%</td>
+                <td>2410.00</td>
+                <td class="down">2215.00</td>
+                <td class="down"><strong>-8.09%</strong></td>
+                <td class="down">-0.46%</td>
+                <td class="down">-11.0370</td>
+            </tr><tr>
+                <td>光寶科</td>
+                <td>5.08%</td>
+                <td>252.50</td>
+                <td class="down">247.00</td>
+                <td class="down"><strong>-2.18%</strong></td>
+                <td class="down">-0.11%</td>
+                <td class="down">-0.2794</td>
+            </tr><tr>
+                <td>強茂</td>
+                <td>4.96%</td>
+                <td>139.00</td>
+                <td class="down">133.00</td>
+                <td class="down"><strong>-4.32%</strong></td>
+                <td class="down">-0.21%</td>
+                <td class="down">-0.2976</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-uni_allweather" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">統一全天候基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-uni_allweather">0.0000</div>
+                <div class="total-sum" id="sum-uni_allweather">-27.9207</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-uni_allweather" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-uni_allweather" style="font-size: 18px; font-weight: bold; color: #333;">-1.19%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -997,16 +1695,96 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-uni_allweather">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>欣興</td>
+                <td>9.19%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.17%</td>
+                <td class="down">-1.6542</td>
+            </tr><tr>
+                <td>台光電</td>
+                <td>9.04%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.11%</td>
+                <td class="down">-5.8760</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>8.87%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.16%</td>
+                <td class="down">-2.6610</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>7.06%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.3530</td>
+            </tr><tr>
+                <td>奇鋐</td>
+                <td>6.7%</td>
+                <td>2940.00</td>
+                <td class="down">2785.00</td>
+                <td class="down"><strong>-5.27%</strong></td>
+                <td class="down">-0.35%</td>
+                <td class="down">-10.3850</td>
+            </tr><tr>
+                <td>聯發科</td>
+                <td>5.63%</td>
+                <td>3920.00</td>
+                <td class="down">3900.00</td>
+                <td class="down"><strong>-0.51%</strong></td>
+                <td class="down">-0.03%</td>
+                <td class="down">-1.1260</td>
+            </tr><tr>
+                <td>穎崴</td>
+                <td>4.11%</td>
+                <td>6775.00</td>
+                <td class="down">6760.00</td>
+                <td class="down"><strong>-0.22%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.6165</td>
+            </tr><tr>
+                <td>致茂</td>
+                <td>3.78%</td>
+                <td>1975.00</td>
+                <td class="up">2030.00</td>
+                <td class="up"><strong>+2.78%</strong></td>
+                <td class="up">+0.11%</td>
+                <td class="up">+2.0790</td>
+            </tr><tr>
+                <td>國巨</td>
+                <td>3.64%</td>
+                <td>570.00</td>
+                <td class="down">540.00</td>
+                <td class="down"><strong>-5.26%</strong></td>
+                <td class="down">-0.19%</td>
+                <td class="down">-1.0920</td>
+            </tr><tr>
+                <td>智邦</td>
+                <td>3.56%</td>
+                <td>2410.00</td>
+                <td class="down">2215.00</td>
+                <td class="down"><strong>-8.09%</strong></td>
+                <td class="down">-0.29%</td>
+                <td class="down">-6.9420</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-uni_prosper" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">統一奔騰基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-uni_prosper">0.0000</div>
+                <div class="total-sum" id="sum-uni_prosper">-53.6517</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-uni_prosper" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-uni_prosper" style="font-size: 18px; font-weight: bold; color: #333;">-1.87%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -1085,16 +1863,96 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-uni_prosper">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>台光電</td>
+                <td>9.92%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.12%</td>
+                <td class="down">-6.4480</td>
+            </tr><tr>
+                <td>奇鋐</td>
+                <td>7.54%</td>
+                <td>2940.00</td>
+                <td class="down">2785.00</td>
+                <td class="down"><strong>-5.27%</strong></td>
+                <td class="down">-0.40%</td>
+                <td class="down">-11.6870</td>
+            </tr><tr>
+                <td>旺矽</td>
+                <td>7.04%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.22%</td>
+                <td class="down">-14.0800</td>
+            </tr><tr>
+                <td>智邦</td>
+                <td>7.02%</td>
+                <td>2410.00</td>
+                <td class="down">2215.00</td>
+                <td class="down"><strong>-8.09%</strong></td>
+                <td class="down">-0.57%</td>
+                <td class="down">-13.6890</td>
+            </tr><tr>
+                <td>欣興</td>
+                <td>7.02%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.13%</td>
+                <td class="down">-1.2636</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>6.76%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.3380</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>6.74%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.12%</td>
+                <td class="down">-2.0220</td>
+            </tr><tr>
+                <td>健策</td>
+                <td>4.78%</td>
+                <td>4450.00</td>
+                <td class="down">4380.00</td>
+                <td class="down"><strong>-1.57%</strong></td>
+                <td class="down">-0.08%</td>
+                <td class="down">-3.3460</td>
+            </tr><tr>
+                <td>金像電</td>
+                <td>4.67%</td>
+                <td>985.00</td>
+                <td class="down">982.00</td>
+                <td class="down"><strong>-0.30%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.1401</td>
+            </tr><tr>
+                <td>國巨</td>
+                <td>4.38%</td>
+                <td>570.00</td>
+                <td class="down">540.00</td>
+                <td class="down"><strong>-5.26%</strong></td>
+                <td class="down">-0.23%</td>
+                <td class="down">-1.3140</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-uni_darkhorse" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">統一黑馬基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-uni_darkhorse">0.0000</div>
+                <div class="total-sum" id="sum-uni_darkhorse">-32.5464</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-uni_darkhorse" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-uni_darkhorse" style="font-size: 18px; font-weight: bold; color: #333;">-1.10%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -1173,16 +2031,88 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-uni_darkhorse">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>台光電</td>
+                <td>7.71%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.09%</td>
+                <td class="down">-5.0115</td>
+            </tr><tr>
+                <td>欣興</td>
+                <td>7.56%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.14%</td>
+                <td class="down">-1.3608</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>6.69%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.12%</td>
+                <td class="down">-2.0070</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>6.03%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.3015</td>
+            </tr><tr>
+                <td>奇鋐</td>
+                <td>5.83%</td>
+                <td>2940.00</td>
+                <td class="down">2785.00</td>
+                <td class="down"><strong>-5.27%</strong></td>
+                <td class="down">-0.31%</td>
+                <td class="down">-9.0365</td>
+            </tr><tr><td>台燿</td><td>4.93%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>金像電</td>
+                <td>4.67%</td>
+                <td>985.00</td>
+                <td class="down">982.00</td>
+                <td class="down"><strong>-0.30%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.1401</td>
+            </tr><tr>
+                <td>旺矽</td>
+                <td>3.72%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.12%</td>
+                <td class="down">-7.4400</td>
+            </tr><tr>
+                <td>智邦</td>
+                <td>3.68%</td>
+                <td>2410.00</td>
+                <td class="down">2215.00</td>
+                <td class="down"><strong>-8.09%</strong></td>
+                <td class="down">-0.30%</td>
+                <td class="down">-7.1760</td>
+            </tr><tr>
+                <td>聯發科</td>
+                <td>3.38%</td>
+                <td>3920.00</td>
+                <td class="down">3900.00</td>
+                <td class="down"><strong>-0.51%</strong></td>
+                <td class="down">-0.02%</td>
+                <td class="down">-0.6760</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-nomura_fortune" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">野村鴻運基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-nomura_fortune">0.0000</div>
+                <div class="total-sum" id="sum-nomura_fortune">+42.6313</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-nomura_fortune" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-nomura_fortune" style="font-size: 18px; font-weight: bold; color: #333;">+0.17%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -1261,16 +2191,88 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_fortune">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>欣興</td>
+                <td>8.21%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.15%</td>
+                <td class="down">-1.4778</td>
+            </tr><tr>
+                <td>台光電</td>
+                <td>7.5%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.09%</td>
+                <td class="down">-4.8750</td>
+            </tr><tr>
+                <td>川湖</td>
+                <td>6.12%</td>
+                <td>10100.00</td>
+                <td class="up">11110.00</td>
+                <td class="up"><strong>+10.00%</strong></td>
+                <td class="up">+0.61%</td>
+                <td class="up">+61.8120</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>6.06%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.11%</td>
+                <td class="down">-1.8180</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>5.58%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.2790</td>
+            </tr><tr>
+                <td>聯發科</td>
+                <td>5.54%</td>
+                <td>3920.00</td>
+                <td class="down">3900.00</td>
+                <td class="down"><strong>-0.51%</strong></td>
+                <td class="down">-0.03%</td>
+                <td class="down">-1.1080</td>
+            </tr><tr>
+                <td>鴻勁</td>
+                <td>5.29%</td>
+                <td>222.00</td>
+                <td class="up">226.50</td>
+                <td class="up"><strong>+2.03%</strong></td>
+                <td class="up">+0.11%</td>
+                <td class="up">+0.2381</td>
+            </tr><tr><td>聯亞</td><td>4.29%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>旺矽</td>
+                <td>3.96%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.13%</td>
+                <td class="down">-7.9200</td>
+            </tr><tr>
+                <td>健策</td>
+                <td>3.57%</td>
+                <td>4450.00</td>
+                <td class="down">4380.00</td>
+                <td class="down"><strong>-1.57%</strong></td>
+                <td class="down">-0.06%</td>
+                <td class="down">-2.4990</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-nomura_growth" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">野村成長基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-nomura_growth">0.0000</div>
+                <div class="total-sum" id="sum-nomura_growth">-25.1914</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-nomura_growth" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-nomura_growth" style="font-size: 18px; font-weight: bold; color: #333;">-0.65%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -1349,16 +2351,96 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_growth">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>台光電</td>
+                <td>7.42%</td>
+                <td>5305.00</td>
+                <td class="down">5240.00</td>
+                <td class="down"><strong>-1.23%</strong></td>
+                <td class="down">-0.09%</td>
+                <td class="down">-4.8230</td>
+            </tr><tr>
+                <td>欣興</td>
+                <td>7.35%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.14%</td>
+                <td class="down">-1.3230</td>
+            </tr><tr>
+                <td>聯發科</td>
+                <td>7.17%</td>
+                <td>3920.00</td>
+                <td class="down">3900.00</td>
+                <td class="down"><strong>-0.51%</strong></td>
+                <td class="down">-0.04%</td>
+                <td class="down">-1.4340</td>
+            </tr><tr>
+                <td>台達電</td>
+                <td>5.84%</td>
+                <td>1680.00</td>
+                <td class="down">1650.00</td>
+                <td class="down"><strong>-1.79%</strong></td>
+                <td class="down">-0.10%</td>
+                <td class="down">-1.7520</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>5.43%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.2715</td>
+            </tr><tr>
+                <td>旺矽</td>
+                <td>4.9%</td>
+                <td>6300.00</td>
+                <td class="down">6100.00</td>
+                <td class="down"><strong>-3.17%</strong></td>
+                <td class="down">-0.16%</td>
+                <td class="down">-9.8000</td>
+            </tr><tr>
+                <td>金像電</td>
+                <td>4.78%</td>
+                <td>985.00</td>
+                <td class="down">982.00</td>
+                <td class="down"><strong>-0.30%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.1434</td>
+            </tr><tr>
+                <td>鴻勁</td>
+                <td>4.31%</td>
+                <td>222.00</td>
+                <td class="up">226.50</td>
+                <td class="up"><strong>+2.03%</strong></td>
+                <td class="up">+0.09%</td>
+                <td class="up">+0.1940</td>
+            </tr><tr>
+                <td>奇鋐</td>
+                <td>3.76%</td>
+                <td>2940.00</td>
+                <td class="down">2785.00</td>
+                <td class="down"><strong>-5.27%</strong></td>
+                <td class="down">-0.20%</td>
+                <td class="down">-5.8280</td>
+            </tr><tr>
+                <td>穎崴</td>
+                <td>3.69%</td>
+                <td>6775.00</td>
+                <td class="down">6760.00</td>
+                <td class="down"><strong>-0.22%</strong></td>
+                <td class="down">-0.01%</td>
+                <td class="down">-0.5535</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-nomura_hightech" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">野村高科技基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-nomura_hightech">0.0000</div>
+                <div class="total-sum" id="sum-nomura_hightech">-4.2819</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-nomura_hightech" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-nomura_hightech" style="font-size: 18px; font-weight: bold; color: #333;">-1.00%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -1437,16 +2519,88 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_hightech">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>聯發科</td>
+                <td>8.15%</td>
+                <td>3920.00</td>
+                <td class="down">3900.00</td>
+                <td class="down"><strong>-0.51%</strong></td>
+                <td class="down">-0.04%</td>
+                <td class="down">-1.6300</td>
+            </tr><tr>
+                <td>南電</td>
+                <td>7.57%</td>
+                <td>1105.00</td>
+                <td class="down">1080.00</td>
+                <td class="down"><strong>-2.26%</strong></td>
+                <td class="down">-0.17%</td>
+                <td class="down">-1.8925</td>
+            </tr><tr><td>聯亞</td><td>7.21%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>臻鼎-KY</td>
+                <td>6.51%</td>
+                <td>482.00</td>
+                <td class="down">473.00</td>
+                <td class="down"><strong>-1.87%</strong></td>
+                <td class="down">-0.12%</td>
+                <td class="down">-0.5859</td>
+            </tr><tr>
+                <td>欣興</td>
+                <td>5.9%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.11%</td>
+                <td class="down">-1.0620</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>5.7%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.2850</td>
+            </tr><tr>
+                <td>景碩</td>
+                <td>5.12%</td>
+                <td>853.00</td>
+                <td class="down">823.00</td>
+                <td class="down"><strong>-3.52%</strong></td>
+                <td class="down">-0.18%</td>
+                <td class="down">-1.5360</td>
+            </tr><tr>
+                <td>華星光</td>
+                <td>5.11%</td>
+                <td>488.00</td>
+                <td class="">488.00</td>
+                <td class=""><strong>+0.00%</strong></td>
+                <td class="">+0.00%</td>
+                <td class="">+0.0000</td>
+            </tr><tr>
+                <td>創意</td>
+                <td>4.95%</td>
+                <td>4480.00</td>
+                <td class="up">4545.00</td>
+                <td class="up"><strong>+1.45%</strong></td>
+                <td class="up">+0.07%</td>
+                <td class="up">+3.2175</td>
+            </tr><tr>
+                <td>文曄</td>
+                <td>4.9%</td>
+                <td>233.50</td>
+                <td class="down">211.50</td>
+                <td class="down"><strong>-9.42%</strong></td>
+                <td class="down">-0.46%</td>
+                <td class="down">-1.0780</td>
+            </tr>
                 </tbody>
             </table>
         </div>
         <div id="sector-nomura_etech" class="fund-section ">
             <div class="dashboard">
                 <div class="dashboard-title">野村 e 科技基金 - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-nomura_etech">0.0000</div>
+                <div class="total-sum" id="sum-nomura_etech">-4.4420</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-nomura_etech" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
+                <div class="total-percent" id="pct-nomura_etech" style="font-size: 18px; font-weight: bold; color: #333;">-1.02%</div>
             </div>
             
             <div style="text-align: right; margin-bottom: 8px;">
@@ -1525,7 +2679,79 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-nomura_etech">
-                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
+                    <tr>
+                <td>聯發科</td>
+                <td>8.09%</td>
+                <td>3920.00</td>
+                <td class="down">3900.00</td>
+                <td class="down"><strong>-0.51%</strong></td>
+                <td class="down">-0.04%</td>
+                <td class="down">-1.6180</td>
+            </tr><tr>
+                <td>南電</td>
+                <td>7.58%</td>
+                <td>1105.00</td>
+                <td class="down">1080.00</td>
+                <td class="down"><strong>-2.26%</strong></td>
+                <td class="down">-0.17%</td>
+                <td class="down">-1.8950</td>
+            </tr><tr><td>聯亞</td><td>6.7%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr><tr>
+                <td>欣興</td>
+                <td>6.15%</td>
+                <td>973.00</td>
+                <td class="down">955.00</td>
+                <td class="down"><strong>-1.85%</strong></td>
+                <td class="down">-0.11%</td>
+                <td class="down">-1.1070</td>
+            </tr><tr>
+                <td>景碩</td>
+                <td>5.61%</td>
+                <td>853.00</td>
+                <td class="down">823.00</td>
+                <td class="down"><strong>-3.52%</strong></td>
+                <td class="down">-0.20%</td>
+                <td class="down">-1.6830</td>
+            </tr><tr>
+                <td>臻鼎-KY</td>
+                <td>5.48%</td>
+                <td>482.00</td>
+                <td class="down">473.00</td>
+                <td class="down"><strong>-1.87%</strong></td>
+                <td class="down">-0.10%</td>
+                <td class="down">-0.4932</td>
+            </tr><tr>
+                <td>文曄</td>
+                <td>5.09%</td>
+                <td>233.50</td>
+                <td class="down">211.50</td>
+                <td class="down"><strong>-9.42%</strong></td>
+                <td class="down">-0.48%</td>
+                <td class="down">-1.1198</td>
+            </tr><tr>
+                <td>創意</td>
+                <td>5.05%</td>
+                <td>4480.00</td>
+                <td class="up">4545.00</td>
+                <td class="up"><strong>+1.45%</strong></td>
+                <td class="up">+0.07%</td>
+                <td class="up">+3.2825</td>
+            </tr><tr>
+                <td>華星光</td>
+                <td>5.04%</td>
+                <td>488.00</td>
+                <td class="">488.00</td>
+                <td class=""><strong>+0.00%</strong></td>
+                <td class="">+0.00%</td>
+                <td class="">+0.0000</td>
+            </tr><tr>
+                <td>台積電</td>
+                <td>3.83%</td>
+                <td>2365.00</td>
+                <td class="up">2370.00</td>
+                <td class="up"><strong>+0.21%</strong></td>
+                <td class="up">+0.01%</td>
+                <td class="up">+0.1915</td>
+            </tr>
                 </tbody>
             </table>
         </div>
@@ -1536,12 +2762,6 @@
     </div>
 </div>
 <script>
-const stockMapping = {"台積電": "2330.TW", "聯發科": "2454.TW", "鴻海": "2317.TW", "台達電": "2308.TW", "聯電": "2303.TW", "日月光投控": "3711.TW", "聯詠": "3034.TW", "瑞昱": "2379.TW", "力積電": "6770.TW", "世界": "5347.TWO", "中美晶": "5483.TWO", "環球晶": "6488.TW", "精測": "6510.TWO", "晶豪科": "3006.TW", "強茂": "2481.TW", "華邦電": "2344.TW", "沛亨": "6291.TW", "聯亞": "3081.TWO", "創意": "3443.TW", "世芯-KY": "3661.TW", "欣興": "3037.TW", "旺矽": "6223.TWO", "台光電": "2383.TW", "台燿": "6274.TW", "信驊": "5274.TWO", "穎崴": "6515.TW", "奇鋐": "3017.TW", "智邦": "2345.TW", "景碩": "3189.TW", "南電": "8046.TW", "鴻勁": "7765.TW", "金像電": "2368.TW", "健策": "3653.TW", "川湖": "2059.TW", "國巨": "2327.TW", "致茂": "2360.TW", "大量": "3167.TW", "台表科": "6278.TW", "光寶科": "2301.TW", "臻鼎-KY": "4958.TW", "臻鼎": "4958.TW", "華星光": "4979.TWO", "文曄": "3036.TW", "群聯": "8299.TW", "嘉澤": "3533.TW", "緯創": "3231.TW", "廣達": "2382.TW", "緯穎": "6669.TW", "技嘉": "2376.TW", "華碩": "2357.TW", "M31": "6643.TWO", "力旺": "3529.TW", "祥碩": "5269.TW", "高力": "8996.TW", "雙鴻": "3324.TW", "健鼎": "3044.TW", "定穎投控": "3715.TW", "瑞儀": "6176.TW", "英業達": "2356.TW", "仁寶": "2324.TW", "富邦金": "2881.TW", "國泰金": "2882.TW", "中信金": "2891.TW", "兆豐金": "2886.TW", "元大金": "2885.TW", "玉山金": "2884.TW", "台塑": "1301.TW", "南亞": "1303.TW", "台化": "1326.TW", "台塑化": "6505.TW", "中鋼": "2002.TW", "統一": "1216.TW", "遠東新": "1402.TW", "台泥": "1101.TW", "亞泥": "1102.TW", "長榮": "2603.TW", "陽明": "2609.TW", "萬海": "2615.TW", "台灣高鐵": "2633.TW", "中華車": "2204.TW", "裕隆": "2201.TW", "和泰車": "2207.TW", "寶成": "9904.TW", "豐泰": "9910.TW"};
-let savedFundsData = localStorage.getItem('myCustomFundsDataNameOnly');
-let fundsData = savedFundsData ? JSON.parse(savedFundsData) : {"yuanta_otc": {"name": "元大店頭基金", "stocks": {"旺矽": 8.0, "中美晶": 6.83, "信驊": 6.78, "台積電": 6.32, "台燿": 6.05, "聯電": 5.74, "精測": 4.64, "環球晶": 4.45, "聯亞": 4.21, "沛亨": 3.95}}, "shinkin_three": {"name": "新光大三通基金", "stocks": {"景碩": 8.79, "欣興": 8.56, "旺矽": 6.81, "世芯-KY": 6.63, "台積電": 6.51, "台達電": 5.44, "力積電": 5.33, "大量": 5.02, "台表科": 4.65, "晶豪科": 4.44}}, "allianz_taiwan": {"name": "安聯台灣大壩基金", "stocks": {"旺矽": 11.92, "穎崴": 7.63, "台燿": 7.25, "台光電": 6.33, "欣興": 5.88, "信驊": 5.46, "台積電": 5.08, "台達電": 4.98, "智邦": 3.1, "景碩": 3.1}}, "allianz_tech": {"name": "安聯台灣科技基金", "stocks": {"旺矽": 8.02, "台積電": 7.05, "華邦電": 6.33, "台燿": 6.13, "台光電": 5.75, "穎崴": 5.45, "創意": 4.58, "台達電": 3.93, "奇鋐": 3.69, "信驊": 3.65}}, "allianz_smart": {"name": "安聯台灣智慧基金", "stocks": {"旺矽": 7.73, "信驊": 7.48, "台光電": 5.99, "台燿": 5.78, "智邦": 4.74, "華邦電": 4.63, "台積電": 4.62, "致茂": 4.47, "台達電": 4.31, "穎崴": 4.1}}, "fubon_choice": {"name": "富邦首選基金", "stocks": {"欣興": 9.76, "旺矽": 7.88, "聯發科": 7.25, "台光電": 6.77, "台達電": 6.76, "南電": 6.01, "鴻勁": 5.95, "金像電": 4.76, "群聯": 4.64, "聯亞": 4.4}}, "fubon_select": {"name": "富邦上選基金", "stocks": {"欣興": 7.32, "台光電": 5.03, "穎崴": 4.36, "台積電": 4.26, "聯電": 4.23, "南電": 4.23, "金像電": 4.19, "鴻勁": 4.16, "聯亞": 3.7, "創意": 3.47}}, "fubon_taiwan": {"name": "富邦新台商基金", "stocks": {"旺矽": 5.71, "欣興": 5.63, "台達電": 5.57, "台光電": 5.42, "聯電": 5.02, "台積電": 4.96, "致茂": 4.16, "創意": 3.95, "嘉澤": 3.87, "聯亞": 3.74}}, "nomura_prime": {"name": "野村優質基金", "stocks": {"鴻勁": 10.32, "台光電": 8.96, "台達電": 8.79, "川湖": 8.49, "台積電": 8.17, "聯發科": 5.95, "欣興": 5.76, "穎崴": 5.71, "健策": 5.3, "金像電": 5.17}}, "hanya_tech": {"name": "瀚亞高科技基金", "stocks": {"欣興": 7.86, "台光電": 7.77, "台燿": 7.57, "台積電": 7.1, "聯發科": 6.8, "台達電": 6.71, "奇鋐": 6.47, "智邦": 5.66, "光寶科": 5.08, "強茂": 4.96}}, "uni_allweather": {"name": "統一全天候基金", "stocks": {"欣興": 9.19, "台光電": 9.04, "台達電": 8.87, "台積電": 7.06, "奇鋐": 6.7, "聯發科": 5.63, "穎崴": 4.11, "致茂": 3.78, "國巨": 3.64, "智邦": 3.56}}, "uni_prosper": {"name": "統一奔騰基金", "stocks": {"台光電": 9.92, "奇鋐": 7.54, "旺矽": 7.04, "智邦": 7.02, "欣興": 7.02, "台積電": 6.76, "台達電": 6.74, "健策": 4.78, "金像電": 4.67, "國巨": 4.38}}, "uni_darkhorse": {"name": "統一黑馬基金", "stocks": {"台光電": 7.71, "欣興": 7.56, "台達電": 6.69, "台積電": 6.03, "奇鋐": 5.83, "台燿": 4.93, "金像電": 4.67, "旺矽": 3.72, "智邦": 3.68, "聯發科": 3.38}}, "nomura_fortune": {"name": "野村鴻運基金", "stocks": {"欣興": 8.21, "台光電": 7.5, "川湖": 6.12, "台達電": 6.06, "台積電": 5.58, "聯發科": 5.54, "鴻勁": 5.29, "聯亞": 4.29, "旺矽": 3.96, "健策": 3.57}}, "nomura_growth": {"name": "野村成長基金", "stocks": {"台光電": 7.42, "欣興": 7.35, "聯發科": 7.17, "台達電": 5.84, "台積電": 5.43, "旺矽": 4.9, "金像電": 4.78, "鴻勁": 4.31, "奇鋐": 3.76, "穎崴": 3.69}}, "nomura_hightech": {"name": "野村高科技基金", "stocks": {"聯發科": 8.15, "南電": 7.57, "聯亞": 7.21, "臻鼎-KY": 6.51, "欣興": 5.9, "台積電": 5.7, "景碩": 5.12, "華星光": 5.11, "創意": 4.95, "文曄": 4.9}}, "nomura_etech": {"name": "野村 e 科技基金", "stocks": {"聯發科": 8.09, "南電": 7.58, "聯亞": 6.7, "欣興": 6.15, "景碩": 5.61, "臻鼎-KY": 5.48, "文曄": 5.09, "創意": 5.05, "華星光": 5.04, "台積電": 3.83}}};
-
-let cacheResults = JSON.parse(localStorage.getItem('myLastRunCache') || '{}');
-
 function toggleEditor(key) {
     const editor = document.getElementById('editor-' + key);
     editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
@@ -1560,152 +2780,14 @@ function addStockRow(key) {
     container.appendChild(div);
 }
 
-function saveAndCalculate(key) {
-    const container = document.getElementById('container-' + key);
-    const rows = container.getElementsByClassName('stock-input-row');
-    let newStocks = {};
-    
-    for (let r of rows) {
-        let name = r.querySelector('.edit-name').value.trim();
-        let weight = parseFloat(r.querySelector('.edit-weight').value) || 0;
-        if (name) {
-            newStocks[name] = weight;
-        }
-    }
-    
-    fundsData[key].stocks = newStocks;
-    localStorage.setItem('myCustomFundsDataNameOnly', JSON.stringify(fundsData));
-    toggleEditor(key);
-    fetchFundData(key);
-}
-
-function resetSettings() {
-    if (confirm("確定要清除自訂資料並重置回原始預設設定與快取嗎？")) {
-        localStorage.removeItem('myCustomFundsDataNameOnly');
-        localStorage.removeItem('myLastRunCache');
-        location.reload();
-    }
-}
-
 function switchFund(key) {
     document.querySelectorAll('.fund-section').forEach(s => s.classList.remove('active'));
     document.getElementById('sector-' + key).classList.add('active');
-    
-    if (cacheResults[key]) {
-        renderCachedData(key, cacheResults[key]);
-    }
-    
-    fetchFundData(key);
 }
 
-function renderCachedData(key, cachedObj) {
-    document.getElementById('tbody-' + key).innerHTML = cachedObj.tableRows;
-    document.getElementById('sum-' + key).innerText = cachedObj.totalContributionStr;
-    document.getElementById('pct-' + key).innerText = cachedObj.totalPctStr;
-}
-
-async function fetchFundData(key) {
-    const stocks = fundsData[key].stocks;
-    const stockNames = Object.keys(stocks);
-    const totalStocks = stockNames.length;
-    
-    const pContainer = document.getElementById('progress-container');
-    const pBar = document.getElementById('progress-bar');
-    pContainer.style.display = 'block';
-    pBar.style.width = '0%';
-    pBar.innerText = '讀取中 0%';
-
-    let totalContribution = 0;
-    let totalPct = 0;
-    let tableRows = "";
-    let completedCount = 0;
-    
-    for (let name in stocks) {
-        let weight = stocks[name];
-        let tickerBase = stockMapping[name];
-        
-        if (!tickerBase) {
-            tableRows += `<tr>
-                <td>${name} (未知)</td>
-                <td>${weight}%</td>
-                <td colspan="5" style="color: #ff4d4f;">找不到對應的股票代號</td>
-            </tr>`;
-            completedCount++;
-            updateProgress(completedCount, totalStocks, pBar, pContainer);
-            continue;
-        }
-        
-        let success = false;
-        let pYester = 0, pCurr = 0, diff = 0;
-        
-        try {
-            // 改用 query2.finance.yahoo.com 直連抓取，並加入延遲避免被封鎖
-            let url = `https://query2.finance.yahoo.com/v8/finance/chart/${tickerBase}?range=5d&interval=1d`;
-            let res = await fetch(url);
-            let data = await res.json();
-            let quotes = data.chart.result[0].indicators.quote[0].close;
-            let validQuotes = quotes.filter(q => q !== null);
-            
-            if (validQuotes.length >= 2) {
-                pYester = validQuotes[validQuotes.length - 2];
-                pCurr = validQuotes[validQuotes.length - 1];
-                diff = pCurr - pYester;
-                success = true;
-            }
-        } catch (e) {}
-        
-        // 每次請求後暫停 200 毫秒，保護 API 不被連續轟炸
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        let pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
-        let contribPct = pctChange * (weight / 100);
-        let contribution = diff * (weight / 100);
-        
-        totalPct += contribPct;
-        totalContribution += contribution;
-        
-        let colorClass = diff > 0 ? "up" : (diff < 0 ? "down" : "");
-        
-        tableRows += `<tr>
-            <td>${name}</td>
-            <td>${weight}%</td>
-            <td>${success ? pYester.toFixed(2) : 'N/A'}</td>
-            <td class="${colorClass}">${success ? pCurr.toFixed(2) : 'N/A'}</td>
-            <td class="${colorClass}"><strong>${pctChange >= 0 ? '+' : ''}${pctChange.toFixed(2)}%</strong></td>
-            <td class="${colorClass}">${contribPct >= 0 ? '+' : ''}${contribPct.toFixed(2)}%</td>
-            <td class="${colorClass}">${contribution >= 0 ? '+' : ''}${contribution.toFixed(4)}</td>
-        </tr>`;
-
-        completedCount++;
-        updateProgress(completedCount, totalStocks, pBar, pContainer);
-    }
-    
-    let sumStr = (totalContribution >= 0 ? '+' : '') + totalContribution.toFixed(4);
-    let pctStr = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
-
-    document.getElementById('tbody-' + key).innerHTML = tableRows;
-    document.getElementById('sum-' + key).innerText = sumStr;
-    document.getElementById('pct-' + key).innerText = pctStr;
-
-    cacheResults[key] = {
-        tableRows: tableRows,
-        totalContributionStr: sumStr,
-        totalPctStr: pctStr
-    };
-    localStorage.setItem('myLastRunCache', JSON.stringify(cacheResults));
-}
-
-function updateProgress(current, total, pBar, pContainer) {
-    let percent = Math.round((current / total) * 100);
-    pBar.style.width = percent + '%';
-    pBar.innerText = `讀取進度 ${percent}% (${current}/${total})`;
-    if (percent >= 100) {
-        setTimeout(() => {
-            pBar.innerText = "讀取完成！";
-            setTimeout(() => {
-                pContainer.style.display = 'none';
-            }, 600);
-        }, 300);
+function resetSettings() {
+    if (confirm("確定要重置嗎？")) {
+        location.reload();
     }
 }
 
@@ -1724,14 +2806,6 @@ async function triggerUpdate() {
     if (response.ok) { document.getElementById('status').innerText = "✅ 請求已送出！"; }
     else { document.getElementById('status').innerText = "❌ 請求失敗"; }
 }
-
-window.onload = function() {
-    let firstKey = Object.keys(fundsData)[0];
-    if (cacheResults[firstKey]) {
-        renderCachedData(firstKey, cacheResults[firstKey]);
-    }
-    fetchFundData(firstKey);
-};
 </script>
 </body>
 </html>

@@ -23,7 +23,7 @@
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (自動識別上市櫃後綴)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已修復上櫃股抓取)</div>
     
     <select onchange="switchFund(this.value)"><option value="yuanta_otc">元大店頭基金</option><option value="shinkin_three">新光大三通基金</option><option value="allianz_taiwan">安聯台灣大壩基金</option><option value="allianz_tech">安聯台灣科技基金</option><option value="allianz_smart">安聯台灣智慧基金</option><option value="fubon_choice">富邦首選基金</option><option value="fubon_select">富邦上選基金</option><option value="fubon_taiwan">富邦新台商基金</option><option value="nomura_prime">野村優質基金</option><option value="hanya_tech">瀚亞高科技基金</option><option value="uni_allweather">統一全天候基金</option><option value="uni_prosper">統一奔騰基金</option><option value="uni_darkhorse">統一黑馬基金</option><option value="nomura_fortune">野村鴻運基金</option><option value="nomura_growth">野村成長基金</option><option value="nomura_hightech">野村高科技基金</option><option value="nomura_etech">野村 e 科技基金</option></select>
     
@@ -95,7 +95,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('yuanta_otc')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('yuanta_otc')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -263,7 +262,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('shinkin_three')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('shinkin_three')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -431,7 +429,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('allianz_taiwan')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('allianz_taiwan')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -599,7 +596,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('allianz_tech')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('allianz_tech')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -767,7 +763,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('allianz_smart')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('allianz_smart')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -935,7 +930,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('fubon_choice')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('fubon_choice')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -1103,7 +1097,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('fubon_select')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('fubon_select')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -1271,7 +1264,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('fubon_taiwan')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('fubon_taiwan')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -1439,7 +1431,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('nomura_prime')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('nomura_prime')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -1607,7 +1598,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('hanya_tech')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('hanya_tech')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -1775,7 +1765,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('uni_allweather')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('uni_allweather')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -1943,7 +1932,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('uni_prosper')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('uni_prosper')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -2111,7 +2099,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('uni_darkhorse')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('uni_darkhorse')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -2279,7 +2266,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('nomura_fortune')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('nomura_fortune')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -2447,7 +2433,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('nomura_growth')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('nomura_growth')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -2615,7 +2600,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('nomura_hightech')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('nomura_hightech')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -2783,7 +2767,6 @@
             </div>
                 </div>
                 <button type="button" onclick="addStockRow('nomura_etech')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
-                <button type="button" onclick="saveAndCalculate('nomura_etech')" style="background: #1890ff; color: white; border: none; padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px; float: right;">儲存並重新計算</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -2885,7 +2868,7 @@
         </div>
     <div class="update-box">
         <button id="updateBtn" onclick="triggerUpdate()" style="background-color: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">更新 GitHub 動作</button>
-        <button type="button" onclick="resetSettings()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置為預設設定</button>
+        <button type="button" onclick="resetSettings()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置畫面</button>
         <p id="status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
     </div>
 </div>
@@ -2914,9 +2897,7 @@ function switchFund(key) {
 }
 
 function resetSettings() {
-    if (confirm("確定要重置嗎？")) {
-        location.reload();
-    }
+    location.reload();
 }
 
 async function triggerUpdate() {

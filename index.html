@@ -25,7 +25,7 @@
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已啟用自動保留最後執行資料)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已改用穩定直連模式與緩衝請求)</div>
     
     <div id="progress-container">
         <div id="progress-bar">準備中 0%</div>
@@ -1639,10 +1639,10 @@ async function fetchFundData(key) {
         let pYester = 0, pCurr = 0, diff = 0;
         
         try {
-            let url = `https://query1.finance.yahoo.com/v8/finance/chart/${tickerBase}?range=5d&interval=1d`;
-            let res = await fetch(`https://api.allorigins.win/get?url=` + encodeURIComponent(url));
-            let json = await res.json();
-            let data = JSON.parse(json.contents);
+            // 改用 query2.finance.yahoo.com 直連抓取，並加入延遲避免被封鎖
+            let url = `https://query2.finance.yahoo.com/v8/finance/chart/${tickerBase}?range=5d&interval=1d`;
+            let res = await fetch(url);
+            let data = await res.json();
             let quotes = data.chart.result[0].indicators.quote[0].close;
             let validQuotes = quotes.filter(q => q !== null);
             
@@ -1653,6 +1653,9 @@ async function fetchFundData(key) {
                 success = true;
             }
         } catch (e) {}
+        
+        // 每次請求後暫停 200 毫秒，保護 API 不被連續轟炸
+        await new Promise(resolve => setTimeout(resolve, 200));
         
         let pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
         let contribPct = pctChange * (weight / 100);

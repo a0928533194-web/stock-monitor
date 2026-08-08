@@ -56,25 +56,32 @@ def fetch_stock_data():
     unique_tickers = set(STOCK_MAPPING.values())
     print(f"開始透過 Python 雲端抓取 {len(unique_tickers)} 檔股票的最新股價...")
     
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+    
     for name, ticker in STOCK_MAPPING.items():
-        try:
-            url = f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}?range=5d&interval=1d"
-            headers = {'User-Agent': 'Mozilla/5.0'}
-            res = requests.get(url, headers=headers, timeout=5)
-            data = res.json()
-            quotes = data['chart']['result'][0]['indicators']['quote'][0]['close']
-            valid_quotes = [q for q in quotes if q is not None]
-            if len(valid_quotes) >= 2:
-                price_cache[name] = {
-                    "yesterday": valid_quotes[-2],
-                    "current": valid_quotes[-1],
-                    "success": True
-                }
-            else:
-                price_cache[name] = {"yesterday": 0, "current": 0, "success": False}
-        except Exception as e:
+        success = False
+        for attempt in range(3):  # 失敗自動重試最多 3 次
+            try:
+                url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range=10d&interval=1d"
+                res = requests.get(url, headers=headers, timeout=6)
+                data = res.json()
+                quotes = data['chart']['result'][0]['indicators']['quote'][0]['close']
+                valid_quotes = [q for q in quotes if q is not None]
+                if len(valid_quotes) >= 2:
+                    price_cache[name] = {
+                        "yesterday": valid_quotes[-2],
+                        "current": valid_quotes[-1],
+                        "success": True
+                    }
+                    success = True
+                    break
+            except Exception as e:
+                time.sleep(0.5)
+        
+        if not success:
             price_cache[name] = {"yesterday": 0, "current": 0, "success": False}
-        time.sleep(0.1)
+        time.sleep(0.05)
+        
     print("股價抓取完畢！")
     return price_cache
 

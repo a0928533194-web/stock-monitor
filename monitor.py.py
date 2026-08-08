@@ -53,27 +53,16 @@ FUNDS_CONFIG = {
 
 def fetch_stock_data():
     price_cache = {}
-    print("開始抓取最新股價（自動判斷上市 .TW 或上櫃 .TWO）...")
-    
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    }
-    
+    print("開始抓取最新股價...")
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
     session = requests.Session()
-    
-    # 明確指定哪些是上櫃股票（強制加 .TWO），其餘預設或優先嘗試 .TW 
     otc_list = {"台燿", "環球晶", "聯亞", "沛亨", "旺矽", "中美晶", "信驊", "精測", "世界", "華星光", "M31", "世芯-KY"}
     
     for name, code in STOCK_MAPPING.items():
         success = False
-        if name in otc_list:
-            suffixes = [".TWO", ".TW"]
-        else:
-            suffixes = [".TW", ".TWO"]
-        
+        suffixes = [".TWO", ".TW"] if name in otc_list else [".TW", ".TWO"]
         for suf in suffixes:
-            if success:
-                break
+            if success: break
             ticker = code + suf
             url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range=10d&interval=1d"
             try:
@@ -94,109 +83,92 @@ def fetch_stock_data():
                             break
             except Exception:
                 pass
-        
         if not success:
             price_cache[name] = {"yesterday": 0, "current": 0, "success": False}
         time.sleep(0.05)
-        
     print("股價抓取完畢！")
     return price_cache
 
 def run_monitor():
     stock_prices = fetch_stock_data()
-    
     options_html, sections_html = "", ""
     
     for i, (key, info) in enumerate(FUNDS_CONFIG.items()):
         active = "active" if i == 0 else ""
-        options_html += '<option value="{}">{}</option>'.format(key, info["name"])
+        options_html += f'<option value="{key}">{info["name"]}</option>'
         
-        editor_rows = ""
-        for name, weight in info["stocks"].items():
-            editor_rows += '''
-            <div class="stock-input-row" style="display: flex; gap: 8px; margin-bottom: 5px;">
-                <input type="text" class="edit-name" value="{}" placeholder="股票名稱" style="width: 55%;">
-                <input type="number" step="0.01" class="edit-weight" value="{}" placeholder="權重%" style="width: 35%;">
-                <button type="button" onclick="this.parentElement.remove()" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; width:10%;">X</button>
-            </div>'''.format(name, weight)
-            
         table_rows = ""
         total_contribution = 0
         total_pct = 0
         
         for name, weight in info["stocks"].items():
-            if name not in stock_prices or not stock_prices[name]["success"]:
-                table_rows += f'<tr><td>{name}</td><td>{weight}%</td><td colspan="5" style="color: #ff4d4f;">找不到數據</td></tr>'
-                continue
+            pYester, pCurr, diff, pctChange, contribPct, contribution = 0, 0, 0, 0, 0, 0
+            if name in stock_prices and stock_prices[name]["success"]:
+                pYester = stock_prices[name]["yesterday"]
+                pCurr = stock_prices[name]["current"]
+                diff = pCurr - pYester
+                pctChange = (diff / pYester) * 100 if pYester != 0 else 0
+                contribPct = pctChange * (weight / 100)
+                contribution = diff * (weight / 100)
                 
-            pYester = stock_prices[name]["yesterday"]
-            pCurr = stock_prices[name]["current"]
-            diff = pCurr - pYester
-            pctChange = (diff / pYester) * 100 if pYester != 0 else 0
-            contribPct = pctChange * (weight / 100)
-            contribution = diff * (weight / 100)
-            
-            total_pct += contribPct
-            total_contribution += contribution
+                total_pct += contribPct
+                total_contribution += contribution
             
             color_class = "up" if diff > 0 else ("down" if diff < 0 else "")
             sign_pct = '+' if pctChange >= 0 else ''
             sign_contrib_pct = '+' if contribPct >= 0 else ''
             sign_contrib = '+' if contribution >= 0 else ''
             
-            table_rows += f'''<tr>
-                <td>{name}</td>
-                <td>{weight}%</td>
-                <td>{pYester:.2f}</td>
-                <td class="{color_class}">{pCurr:.2f}</td>
-                <td class="{color_class}"><strong>{sign_pct}{pctChange:.2f}%</strong></td>
-                <td class="{color_class}">{sign_contrib_pct}{contribPct:.2f}%</td>
-                <td class="{color_class}">{sign_contrib}{contribution:.4f}</td>
+            table_rows += f'''<tr data-name="{name}">
+                <td><input type="text" class="edit-name" value="{name}" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px; background:transparent;" oninput="recalc('{key}')"></td>
+                <td><input type="number" step="0.01" class="edit-weight" value="{weight}" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="recalc('{key}')">%</td>
+                <td class="col-yesterday">{pYester:.2f}</td>
+                <td class="col-current {color_class}">{pCurr:.2f}</td>
+                <td class="col-pct {color_class}"><strong>{sign_pct}{pctChange:.2f}%</strong></td>
+                <td class="col-contrib-pct {color_class}">{sign_contrib_pct}{contribPct:.2f}%</td>
+                <td class="col-contrib {color_class}">{sign_contrib}{contribution:.4f}</td>
+                <td><button type="button" onclick="this.closest('tr').remove(); recalc('{key}');" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 6px;">X</button></td>
             </tr>'''
 
         sum_str = ('+' if total_contribution >= 0 else '') + f"{total_contribution:.4f}"
         pct_str = ('+' if total_pct >= 0 else '') + f"{total_pct:.2f}%"
 
-        sections_html += '''
-        <div id="sector-{key}" class="fund-section {active}">
+        # 把原始股價資料透過 JSON 埋在 DOM 裡，供前端即時計算使用
+        prices_json = json.dumps({n: stock_prices[n] for n in info["stocks"] if n in stock_prices})
+
+        sections_html += f'''
+        <div id="sector-{key}" class="fund-section {active}" data-prices='{prices_json}'>
             <div class="dashboard">
-                <div class="dashboard-title">{name} - 今日預估總貢獻</div>
+                <div class="dashboard-title">{info["name"]} - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-{key}">{sum_str}</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
                 <div class="total-percent" id="pct-{key}" style="font-size: 18px; font-weight: bold; color: #333;">{pct_str}</div>
             </div>
             
-            <div style="text-align: right; margin-bottom: 8px;">
-                <button type="button" onclick="toggleEditor('{key}')" style="background: #fa8c16; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">⚙️ 編輯此基金持股</button>
-            </div>
-            
-            <div id="editor-{key}" style="display: none; background: #fffbe6; padding: 10px; border-radius: 8px; border: 1px solid #ffe58f; margin-bottom: 10px;">
-                <div style="font-weight: bold; font-size: 12px; margin-bottom: 5px;">修改成分股與權重：</div>
-                <div id="container-{key}">
-                    {editor_rows}
-                </div>
-                <button type="button" onclick="addStockRow('{key}')" style="background: #52c41a; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 5px;">＋ 新增一檔股票</button>
+            <div style="margin-bottom: 8px; display:flex; justify-content: space-between;">
+                <button type="button" onclick="addStockRow('{key}')" style="background: #52c41a; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">＋ 新增一檔股票</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
                 <thead>
                     <tr>
-                        <th style="width:20%">成分股</th>
-                        <th style="width:12%">權重</th>
+                        <th style="width:18%">成分股</th>
+                        <th style="width:14%">權重</th>
                         <th style="width:12%">昨收</th>
                         <th style="width:12%">現價</th>
                         <th style="width:14%">漲跌幅%</th>
                         <th style="width:15%">貢獻%</th>
                         <th style="width:15%">貢獻度</th>
+                        <th style="width:8%"></th>
                     </tr>
                 </thead>
                 <tbody id="tbody-{key}">
                     {table_rows}
                 </tbody>
             </table>
-        </div>'''.format(key=key, active=active, name=info["name"], editor_rows=editor_rows, table_rows=table_rows, sum_str=sum_str, pct_str=pct_str)
+        </div>'''
 
-    html_template = '''<!DOCTYPE html>
+    html_template = f'''<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -205,14 +177,14 @@ def run_monitor():
     <style>
         :root {{ --up: #ff4d4f; --down: #52c41a; }}
         body {{ font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }}
-        .container {{ max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
+        .container {{ max-width: 750px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
         .fund-section {{ display: none; }} 
         .fund-section.active {{ display: block; }}
         .dashboard {{ text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }}
         .total-sum {{ font-size: 24px; font-weight: bold; color: #333; }}
         table {{ width: 100%; border-collapse: collapse; font-size: 11px; }}
         th {{ color: #888; padding: 8px 2px; border-bottom: 2px solid #ddd; text-align: center; }}
-        td {{ padding: 8px 2px; text-align: center; border-bottom: 1px solid #f9f9f9; }}
+        td {{ padding: 6px 2px; text-align: center; border-bottom: 1px solid #f9f9f9; }}
         .up {{ color: var(--up); font-weight: bold; }} 
         .down {{ color: var(--down); font-weight: bold; }}
         select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
@@ -221,42 +193,104 @@ def run_monitor():
 </head>
 <body>
 <div class="container">
-    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已修復上櫃股抓取)</div>
+    <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (支援即時權重計算)</div>
     
     <select onchange="switchFund(this.value)">{options_html}</select>
     {sections_html}
+    
     <div class="update-box">
         <button id="updateBtn" onclick="triggerUpdate()" style="background-color: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">更新 GitHub 動作</button>
-        <button type="button" onclick="resetSettings()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置畫面</button>
+        <button type="button" onclick="location.reload()" style="background-color: #8c8c8c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 5px;">重置畫面</button>
         <p id="status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
     </div>
 </div>
-<script>
-function toggleEditor(key) {{
-    const editor = document.getElementById('editor-' + key);
-    editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
-}}
 
-function addStockRow(key) {{
-    const container = document.getElementById('container-' + key);
-    const div = document.createElement('div');
-    div.className = 'stock-input-row';
-    div.style.cssText = 'display: flex; gap: 8px; margin-bottom: 5px;';
-    div.innerHTML = `
-        <input type="text" class="edit-name" placeholder="股票名稱" style="width: 55%;">
-        <input type="number" step="0.01" class="edit-weight" placeholder="權重%" style="width: 35%;">
-        <button type="button" onclick="this.parentElement.remove()" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; width:10%;">X</button>
-    `;
-    container.appendChild(div);
-}}
+<script>
+// 全域對照表，讓前端新增股票時也能抓到股價用（簡化版預設快取）
+const globalPrices = {{}};
+document.querySelectorAll('.fund-section').forEach(section => {{
+    const prices = JSON.parse(section.getAttribute('data-prices') || '{{}}');
+    Object.assign(globalPrices, prices);
+}});
 
 function switchFund(key) {{
     document.querySelectorAll('.fund-section').forEach(s => s.classList.remove('active'));
     document.getElementById('sector-' + key).classList.add('active');
 }}
 
-function resetSettings() {{
-    location.reload();
+function addStockRow(key) {{
+    const tbody = document.getElementById('tbody-' + key);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><input type="text" class="edit-name" value="" placeholder="股票名稱" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="recalc('${{key}}')"></td>
+        <td><input type="number" step="0.01" class="edit-weight" value="0" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="recalc('${{key}}')">%</td>
+        <td class="col-yesterday">0.00</td>
+        <td class="col-current">0.00</td>
+        <td class="col-pct"><strong>0.00%</strong></td>
+        <td class="col-contrib-pct">0.00%</td>
+        <td class="col-contrib">0.0000</td>
+        <td><button type="button" onclick="this.closest('tr').remove(); recalc('${{key}}');" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 6px;">X</button></td>
+    `;
+    tbody.appendChild(tr);
+}}
+
+function recalc(key) {{
+    const section = document.getElementById('sector-' + key);
+    const rows = section.querySelectorAll('#tbody-' + key + ' tr');
+    
+    let totalSum = 0;
+    let totalPct = 0;
+    
+    rows.forEach(row => {{
+        const nameInput = row.querySelector('.edit-name');
+        const weightInput = row.querySelector('.edit-weight');
+        const name = nameInput ? nameInput.value.trim() : '';
+        const weight = parseFloat(weightInput ? weightInput.value : 0) || 0;
+        
+        const yCell = row.querySelector('.col-yesterday');
+        const cCell = row.querySelector('.col-current');
+        const pctCell = row.querySelector('.col-pct');
+        const cpctCell = row.querySelector('.col-contrib-pct');
+        const contribCell = row.querySelector('.col-contrib');
+        
+        let pYester = 0, pCurr = 0;
+        if (name && globalPrices[name] && globalPrices[name].success) {{
+            pYester = globalPrices[name].yesterday;
+            pCurr = globalPrices[name].current;
+            yCell.innerText = pYester.toFixed(2);
+            cCell.innerText = pCurr.toFixed(2);
+        }} else {{
+            yCell.innerText = "0.00";
+            cCell.innerText = "0.00";
+        }}
+        
+        const diff = pCurr - pYester;
+        const pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
+        const contribPct = pctChange * (weight / 100);
+        const contribution = diff * (weight / 100);
+        
+        if (pYester !== 0) {{
+            totalSum += contribution;
+            totalPct += contribPct;
+        }}
+        
+        const colorClass = diff > 0 ? "up" : (diff < 0 ? "down" : "");
+        const signPct = pctChange >= 0 ? '+' : '';
+        const signCPct = contribPct >= 0 ? '+' : '';
+        const signContrib = contribution >= 0 ? '+' : '';
+        
+        cCell.className = "col-current " + colorClass;
+        pctCell.className = "col-pct " + colorClass;
+        cpctCell.className = "col-contrib-pct " + colorClass;
+        contribCell.className = "col-contrib " + colorClass;
+        
+        pctCell.innerHTML = `<strong>${{signPct}}${{pctChange.toFixed(2)}}%</strong>`;
+        cpctCell.innerText = `${{signCPct}}${{contribPct.toFixed(2)}}%`;
+        contribCell.innerText = `${{signContrib}}${{contribution.toFixed(4)}}`;
+    }});
+    
+    document.getElementById('sum-' + key).innerText = (totalSum >= 0 ? '+' : '') + totalSum.toFixed(4);
+    document.getElementById('pct-' + key).innerText = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
 }}
 
 async function triggerUpdate() {{
@@ -278,13 +312,8 @@ async function triggerUpdate() {{
 </body>
 </html>'''
 
-    html_content = html_template.format(
-        options_html=options_html,
-        sections_html=sections_html
-    )
-
     with open("index.html", "w", encoding="utf-8") as f:
-        f.write(html_content)
+        f.write(html_template)
     print("【更新成功】index.html 已重新生成")
 
 if __name__ == "__main__":

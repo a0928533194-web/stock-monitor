@@ -102,7 +102,7 @@ def run_monitor():
                     </tr>
                 </thead>
                 <tbody id="tbody-{key}">
-                    <tr><td colspan="7" style="color: #888;">尚無快取資料，請稍候...</td></tr>
+                    <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
         </div>'''
@@ -123,17 +123,17 @@ def run_monitor():
     select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
     .update-box {{ text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }}
     
-    /* 進度條樣式 */
-    #progress-container {{ width: 100%; background-color: #f3f3f3; border-radius: 4px; overflow: hidden; margin-bottom: 10px; height: 16px; display: none; }}
-    #progress-bar {{ width: 0%; height: 100%; background-color: #1890ff; text-align: center; color: white; font-size: 10px; line-height: 16px; transition: width 0.2s; }}
+    /* 進度條樣式強化：確保強制顯示 */
+    #progress-container {{ width: 100%; background-color: #f3f3f3; border-radius: 4px; overflow: hidden; margin-bottom: 10px; height: 18px; border: 1px solid #ddd; }}
+    #progress-bar {{ width: 0%; height: 100%; background-color: #1890ff; text-align: center; color: white; font-size: 11px; font-weight: bold; line-height: 18px; transition: width 0.1s ease; }}
 </style></head>
 <body>
 <div class="container">
     <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已啟用自動保留最後執行資料)</div>
     
-    <!-- 進度條元件 -->
+    <!-- 進度條元件 (預設顯示區塊) -->
     <div id="progress-container">
-        <div id="progress-bar">0%</div>
+        <div id="progress-bar">準備中 0%</div>
     </div>
 
     <select onchange="switchFund(this.value)">{options_html}</select>
@@ -218,15 +218,11 @@ async function fetchFundData(key) {{
     const stockNames = Object.keys(stocks);
     const totalStocks = stockNames.length;
     
-    if (!cacheResults[key]) {{
-        document.getElementById('tbody-' + key).innerHTML = `<tr><td colspan="7" style="color: #1890ff;">正在對應代號並抓取股價數據...</td></tr>`;
-    }}
-
     const pContainer = document.getElementById('progress-container');
     const pBar = document.getElementById('progress-bar');
     pContainer.style.display = 'block';
     pBar.style.width = '0%';
-    pBar.innerText = '0%';
+    pBar.innerText = '讀取中 0%';
 
     let totalContribution = 0;
     let totalPct = 0;
@@ -308,11 +304,14 @@ async function fetchFundData(key) {{
 function updateProgress(current, total, pBar, pContainer) {{
     let percent = Math.round((current / total) * 100);
     pBar.style.width = percent + '%';
-    pBar.innerText = percent + '%';
+    pBar.innerText = `讀取進度 ${{percent}}% (${{current}}/${{total}})`;
     if (percent >= 100) {{
         setTimeout(() => {{
-            pContainer.style.display = 'none';
-        }}, 400);
+            pBar.innerText = "讀取完成！";
+            setTimeout(() => {{
+                pContainer.style.display = 'none';
+            }}, 600);
+        }}, 300);
     }}
 }}
 
@@ -344,7 +343,7 @@ window.onload = function() {{
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("【更新成功】index.html 已生成")
+    print("【更新成功】index.html 已生成（進度條已修復並強制顯示）")
 
 if __name__ == "__main__":
     run_monitor()

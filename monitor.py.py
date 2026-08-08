@@ -29,7 +29,6 @@ def run_monitor():
         active = "active" if i == 0 else ""
         options_html += f'<option value="{key}">{info["name"]}</option>'
         
-        # 產生編輯輸入框的初始 HTML
         editor_rows = ""
         for name, (ticker, weight) in info["stocks"].items():
             editor_rows += f'''
@@ -53,7 +52,6 @@ def run_monitor():
                 <button type="button" onclick="toggleEditor('{key}')" style="background: #fa8c16; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">⚙️ 編輯此基金持股</button>
             </div>
             
-            <!-- 編輯面板 -->
             <div id="editor-{key}" style="display: none; background: #fffbe6; padding: 10px; border-radius: 8px; border: 1px solid #ffe58f; margin-bottom: 10px;">
                 <div style="font-weight: bold; font-size: 12px; margin-bottom: 5px;">修改成分股與權重：</div>
                 <div id="container-{key}">
@@ -211,7 +209,7 @@ async function fetchFundData(key) {{
     tbody.innerHTML = tableRows;
     document.getElementById('sum-' + key).innerText = (totalContribution >= 0 ? '+' : '') + totalContribution.toFixed(4);
     document.getElementById('pct-' + key).innerText = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
-}
+}}
 
 async function triggerUpdate() {{
     const GITHUB_OWNER = "a0928533194-web"; 

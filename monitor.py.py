@@ -56,21 +56,21 @@ def run_monitor():
     
     for i, (key, info) in enumerate(FUNDS_CONFIG.items()):
         active = "active" if i == 0 else ""
-        options_html += f'<option value="{key}">{info["name"]}</option>'
+        options_html += '<option value="{}">{}</option>'.format(key, info["name"])
         
         editor_rows = ""
         for name, weight in info["stocks"].items():
-            editor_rows += f'''
+            editor_rows += '''
             <div class="stock-input-row" style="display: flex; gap: 8px; margin-bottom: 5px;">
-                <input type="text" class="edit-name" value="{name}" placeholder="股票名稱" style="width: 55%;">
-                <input type="number" step="0.01" class="edit-weight" value="{weight}" placeholder="權重%" style="width: 35%;">
+                <input type="text" class="edit-name" value="{}" placeholder="股票名稱" style="width: 55%;">
+                <input type="number" step="0.01" class="edit-weight" value="{}" placeholder="權重%" style="width: 35%;">
                 <button type="button" onclick="this.parentElement.remove()" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; width:10%;">X</button>
-            </div>'''
+            </div>'''.format(name, weight)
             
-        sections_html += f'''
+        sections_html += '''
         <div id="sector-{key}" class="fund-section {active}">
             <div class="dashboard">
-                <div class="dashboard-title">{info["name"]} - 今日預估總貢獻</div>
+                <div class="dashboard-title">{name} - 今日預估總貢獻</div>
                 <div class="total-sum" id="sum-{key}">0.0000</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
                 <div class="total-percent" id="pct-{key}" style="font-size: 18px; font-weight: bold; color: #333;">0.00%</div>
@@ -105,33 +105,38 @@ def run_monitor():
                     <tr><td colspan="7" style="color: #888;">正在讀取最新數據，請稍候...</td></tr>
                 </tbody>
             </table>
-        </div>'''
+        </div>'''.format(key=key, active=active, name=info["name"], editor_rows=editor_rows)
 
-    html_content = f"""<!DOCTYPE html>
-<html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>基金監測系統</title>
-<style>
-    :root {{ --up: #ff4d4f; --down: #52c41a; }}
-    body {{ font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }}
-    .container {{ max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
-    .fund-section {{ display: none; }} .fund-section.active {{ display: block; }}
-    .dashboard {{ text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }}
-    .total-sum {{ font-size: 24px; font-weight: bold; color: #333; }}
-    table {{ width: 100%; border-collapse: collapse; font-size: 11px; }}
-    th {{ color: #888; padding: 8px 2px; border-bottom: 2px solid #ddd; text-align: center; }}
-    td {{ padding: 8px 2px; text-align: center; border-bottom: 1px solid #f9f9f9; }}
-    .up {{ color: var(--up); font-weight: bold; }} .down {{ color: var(--down); font-weight: bold; }}
-    select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
-    .update-box {{ text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }}
-    
-    /* 進度條樣式強化：確保強制顯示 */
-    #progress-container {{ width: 100%; background-color: #f3f3f3; border-radius: 4px; overflow: hidden; margin-bottom: 10px; height: 18px; border: 1px solid #ddd; }}
-    #progress-bar {{ width: 0%; height: 100%; background-color: #1890ff; text-align: center; color: white; font-size: 11px; font-weight: bold; line-height: 18px; transition: width 0.1s ease; }}
-</style></head>
+    # 這裡改用普通字串並用 .format() 帶入 JSON 資料，徹底避免 f-string 內大括號衝突
+    html_template = """<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基金監測系統</title>
+    <style>
+        :root {{ --up: #ff4d4f; --down: #52c41a; }}
+        body {{ font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }}
+        .container {{ max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
+        .fund-section {{ display: none; }} 
+        .fund-section.active {{ display: block; }}
+        .dashboard {{ text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }}
+        .total-sum {{ font-size: 24px; font-weight: bold; color: #333; }}
+        table {{ width: 100%; border-collapse: collapse; font-size: 11px; }}
+        th {{ color: #888; padding: 8px 2px; border-bottom: 2px solid #ddd; text-align: center; }}
+        td {{ padding: 8px 2px; text-align: center; border-bottom: 1px solid #f9f9f9; }}
+        .up {{ color: var(--up); font-weight: bold; }} 
+        .down {{ color: var(--down); font-weight: bold; }}
+        select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
+        .update-box {{ text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }}
+        #progress-container {{ width: 100%; background-color: #f3f3f3; border-radius: 4px; overflow: hidden; margin-bottom: 10px; height: 18px; border: 1px solid #ddd; }}
+        #progress-bar {{ width: 0%; height: 100%; background-color: #1890ff; text-align: center; color: white; font-size: 11px; font-weight: bold; line-height: 18px; transition: width 0.1s ease; }}
+    </style>
+</head>
 <body>
 <div class="container">
     <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已啟用自動保留最後執行資料)</div>
     
-    <!-- 進度條元件 (預設顯示區塊) -->
     <div id="progress-container">
         <div id="progress-bar">準備中 0%</div>
     </div>
@@ -299,7 +304,7 @@ async function fetchFundData(key) {{
         totalPctStr: pctStr
     }};
     localStorage.setItem('myLastRunCache', JSON.stringify(cacheResults));
-}
+}}
 
 function updateProgress(current, total, pBar, pContainer) {{
     let percent = Math.round((current / total) * 100);
@@ -339,11 +344,19 @@ window.onload = function() {{
     fetchFundData(firstKey);
 }};
 </script>
-</body></html>"""
+</body>
+</html>"""
+
+    html_content = html_template.format(
+        options_html=options_html,
+        sections_html=sections_html,
+        mapping_json=mapping_json,
+        funds_json=funds_json
+    )
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
-    print("【更新成功】index.html 已生成（進度條已修復並強制顯示）")
+    print("【更新成功】index.html 已生成")
 
 if __name__ == "__main__":
     run_monitor()

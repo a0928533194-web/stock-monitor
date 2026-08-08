@@ -245,7 +245,7 @@ async function triggerUpdate() {{
     const userToken = prompt("請輸入您的 GitHub Token:");
     if (!userToken) return;
     document.getElementById('status').innerText = "正在發送請求...";
-    const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`, {{
+    const response = await fetch(`https://api.github.com/repos/${{GITHUB_OWNER}}/${{REPO_NAME}}/actions/workflows/${{WORKFLOW_FILE}}/dispatches`, {{
         method: "POST",
         headers: {{"Authorization": "token " + userToken, "Accept": "application/vnd.github.v3+json"}},
         body: JSON.stringify({{"ref": "main"}})

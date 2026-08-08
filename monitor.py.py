@@ -93,40 +93,41 @@ def run_monitor():
     stock_prices = fetch_stock_data()
     options_html = ""
     
-    for i, (key, info) in enumerate(FUNDS_CONFIG.items()):
+    for key, info in FUNDS_CONFIG.items():
         options_html += f'<option value="{key}">{info["name"]}</option>'
 
     all_prices_json = json.dumps(stock_prices)
     default_config_json = json.dumps(FUNDS_CONFIG)
 
-    html_template = f'''<!DOCTYPE html>
+    # 改用一般字串串接，徹底避開 f-string 的大括號語法衝突
+    html_template = """<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>基金監測系統</title>
     <style>
-        :root {{ --up: #ff4d4f; --down: #52c41a; }}
-        body {{ font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }}
-        .container {{ max-width: 750px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
-        .fund-section {{ display: none; }} 
-        .fund-section.active {{ display: block; }}
-        .dashboard {{ text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }}
-        .total-sum {{ font-size: 24px; font-weight: bold; color: #333; }}
-        table {{ width: 100%; border-collapse: collapse; font-size: 11px; }}
-        th {{ color: #888; padding: 8px 2px; border-bottom: 2px solid #ddd; text-align: center; }}
-        td {{ padding: 6px 2px; text-align: center; border-bottom: 1px solid #f9f9f9; }}
-        .up {{ color: var(--up); font-weight: bold; }} 
-        .down {{ color: var(--down); font-weight: bold; }}
-        select {{ width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }}
-        .update-box {{ text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }}
+        :root { --up: #ff4d4f; --down: #52c41a; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }
+        .container { max-width: 750px; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .fund-section { display: none; } 
+        .fund-section.active { display: block; }
+        .dashboard { text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; }
+        .total-sum { font-size: 24px; font-weight: bold; color: #333; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th { color: #888; padding: 8px 2px; border-bottom: 2px solid #ddd; text-align: center; }
+        td { padding: 6px 2px; text-align: center; border-bottom: 1px solid #f9f9f9; }
+        .up { color: var(--up); font-weight: bold; } 
+        .down { color: var(--down); font-weight: bold; }
+        select { width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; }
+        .update-box { text-align:center; margin: 20px 0; padding: 15px; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
 <div class="container">
     <div style="text-align:center; font-size: 12px; color: #666; margin-bottom: 5px;">🕒 系統就緒 (已啟用自動記憶功能)</div>
     
-    <select id="fundSelect" onchange="switchFund(this.value)">{options_html}</select>
+    <select id="fundSelect" onchange="switchFund(this.value)"></select>
     
     <div id="sections-container"></div>
     
@@ -140,39 +141,54 @@ def run_monitor():
 </div>
 
 <script>
-const globalPrices = {all_prices_json};
-const defaultConfig = {default_config_json};
+const globalPrices = __GLOBAL_PRICES__;
+const defaultConfig = __DEFAULT_config__;
 
-function getConfig() {{
+function getConfig() {
     const saved = localStorage.getItem('user_funds_config');
-    if (saved) {{
-        try {{ return JSON.parse(saved); }} catch(e) {{}}
-    }}
+    if (saved) {
+        try { return JSON.parse(saved); } catch(e) {}
+    }
     return defaultConfig;
-}}
+}
 
-function saveConfig(config) {{
+function saveConfig(config) {
     localStorage.setItem('user_funds_config', JSON.stringify(config));
-}}
+}
 
-function renderApp() {{
+function renderApp() {
     const config = getConfig();
+    const selectEl = document.getElementById('fundSelect');
+    const currentSelected = selectEl.value;
+    
+    selectEl.innerHTML = '';
+    for (const [key, info] of Object.entries(config)) {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = info.name;
+        selectEl.appendChild(opt);
+    }
+    
+    if (currentSelected && config[currentSelected]) {
+        selectEl.value = currentSelected;
+    }
+    
     const container = document.getElementById('sections-container');
     container.innerHTML = '';
     
-    const activeKey = document.getElementById('fundSelect').value || Object.keys(config)[0];
+    const activeKey = selectEl.value || Object.keys(config)[0];
     
-    for (const [key, info] of Object.entries(config)) {{
+    for (const [key, info] of Object.entries(config)) {
         const active = (key === activeKey) ? "active" : "";
         
         let table_rows = "";
         let total_contribution = 0;
         let total_pct = 0;
         
-        if (info && info.stocks) {{
-            for (const [name, weight] of Object.entries(info.stocks)) {{
+        if (info && info.stocks) {
+            for (const [name, weight] of Object.entries(info.stocks)) {
                 let pYester = 0, pCurr = 0, diff = 0, pctChange = 0, contribPct = 0, contribution = 0;
-                if (globalPrices[name] && globalPrices[name].success) {{
+                if (globalPrices[name] && globalPrices[name].success) {
                     pYester = globalPrices[name].yesterday;
                     pCurr = globalPrices[name].current;
                     diff = pCurr - pYester;
@@ -182,7 +198,7 @@ function renderApp() {{
                     
                     total_pct += contribPct;
                     total_contribution += contribution;
-                }}
+                }
                 
                 const color_class = diff > 0 ? "up" : (diff < 0 ? "down" : "");
                 const sign_pct = pctChange >= 0 ? '+' : '';
@@ -190,33 +206,33 @@ function renderApp() {{
                 const sign_contrib = contribution >= 0 ? '+' : '';
                 
                 table_rows += `<tr>
-                    <td><input type="text" class="edit-name" value="${{name}}" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px; background:transparent;" oninput="updateData()"></td>
-                    <td><input type="number" step="0.01" class="edit-weight" value="${{weight}}" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="updateData()">%</td>
-                    <td class="col-yesterday">${{pYester.toFixed(2)}}</td>
-                    <td class="col-current ${{color_class}}">${{pCurr.toFixed(2)}}</td>
-                    <td class="col-pct ${{color_class}}"><strong>${{sign_pct}}${{pctChange.toFixed(2)}}%</strong></td>
-                    <td class="col-contrib-pct ${{color_class}}">${{sign_contrib_pct}}${{contribPct.toFixed(2)}}%</td>
-                    <td class="col-contrib ${{color_class}}">${{sign_contrib}}${{contribution.toFixed(4)}}</td>
+                    <td><input type="text" class="edit-name" value="${name}" style="width:90%; text-align:center; border:1px solid #ddd; border-radius:3px; background:transparent;" oninput="updateData()"></td>
+                    <td><input type="number" step="0.01" class="edit-weight" value="${weight}" style="width:80%; text-align:center; border:1px solid #ddd; border-radius:3px;" oninput="updateData()">%</td>
+                    <td class="col-yesterday">${pYester.toFixed(2)}</td>
+                    <td class="col-current ${color_class}">${pCurr.toFixed(2)}</td>
+                    <td class="col-pct ${color_class}"><strong>${sign_pct}${pctChange.toFixed(2)}%</strong></td>
+                    <td class="col-contrib-pct ${color_class}">${sign_contrib_pct}${contribPct.toFixed(2)}%</td>
+                    <td class="col-contrib ${color_class}">${sign_contrib}${contribution.toFixed(4)}</td>
                     <td><button type="button" onclick="this.closest('tr').remove(); updateData();" style="background:#ff4d4f; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 6px;">X</button></td>
                 </tr>`;
-            }}
-        }}
+            }
+        }
 
         const sum_str = (total_contribution >= 0 ? '+' : '') + total_contribution.toFixed(4);
         const pct_str = (total_pct >= 0 ? '+' : '') + total_pct.toFixed(2) + '%';
         const fundName = info ? info.name : key;
 
         const sectionHtml = `
-        <div id="sector-${{key}}" class="fund-section ${{active}}" data-key="${{key}}">
+        <div id="sector-${key}" class="fund-section ${active}" data-key="${key}">
             <div class="dashboard">
-                <div class="dashboard-title">${{fundName}} - 今日預估總貢獻</div>
-                <div class="total-sum" id="sum-${{key}}">${{sum_str}}</div>
+                <div class="dashboard-title">${fundName} - 今日預估總貢獻</div>
+                <div class="total-sum" id="sum-${key}">${sum_str}</div>
                 <div class="dashboard-title">今日預估總貢獻 %</div>
-                <div class="total-percent" id="pct-${{key}}" style="font-size: 18px; font-weight: bold; color: #333;">${{pct_str}}</div>
+                <div class="total-percent" id="pct-${key}" style="font-size: 18px; font-weight: bold; color: #333;">${pct_str}</div>
             </div>
             
             <div style="margin-bottom: 8px;">
-                <button type="button" onclick="addStockRow('${{key}}')" style="background: #52c41a; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">＋ 新增一檔股票</button>
+                <button type="button" onclick="addStockRow('${key}')" style="background: #52c41a; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">＋ 新增一檔股票</button>
             </div>
 
             <table style="width:100%; table-layout:fixed;">
@@ -232,22 +248,22 @@ function renderApp() {{
                         <th style="width:8%"></th>
                     </tr>
                 </thead>
-                <tbody id="tbody-${{key}}">
-                    ${{table_rows}}
+                <tbody id="tbody-${key}">
+                    ${table_rows}
                 </tbody>
             </table>
         </div>`;
         container.insertAdjacentHTML('beforeend', sectionHtml);
-    }}
+    }
 }
 
-function switchFund(key) {{
+function switchFund(key) {
     document.querySelectorAll('.fund-section').forEach(s => s.classList.remove('active'));
     const target = document.getElementById('sector-' + key);
     if (target) target.classList.add('active');
-}}
+}
 
-function addStockRow(key) {{
+function addStockRow(key) {
     const tbody = document.getElementById('tbody-' + key);
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -262,28 +278,28 @@ function addStockRow(key) {{
     `;
     tbody.appendChild(tr);
     updateData();
-}}
+}
 
-function updateData() {{
+function updateData() {
     const config = getConfig();
     
-    document.querySelectorAll('.fund-section').forEach(section => {{
+    document.querySelectorAll('.fund-section').forEach(section => {
         const key = section.getAttribute('data-key');
         const rows = section.querySelectorAll('tbody tr');
         
-        let newStocks = {{}};
+        let newStocks = {};
         let totalSum = 0;
         let totalPct = 0;
         
-        rows.forEach(row => {{
+        rows.forEach(row => {
             const nameInput = row.querySelector('.edit-name');
             const weightInput = row.querySelector('.edit-weight');
             const name = nameInput ? nameInput.value.trim() : '';
             const weight = parseFloat(weightInput ? weightInput.value : 0) || 0;
             
-            if (name) {{
+            if (name) {
                 newStocks[name] = weight;
-            }}
+            }
             
             const yCell = row.querySelector('.col-yesterday');
             const cCell = row.querySelector('.col-current');
@@ -292,25 +308,25 @@ function updateData() {{
             const contribCell = row.querySelector('.col-contrib');
             
             let pYester = 0, pCurr = 0;
-            if (name && globalPrices[name] && globalPrices[name].success) {{
+            if (name && globalPrices[name] && globalPrices[name].success) {
                 pYester = globalPrices[name].yesterday;
                 pCurr = globalPrices[name].current;
                 yCell.innerText = pYester.toFixed(2);
                 cCell.innerText = pCurr.toFixed(2);
-            }} else {{
+            } else {
                 yCell.innerText = "0.00";
                 cCell.innerText = "0.00";
-            }}
+            }
             
             const diff = pCurr - pYester;
             const pctChange = pYester !== 0 ? (diff / pYester) * 100 : 0;
             const contribPct = pctChange * (weight / 100);
             const contribution = diff * (weight / 100);
             
-            if (pYester !== 0) {{
+            if (pYester !== 0) {
                 totalSum += contribution;
                 totalPct += contribPct;
-            }}
+            }
             
             const colorClass = diff > 0 ? "up" : (diff < 0 ? "down" : "");
             const signPct = pctChange >= 0 ? '+' : '';
@@ -322,51 +338,55 @@ function updateData() {{
             cpctCell.className = "col-contrib-pct " + colorClass;
             contribCell.className = "col-contrib " + colorClass;
             
-            pctCell.innerHTML = `<strong>${{signPct}}${{pctChange.toFixed(2)}}%</strong>`;
-            cpctCell.innerText = `${{signCPct}}${{contribPct.toFixed(2)}}%`;
-            contribCell.innerText = `${{signContrib}}${{contribution.toFixed(4)}}`;
-        }});
+            pctCell.innerHTML = `<strong>${signPct}${pctChange.toFixed(2)}%</strong>`;
+            cpctCell.innerText = `${signCPct}${contribPct.toFixed(2)}%`;
+            contribCell.innerText = `${signContrib}${contribution.toFixed(4)}`;
+        });
         
-        if (config[key]) {{
+        if (config[key]) {
             config[key].stocks = newStocks;
-        }}
+        }
         
         const sumEl = document.getElementById('sum-' + key);
         const pctEl = document.getElementById('pct-' + key);
         if (sumEl) sumEl.innerText = (totalSum >= 0 ? '+' : '') + totalSum.toFixed(4);
         if (pctEl) pctEl.innerText = (totalPct >= 0 ? '+' : '') + totalPct.toFixed(2) + '%';
-    }});
+    });
     
     saveConfig(config);
-}}
+}
 
-function resetConfig() {{
-    if (confirm("確定要恢復為預設的基金與權重嗎？")) {{
+function resetConfig() {
+    if (confirm("確定要恢復為預設的基金與權重嗎？")) {
         localStorage.removeItem('user_funds_config');
         location.reload();
-    }}
-}}
+    }
+}
 
-async function triggerUpdate() {{
+async function triggerUpdate() {
     const GITHUB_OWNER = "a0928533194-web"; 
     const REPO_NAME = "stock-monitor";
     const WORKFLOW_FILE = "run.yml"; 
     const userToken = prompt("請輸入您的 GitHub Token:");
     if (!userToken) return;
     document.getElementById('status').innerText = "正在發送請求...";
-    const response = await fetch(`https://api.github.com/repos/${{GITHUB_OWNER}}/${{REPO_NAME}}/actions/workflows/${{WORKFLOW_FILE}}/dispatches`, {{
+    const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`, {
         method: "POST",
-        headers: {{"Authorization": "token " + userToken, "Accept": "application/vnd.github.v3+json"}},
-        body: JSON.stringify({{"ref": "main"}})
-    }});
-    if (response.ok) {{ document.getElementById('status').innerText = "✅ 請求已送出！"; }}
-    else {{ document.getElementById('status').innerText = "❌ 請求失敗"; }}
-}}
+        headers: {"Authorization": "token " + userToken, "Accept": "application/vnd.github.v3+json"},
+        body: JSON.stringify({"ref": "main"})
+    });
+    if (response.ok) { document.getElementById('status').innerText = "✅ 請求已送出！"; }
+    else { document.getElementById('status').innerText = "❌ 請求失敗"; }
+}
 
 renderApp();
 </script>
 </body>
-</html>'''
+</html>"""
+
+    # 將資料透過字串替換安全地填入，避免大括號衝突
+    html_template = html_template.replace("__GLOBAL_PRICES__", all_prices_json)
+    html_template = html_template.replace("__DEFAULT_config__", default_config_json)
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_template)

@@ -1,6 +1,5 @@
 import json
 
-# 股票名稱對應代號的對照字典（包含台股常用的上市櫃代號與後綴）
 STOCK_MAPPING = {
     "台積電": "2330.TW", "聯發科": "2454.TW", "鴻海": "2317.TW", "台達電": "2308.TW",
     "聯電": "2303.TW", "欣興": "3037.TW", "旺矽": "6223.TWO", "台光電": "2383.TW",
@@ -14,7 +13,6 @@ STOCK_MAPPING = {
     "文曄": "3036.TW", "群聯": "8299.TW", "嘉澤": "3533.TW"
 }
 
-# 完整基金數據設定（這裡儲存時僅保留 名稱與權重）
 FUNDS_CONFIG = {
     "yuanta_otc": {"name": "元大店頭基金", "stocks": {"旺矽": 8.00, "中美晶": 6.83, "信驊": 6.78, "台積電": 6.32, "台燿": 6.05, "聯電": 5.74, "精測": 4.64, "環球晶": 4.45, "聯亞": 4.21, "沛亨": 3.95}},
     "shinkin_three": {"name": "新光大三通基金", "stocks": {"景碩": 8.79, "欣興": 8.56, "旺矽": 6.81, "世芯-KY": 6.63, "台積電": 6.51, "台達電": 5.44, "力積電": 5.33, "大量": 5.02, "台表科": 4.65, "晶豪科": 4.44}},
@@ -230,9 +228,9 @@ async function fetchFundData(key) {{
             <td>${{weight}}%</td>
             <td>${{success ? pYester.toFixed(2) : 'N/A'}}</td>
             <td class="${{colorClass}}">${{success ? pCurr.toFixed(2) : 'N/A'}}</td>
-            <td class="${{colorClass}}"><strong>${{pctChange >= 0 ? '+' : ''}}{{pctChange.toFixed(2)}}%</strong></td>
-            <td class="${{colorClass}}">${{contribPct >= 0 ? '+' : ''}}{{contribPct.toFixed(2)}}%</td>
-            <td class="${{colorClass}}">${{contribution >= 0 ? '+' : ''}}{{contribution.toFixed(4)}}</td>
+            <td class="${{colorClass}}"><strong>${{pctChange >= 0 ? '+' : ''}}${{pctChange.toFixed(2)}}%</strong></td>
+            <td class="${{colorClass}}">${{contribPct >= 0 ? '+' : ''}}${{contribPct.toFixed(2)}}%</td>
+            <td class="${{colorClass}}">${{contribution >= 0 ? '+' : ''}}${{contribution.toFixed(4)}}</td>
         </tr>`;
     }}
     
